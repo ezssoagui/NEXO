@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Brain, Target, PenLine, Layers, ShieldCheck, Moon, Sun } from 'lucide-react';
+import { ArrowRight, Sparkles, Brain, Target, PenLine, Layers, ShieldCheck, Moon, Sun } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { PERSONAS } from '../store/seed';
+import { loadDemoStudent } from '../store/demoStudent';
 import { Logo } from '../components/ui';
 
 export default function Welcome() {
@@ -21,6 +22,7 @@ export default function Welcome() {
           <p className="mt-5 max-w-2xl text-lg text-slate-300">NEXO é uma plataforma de preparação para ENEM, vestibulares e olimpíadas que acompanha seu raciocínio: identifica o erro específico, explica, propõe uma questão gêmea e atualiza seu domínio.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button className="btn-primary !px-6 !py-3 !text-base" onClick={() => nav('/cadastro')}>Criar meu perfil <ArrowRight size={18} /></button>
+            <button className="btn !border !border-mint-400/60 !px-6 !py-3 !text-base text-mint-300 hover:bg-white/10" onClick={() => { loadDemoStudent(); nav('/inicio'); }}><Sparkles size={18} /> Ver estudante com histórico (Marina)</button>
             <a href="#perfis" className="btn !border !border-white/25 !px-6 !py-3 !text-base text-white hover:bg-white/10">Explorar com perfil fictício</a>
           </div>
         </div>
