@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Play, Target, CheckCircle2, Layers, Brain, ArrowRight, Compass, Shuffle, TrendingUp, AlertTriangle, Trophy, BookOpen, ListChecks, Route as RouteIcon } from 'lucide-react';
+import { Play, Target, Layers, Brain, ArrowRight, Compass, Shuffle, TrendingUp, AlertTriangle, Trophy, BookOpen, ListChecks, Route as RouteIcon, PenLine } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Card, Stat, Progress, Badge, cx } from '../components/ui';
 import { EvolutionChart, SkillMap } from '../components/charts';
-import { allMastery, subjectStats, masteryIndicators } from '../engine/mastery';
+import { allMastery, subjectStats } from '../engine/mastery';
 import { recommendations, NEXT_LABEL } from '../engine/learning';
 import { isDue } from '../engine/srs';
 import { FLASHCARDS } from '../data/flashcards';
 import { levelInfo, totalXP } from '../engine/gamification';
-import { CAUSE_LABELS, SKILLS, SUBJECT_COLORS, skillById } from '../data/skills';
+import { CAUSE_LABELS, SUBJECT_COLORS, skillById } from '../data/skills';
 import { LESSONS } from '../data/lessons';
 import CyclesCard from '../components/CyclesCard';
 import type { ErrorCause } from '../types';
@@ -17,7 +17,7 @@ import type { ErrorCause } from '../types';
 const DAY = 86400000;
 export default function Dashboard() {
   const nav = useNavigate();
-  const { profile, attempts, cardStates, customCards, xpEvents, diagnosticDone, skillReviews, settings, setSetting, simHistory } = useStore();
+  const { profile, attempts, cardStates, customCards, essays, xpEvents, diagnosticDone, skillReviews, settings, setSetting, simHistory } = useStore();
   const [minutes, setMinutes] = useState<5 | 10 | 20 | 40>(10);
   const real = attempts.filter((a) => !a.free);
   const recs = recommendations(real, skillReviews, Date.now(), 3);
@@ -29,20 +29,20 @@ export default function Dashboard() {
   const dueSkills = Object.entries(skillReviews).filter(([, r]) => r.due <= Date.now()).map(([k]) => k);
   const causes = new Map<ErrorCause, number>(); real.filter((a) => !a.correct && a.cause && a.cause !== 'indeterminada').forEach((a) => causes.set(a.cause!, (causes.get(a.cause!) ?? 0) + 1));
   const topCauses = [...causes.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
-  const ind = SKILLS.map((s) => masteryIndicators(real, s.id));
-  const reviewsDone = ind.reduce((s, x) => s + x.reviews, 0); const retained = ind.reduce((s, x) => s + x.retained, 0);
   const week = real.filter((a) => a.ts > Date.now() - 7 * DAY); const prevWeek = real.filter((a) => a.ts <= Date.now() - 7 * DAY && a.ts > Date.now() - 14 * DAY);
   const acc = (xs: typeof real) => (xs.length ? Math.round((xs.filter((a) => a.correct).length / xs.length) * 100) : null);
   const xp = totalXP(xpEvents); const lv = levelInfo(xp);
   const subj = subjectStats(real);
   const trails = LESSONS.map((l) => ({ l, done: l.skillIds.every((sk) => ['provisorio', 'consistente'].includes(m.find((x) => x.skillId === sk)?.state ?? '')), started: real.some((a) => l.skillIds.includes(a.skillId)) }));
   const adaptive = settings.studyMode === 'adaptativo';
+  const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
+  const essaysMonth = essays.reduce((n, e) => n + e.versions.filter((v) => v.ts >= monthStart.getTime()).length, 0);
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 to-navy-700 p-6 text-white sm:p-8">
-        <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-mint-500/20 blur-2xl" aria-hidden />
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <section className="relative flex min-h-[18rem] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 to-navy-700 p-6 text-white sm:min-h-[20rem] sm:p-10">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-mint-500/20 blur-2xl" aria-hidden />
+        <div className="relative flex flex-wrap items-center justify-between gap-3">
           <div><p className="text-sm text-mint-300">Olá, {profile?.nickname}</p><h1 className="mt-1 text-2xl font-extrabold !text-white sm:text-3xl">Bom voltar a estudar. Vamos evoluir hoje?</h1></div>
           <div className="flex rounded-xl bg-white/10 p-1 text-sm" role="radiogroup" aria-label="Modo de estudo">
             <button role="radio" aria-checked={adaptive} onClick={() => setSetting('studyMode', 'adaptativo')} className={cx('flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold', adaptive ? 'bg-white text-navy-900' : 'text-white/80')}><Compass size={14} /> Adaptativo</button>
@@ -51,16 +51,31 @@ export default function Dashboard() {
         </div>
         {adaptive ? (
           <>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="flex rounded-xl bg-white/10 p-1" role="radiogroup" aria-label="Duração da sessão">{([5, 10, 20, 40] as const).map((n) => <button key={n} role="radio" aria-checked={minutes === n} onClick={() => setMinutes(n)} className={cx('rounded-lg px-3 py-2 text-sm font-semibold', minutes === n ? 'bg-white text-navy-900' : 'text-white/80 hover:text-white')}>{n} min</button>)}</div>
               <button className="btn-primary !px-5 !py-3 !text-base" onClick={() => nav(diagnosticDone ? `/sessao?min=${minutes}` : '/diagnostico')}><Play size={18} /> {diagnosticDone ? 'Começar minha sessão' : 'Fazer diagnóstico inicial'}</button>
             </div>
-            <p className="mt-2 text-xs text-slate-400">A sessão é montada pelo NEXO Learning Engine a partir das suas evidências. Você pode sair dela a qualquer momento.</p>
+            <p className="relative mt-3 text-xs text-slate-400">A sessão é montada pelo NEXO Learning Engine a partir das suas evidências. Você pode sair dela a qualquer momento.</p>
           </>
         ) : (
-          <div className="mt-5 grid gap-2 sm:grid-cols-4">{[['/questoes', 'Banco de questões', ListChecks], ['/aulas', 'Aulas e materiais', BookOpen], ['/flashcards', 'Revisão', Layers], ['/simulados', 'Simulados', Target]].map(([to, l, I]: any) => <Link key={to} to={to} className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-3 text-sm font-semibold hover:bg-white/20"><I size={16} />{l}</Link>)}</div>
+          <div className="relative mt-8 grid gap-2 sm:grid-cols-4">{[['/questoes', 'Banco de questões', ListChecks], ['/aulas', 'Aulas e materiais', BookOpen], ['/flashcards', 'Revisão', Layers], ['/simulados', 'Simulados', Target]].map(([to, l, I]: any) => <Link key={to} to={to} className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-3 text-sm font-semibold hover:bg-white/20"><I size={16} />{l}</Link>)}</div>
         )}
       </section>
+
+      {/* Resumo rápido da semana */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Stat label="Acertos nesta semana" value={acc(week) === null ? '—' : `${acc(week)}%`} hint={acc(prevWeek) === null ? 'sem dados da semana anterior' : `semana anterior: ${acc(prevWeek)}%`} icon={<TrendingUp size={18} />} />
+        <Stat label="Questões na semana" value={week.length} hint={prevWeek.length ? `semana anterior: ${prevWeek.length}` : 'últimos 7 dias'} icon={<ListChecks size={18} />} />
+        <Stat label="Revisões pendentes" value={dueCards + dueSkills.length} hint={`${dueSkills.length} habilidade(s) · ${dueCards} cartão(ões)`} icon={<Layers size={18} />} />
+        <Stat label="Redações no mês" value={essaysMonth} hint="versões enviadas para correção" icon={<PenLine size={18} />} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-5">
+        <Card className="lg:col-span-3"><div className="mb-2 flex items-center justify-between"><h2 className="section-title">Evolução de acertos</h2><Link to="/desempenho" className="text-sm font-medium text-mint-700 hover:underline dark:text-mint-400">Detalhes</Link></div>{real.length ? <EvolutionChart attempts={real} /> : <p className="muted text-sm">O gráfico aparece com as primeiras respostas.</p>}</Card>
+        <Card className="lg:col-span-2"><h2 className="section-title mb-3">Evolução por disciplina</h2>
+          <div className="space-y-3">{subj.map((s) => <div key={s.subject}><div className="mb-1 flex justify-between text-sm"><span>{s.subject}</span><span className="muted text-xs">{s.dominated}/{s.total} em domínio · {s.attempts} questões{s.attempts ? ` · ${s.accuracy}% de acerto` : ''}</span></div><Progress value={s.dominated / s.total} hex={SUBJECT_COLORS[s.subject]} label={`Habilidades em domínio em ${s.subject}`} /></div>)}</div>
+        </Card>
+      </div>
 
       {/* 1) O que estudar hoje  2) Por quê */}
       <Card>
@@ -74,21 +89,6 @@ export default function Dashboard() {
           </li>)}</ol>
         )}
       </Card>
-
-      {/* 3) Como estou evoluindo */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label="Acertos nesta semana" value={acc(week) === null ? '—' : `${acc(week)}%`} hint={acc(prevWeek) === null ? `${week.length} questões` : `semana anterior: ${acc(prevWeek)}%`} icon={<TrendingUp size={18} />} />
-        <Stat label="Habilidades em domínio" value={`${strong.length}/${SKILLS.length}`} hint={`${attention.length} precisam de atenção`} icon={<CheckCircle2 size={18} />} />
-        <Stat label="Retenção observada" value={reviewsDone ? `${retained}/${reviewsDone}` : '—'} hint="acertos em revisões ≥ 1 dia depois" icon={<Brain size={18} />} />
-        <Stat label="Revisões pendentes" value={dueCards + dueSkills.length} hint={`${dueSkills.length} habilidade(s) · ${dueCards} cartão(ões)`} icon={<Layers size={18} />} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-5">
-        <Card className="lg:col-span-3"><div className="mb-2 flex items-center justify-between"><h2 className="section-title">Evolução de acertos</h2><Link to="/desempenho" className="text-sm font-medium text-mint-700 hover:underline dark:text-mint-400">Detalhes</Link></div>{real.length ? <EvolutionChart attempts={real} /> : <p className="muted text-sm">O gráfico aparece com as primeiras respostas.</p>}</Card>
-        <Card className="lg:col-span-2"><h2 className="section-title mb-3">Evolução por disciplina</h2>
-          <div className="space-y-3">{subj.map((s) => <div key={s.subject}><div className="mb-1 flex justify-between text-sm"><span>{s.subject}</span><span className="muted text-xs">{s.dominated}/{s.total} em domínio · {s.attempts} questões{s.attempts ? ` · ${s.accuracy}% de acerto` : ''}</span></div><Progress value={s.dominated / s.total} hex={SUBJECT_COLORS[s.subject]} label={`Habilidades em domínio em ${s.subject}`} /></div>)}</div>
-        </Card>
-      </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card><h2 className="section-title mb-2 flex items-center gap-2"><Trophy size={16} className="text-mint-600" /> Habilidades fortes</h2>{strong.length ? <ul className="space-y-1 text-sm">{strong.slice(0, 6).map((x) => <li key={x.skillId}>✓ {x.skill.name} <span className="muted text-xs">({x.state === 'consistente' ? 'consistente' : 'provisório'})</span></li>)}</ul> : <p className="muted text-sm">Nenhuma ainda — um acerto isolado não basta.</p>}</Card>
