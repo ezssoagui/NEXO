@@ -5,7 +5,7 @@
  */
 import { createServer } from 'node:http';
 import { providerFromEnv } from './providers';
-import { diagnoseHandler, essayHandler, healthHandler, interventionLogHandler, questionHandler, tutorHandler } from './handlers';
+import { diagnoseHandler, essayHandler, explainHandler, healthHandler, interventionLogHandler, questionHandler, tutorHandler } from './handlers';
 import { openDb } from './db';
 import { authenticate, login, logout, register } from './auth';
 import { adminMetrics, deleteMe, exportMe, getState, putState } from './learning';
@@ -42,6 +42,7 @@ createServer(async (req, res) => {
       case '/api/auth/logout': return send(logout(db, req.headers.authorization));
       case '/api/ai/diagnose': return send(await diagnoseHandler(provider, body));
       case '/api/ai/tutor': return send(await tutorHandler(provider, body));
+      case '/api/ai/explain': return send(await explainHandler(provider, body));
       case '/api/ai/essay': return send(await essayHandler(provider, body));
       case '/api/ai/questions': return send(await questionHandler(provider, body));
       case '/api/ai/log': return send(interventionLogHandler(body));

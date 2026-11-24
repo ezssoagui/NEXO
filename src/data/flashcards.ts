@@ -44,5 +44,18 @@ const raw: [Subject, string, string, string, string][] = [
 ];
 
 export const FLASHCARDS: Flashcard[] = raw.map(([subject, topic, skillId, front, back], i) => ({
-  id: `f${String(i + 1).padStart(2, '0')}`, subject, topic, skillId, front, back, origin: 'curado',
+  id: `f${String(i + 1).padStart(2, '0')}`, subject, topic, skillId, front, back, kind: 'curricular',
 }));
+
+/** Cartões conceituais: pedem relação ou distinção, não só memória. */
+const conceptual: [Subject, string, string, string, string][] = [
+  ['Física', 'Magnetismo', 'fis-forca-magnetica', 'Quando existe campo magnético sem força sobre uma carga?', 'Carga em repouso ou com velocidade paralela ao campo.'],
+  ['Física', 'Indução', 'fis-inducao', 'Por que um ímã parado na bobina não gera corrente?', 'O fluxo não varia: sem variação, não há fem induzida.'],
+  ['Física', 'Dinâmica', 'fis-centripeta', 'A força centrípeta é uma força a mais? Explique.', 'Não: é a resultante das forças na direção do centro.'],
+  ['Física', 'Eletrodinâmica', 'fis-energia-eletrica', 'Potência × energia elétrica: o que liga as duas?', 'O tempo: E = P·Δt.'],
+  ['Biologia', 'Sistema excretor', 'bio-osmorregulacao', 'ADH × aldosterona: o que cada um retém?', 'ADH: água. Aldosterona: sódio (e a água acompanha).'],
+  ['Biologia', 'Membrana', 'bio-citologia', 'Osmose × transporte ativo: dois critérios de diferença?', 'Gasto de ATP e sentido em relação ao gradiente.'],
+  ['Química', 'Eletroquímica', 'qui-eletroquimica', 'Por que o metal de sacrifício protege o ferro?', 'Tem menor potencial de redução e oxida primeiro.'],
+  ['Humanas', 'Filosofia antiga', 'fil-antiga', 'Ironia × maiêutica?', 'Desfazer a falsa certeza × ajudar a construir a ideia.'],
+];
+FLASHCARDS.push(...conceptual.map(([subject, topic, skillId, front, back], i) => ({ id: `k${String(i + 1).padStart(2, '0')}`, subject, topic, skillId, front, back, kind: 'conceitual' as const })));

@@ -4,13 +4,13 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'] },
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
       colors: {
-        navy: { 50:'#eef3fb',100:'#d5e1f3',200:'#a9c0e4',300:'#7698ce',400:'#4a71b3',500:'#2f5494',600:'#223f74',700:'#192f59',800:'#112142',900:'#0b162e',950:'#060d1d' },
-        mint: { 50:'#ecfdf7',100:'#d1faec',200:'#a5f3d9',300:'#6ee7c2',400:'#34d3a6',500:'#14b88d',600:'#0a9573',700:'#0a775e',800:'#0c5e4c',900:'#0b4d40' },
+        brand: { 50: '#eef4ff', 100: '#dbe6fe', 200: '#bfd3fe', 300: '#93b4fd', 400: '#6391fa', 500: '#3b6ef5', 600: '#2556e4', 700: '#1d45c2', 800: '#1d3b9b', 900: '#1c357a', 950: '#14224d' },
+        ink: { 50: '#f8f9fb', 100: '#f1f3f6', 200: '#e4e7ec', 300: '#cdd2da', 400: '#9aa3b0', 500: '#667080', 600: '#4b5462', 700: '#363d49', 800: '#232932', 900: '#171b22', 950: '#0f1217' },
       },
-      keyframes: { fadeUp: { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'none' } } },
-      animation: { fadeUp: 'fadeUp .35s ease-out both' },
+      keyframes: { fadeUp: { '0%': { opacity: 0, transform: 'translateY(4px)' }, '100%': { opacity: 1, transform: 'none' } } },
+      animation: { fadeUp: 'fadeUp .2s ease-out both' },
     },
   },
   plugins: [],

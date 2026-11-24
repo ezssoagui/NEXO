@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { evaluateEssay, compareParagraph } from '../src/engine/essay';
 import { ESSAY_THEMES, DEMO_ESSAYS } from '../src/data/essays';
 import { AI, resetAIStatus } from '../src/services/ai';
-import { essayHandler, tutorHandler, questionHandler } from '../server/handlers';
+import { essayHandler, explainHandler, tutorHandler, questionHandler } from '../server/handlers';
 import { MockProvider, ProviderError } from '../server/providers';
 import { resetUsage } from '../server/usage';
 import { scrub } from '../server/privacy';
@@ -62,5 +62,10 @@ describe('Integração com IA: falhas e validação', () => {
   });
   it('LGPD: dados pessoais são removidos antes de enviar ao provedor', () => {
     expect(scrub('meu email é ana@x.com e cpf 123.456.789-00')).not.toMatch(/ana@x\.com|123\.456/);
+  });
+  it('servidor: explicação ativa — erro sem trecho literal é descartado e notas são limitadas', async () => {
+    const p = new MockProvider(() => ({ criteria: [{ id: 'correcao', score: 0, note: 'x' }, { id: 'completude', score: 9, note: '' }, { id: 'coerencia', score: 2, note: '' }, { id: 'relacoes', score: 2, note: '' }, { id: 'autonomia', score: 2, note: '' }], found: [], missing: [], errors: [{ quote: 'frase que o aluno não escreveu', why: 'inventado' }] }) as never);
+    const r = await explainHandler(p, { userId: 'ex', prompt: 'p', rubric: ['a'], reference: 'r', text: 'A corrente dobra porque a resistência é constante e a tensão dobrou.' });
+    const d = (r.body as any).data; expect(r.status).toBe(200); expect(d.errors).toEqual([]); expect(d.criteria[0].score).toBe(1); expect(d.criteria[1].score).toBe(2);
   });
 });

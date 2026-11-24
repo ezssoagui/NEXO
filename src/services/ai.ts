@@ -6,11 +6,14 @@
  *   com `demo: true` e o motivo em `fallbackReason` — nunca apresentado como resposta de IA real.
  * - O provedor pode ser trocado no servidor sem mudar o front-end.
  */
-import type { EssayEval, GeneratedQuestion, Difficulty, Attempt, InterventionLogEntry } from '../types';
+import type { EssayEval, GeneratedQuestion, Difficulty } from '../types';
 import type { EssayTheme } from '../data/essays';
 import { evaluateEssay, ESSAY_ENGINE } from '../engine/essay';
 import { generate } from '../engine/generator';
-import { respond, type TutorState, type TutorReply } from '../engine/tutor';
+import { respond, type TutorContext, type TutorState, type TutorReply } from '../engine/tutor';
+import type { CriterionScore, Explanation, ExplainResult } from '../types';
+import type { ExplainTask } from '../data/explainTasks';
+import { evaluateExplanation, EXPLAIN_ENGINE, type ExplainOutcome } from '../engine/explain';
 import { skillById } from '../data/skills';
 
 export interface AIResult<T> { data: T; engine: string; demo: boolean; fallbackReason?: string; costUsd?: number }
@@ -41,7 +44,7 @@ export async function getAIStatus(force = false, fetchImpl: typeof fetch = fetch
 }
 export const resetAIStatus = () => { status = null; };
 
-const pseudo = () => { try { return JSON.parse(localStorage.getItem('nexo-v2') ?? '{}')?.state?.pseudoId ?? 'anon'; } catch { return 'anon'; } };
+const pseudo = () => { try { return JSON.parse(localStorage.getItem('nexo-v3') ?? '{}')?.state?.pseudoId ?? 'anon'; } catch { return 'anon'; } };
 
 /** Executa a chamada remota; em qualquer falha, devolve o resultado demonstrativo com o motivo explícito. */
 async function withFallback<T>(remote: () => Promise<AIResult<T>>, demo: () => Promise<AIResult<T>>, fetchImpl: typeof fetch = fetch): Promise<AIResult<T>> {
@@ -54,12 +57,21 @@ async function withFallback<T>(remote: () => Promise<AIResult<T>>, demo: () => P
   }
 }
 
+/** Regra fixa do motor pedagógico: transforma critérios (0–2) em resultado. */
+export function verdictFrom(criteria: CriterionScore[]): ExplainResult {
+  const s = Object.fromEntries(criteria.map((c) => [c.id, c.score])) as Record<CriterionScore['id'], number>;
+  if (s.correcao === 0 || s.autonomia === 0) return 'nao_demonstrada';
+  if (s.correcao === 2 && s.completude === 2 && s.coerencia >= 1 && s.relacoes === 2) return 'demonstrada';
+  return s.completude >= 1 && s.coerencia >= 1 ? 'parcial' : 'nao_demonstrada';
+}
+export type { Explanation };
+
 export const AI = {
-  async reply(state: TutorState, message: string, ctx: { attempts: Attempt[]; weakSkills: string[]; history?: { role: string; text: string }[] }, fetchImpl: typeof fetch = fetch): Promise<AIResult<{ reply: TutorReply; state: TutorState }>> {
-    const demo = async (): Promise<AIResult<{ reply: TutorReply; state: TutorState }>> => { await delay(350); return { data: respond(state, message, ctx), engine: 'Nexo Tutor — motor de regras (demonstração)', demo: true }; };
+  async reply(state: TutorState, message: string, ctx: TutorContext & { history?: { role: string; text: string }[] }, fetchImpl: typeof fetch = fetch): Promise<AIResult<{ reply: TutorReply; state: TutorState }>> {
+    const demo = async (): Promise<AIResult<{ reply: TutorReply; state: TutorState }>> => { await delay(350); return { data: respond(state, message, ctx), engine: 'Motor de regras (demonstração, sem IA)', demo: true }; };
     const remote = async (): Promise<AIResult<{ reply: TutorReply; state: TutorState }>> => {
       const q = state.context?.q;
-      const r = await fetchJson('/api/ai/tutor', { userId: pseudo(), mode: state.mode, message, history: ctx.history ?? [], situation: state.context?.attempt?.situation, question: q ? { context: q.context, statement: q.statement, alternatives: q.alternatives?.map((a) => ({ letter: a.letter, text: a.text })), correct: q.alternatives?.find((a) => a.correct)?.letter, chosen: state.context?.attempt?.chosen } : undefined }, 30000, fetchImpl);
+      const r = await fetchJson('/api/ai/tutor', { userId: pseudo(), mode: state.mode, message, history: ctx.history ?? [], level: ctx.levels?.[state.skill ?? ''], question: q ? { context: q.context, statement: q.statement, alternatives: q.alternatives?.map((a) => ({ letter: a.letter, text: a.text })), correct: q.alternatives?.find((a) => a.correct)?.letter, chosen: state.context?.attempt?.chosen } : undefined }, 30000, fetchImpl);
       return { data: { reply: { text: r.data.reply, diagnosis: r.data.diagnosis ?? undefined, uncertain: r.data.uncertain }, state }, engine: `IA real · ${r.engine}`, demo: false, costUsd: r.costUsd };
     };
     return withFallback(remote, demo, fetchImpl);
@@ -90,17 +102,19 @@ export const AI = {
     };
     return withFallback(remote, demo, fetchImpl);
   },
-  /** Interpreta uma justificativa livre por IA (só com IA real conectada). O resultado é apenas EVIDÊNCIA para o motor. */
-  async interpretJustification(input: { statement: string; chosen: string; correct?: string; justification: string }, fetchImpl: typeof fetch = fetch): Promise<{ cause: any; confidence: number; quote?: string } | null> {
-    const st = await getAIStatus(false, fetchImpl).catch(() => null);
-    if (st?.mode !== 'remote') return null;
-    try { const r = await fetchJson('/api/ai/diagnose', { userId: pseudo(), ...input }, 15000, fetchImpl); return r?.data?.cause && r.data.cause !== 'indeterminada' ? { cause: r.data.cause, confidence: r.data.confidence, quote: r.data.quote ?? undefined } : null; } catch { return null; }
-  },
-  /** Envia o registro pedagógico (pseudonimizado) ao backend quando disponível; nunca bloqueia a interface. */
-  async logIntervention(entry: InterventionLogEntry, fetchImpl: typeof fetch = fetch) {
-    const st = await getAIStatus(false, fetchImpl).catch(() => null);
-    if (st?.mode !== 'remote') return;
-    fetchJson('/api/ai/log', { userId: pseudo(), entry }, 3000, fetchImpl).catch(() => undefined);
+  /**
+   * Avalia uma explicação ativa. A IA (se conectada) interpreta critério a critério; o RESULTADO é decidido por regra fixa
+   * (verdictFrom), nunca pela IA. Sem IA, usa o avaliador por regras, identificado.
+   */
+  async explain(task: ExplainTask, text: string, opts: { assisted?: boolean } = {}, fetchImpl: typeof fetch = fetch): Promise<AIResult<ExplainOutcome>> {
+    const local = evaluateExplanation(task, text, opts);
+    const demo = async () => { await delay(300); return { data: local, engine: EXPLAIN_ENGINE, demo: true }; };
+    const remote = async () => {
+      const r = await fetchJson('/api/ai/explain', { userId: pseudo(), prompt: task.prompt, level: task.level, rubric: [...task.ideas, ...task.relations].map((p) => p.label), reference: task.reference, text }, 30000, fetchImpl);
+      const criteria: CriterionScore[] = r.data.criteria.map((c: CriterionScore) => (c.id === 'autonomia' && opts.assisted ? { ...c, score: 0, note: 'Feita com apoio: não conta como comprovação.' } : c));
+      return { data: { result: verdictFrom(criteria), criteria, found: r.data.found, missing: r.data.missing, errors: r.data.errors }, engine: `IA real · ${r.engine}`, demo: false, costUsd: r.costUsd };
+    };
+    return withFallback(remote, demo, fetchImpl);
   },
 };
 export const DemoProvider = AI; // compatibilidade

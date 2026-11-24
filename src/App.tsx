@@ -4,70 +4,58 @@ import { useStore } from './store/useStore';
 import Layout from './components/Layout';
 import Welcome from './pages/Welcome';
 import Onboarding from './pages/Onboarding';
+import Inicio from './pages/Inicio';
+import { Toast } from './components/ui';
 import { startSync } from './services/sync';
 startSync();
 
-const Diagnostico = lazy(() => import('./pages/Diagnostico'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Trilha = lazy(() => import('./pages/Trilha'));
+const Percurso = lazy(() => import('./pages/Percurso'));
+const Conteudos = lazy(() => import('./pages/Conteudos'));
+const Bloco = lazy(() => import('./pages/Bloco'));
+const Habilidade = lazy(() => import('./pages/Habilidade'));
+const Aula = lazy(() => import('./pages/Aula'));
 const Questoes = lazy(() => import('./pages/Questoes'));
 const Resolver = lazy(() => import('./pages/Resolver'));
-const Tutor = lazy(() => import('./pages/Tutor'));
-const Aulas = lazy(() => import('./pages/Aulas'));
-const Aula = lazy(() => import('./pages/Aula'));
+const Atividade = lazy(() => import('./pages/Atividade'));
+const Revisoes = lazy(() => import('./pages/Revisoes'));
 const Redacao = lazy(() => import('./pages/Redacao'));
-const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Simulados = lazy(() => import('./pages/Simulados'));
-const Arena = lazy(() => import('./pages/Arena'));
+const Professor = lazy(() => import('./pages/Professor'));
 const Desempenho = lazy(() => import('./pages/Desempenho'));
-const Biblioteca = lazy(() => import('./pages/Biblioteca'));
-const Perfil = lazy(() => import('./pages/Perfil'));
-const Planos = lazy(() => import('./pages/Planos'));
-const Admin = lazy(() => import('./pages/Admin'));
+const Configuracoes = lazy(() => import('./pages/Configuracoes'));
 const Sessao = lazy(() => import('./pages/Sessao'));
-const Ensinar = lazy(() => import('./pages/Ensinar'));
-const Portfolio = lazy(() => import('./pages/Portfolio'));
+const Diagnostico = lazy(() => import('./pages/Diagnostico'));
+const Single = { Explicar: lazy(() => import('./pages/Praticas').then((m) => ({ default: m.Explicar }))), Comparar: lazy(() => import('./pages/Praticas').then((m) => ({ default: m.Comparar }))), Gemea: lazy(() => import('./pages/Praticas').then((m) => ({ default: m.Gemea }))) };
 
 export default function App() {
-  const profile = useStore((s) => s.profile);
-  const dark = useStore((s) => s.settings.dark);
-  const loc = useLocation();
+  const profile = useStore((s) => s.profile); const dark = useStore((s) => s.settings.dark); const loc = useLocation();
   useEffect(() => { document.documentElement.classList.toggle('dark', dark); }, [dark]);
   useEffect(() => { window.scrollTo(0, 0); }, [loc.pathname]);
-  const fallback = <div className="muted p-10 text-center text-sm">Carregando…</div>;
-
-  if (!profile) return (
-    <Routes>
-      <Route path="/" element={<Welcome />} />
-      <Route path="/cadastro" element={<Onboarding />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-  if (loc.pathname === '/diagnostico') return <Suspense fallback={fallback}><Diagnostico /></Suspense>;
+  if (!profile) return <><Routes><Route path="/" element={<Welcome />} /><Route path="/comecar" element={<Onboarding />} /><Route path="*" element={<Navigate to="/" replace />} /></Routes><Toast /></>;
   return (
     <Layout>
-      <Suspense fallback={fallback}>
+      <Suspense fallback={<p className="muted py-10 text-sm">Carregando…</p>}>
         <Routes>
-          <Route path="/" element={<Navigate to="/inicio" replace />} />
-          <Route path="/inicio" element={<Dashboard />} />
-          <Route path="/trilha" element={<Trilha />} />
+          <Route path="/inicio" element={<Inicio />} />
+          <Route path="/percurso" element={<Percurso />} />
+          <Route path="/conteudos" element={<Conteudos />} />
+          <Route path="/conteudos/habilidade/:id" element={<Habilidade />} />
+          <Route path="/conteudos/:id" element={<Bloco />} />
+          <Route path="/aulas/:id" element={<Aula />} />
           <Route path="/questoes" element={<Questoes />} />
           <Route path="/questoes/:id" element={<Resolver />} />
-          <Route path="/tutor" element={<Tutor />} />
-          <Route path="/aulas" element={<Aulas />} />
-          <Route path="/aulas/:id" element={<Aula />} />
+          <Route path="/atividade/:id" element={<Atividade />} />
+          <Route path="/revisoes" element={<Revisoes />} />
           <Route path="/redacao" element={<Redacao />} />
-          <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/simulados" element={<Simulados />} />
-          <Route path="/arena" element={<Arena />} />
+          <Route path="/professor" element={<Professor />} />
           <Route path="/desempenho" element={<Desempenho />} />
-          <Route path="/biblioteca" element={<Biblioteca />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/planos" element={<Planos />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/sessao" element={<Sessao />} />
-          <Route path="/ensinar" element={<Ensinar />} />
-          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
+          <Route path="/sessao/:id" element={<Sessao />} />
+          <Route path="/diagnostico" element={<Diagnostico />} />
+          <Route path="/explicar/:skillId" element={<Single.Explicar />} />
+          <Route path="/comparar/:id" element={<Single.Comparar />} />
+          <Route path="/gemea/:skillId" element={<Single.Gemea />} />
           <Route path="*" element={<Navigate to="/inicio" replace />} />
         </Routes>
       </Suspense>

@@ -1,160 +1,90 @@
 export type Subject = 'Matemática' | 'Física' | 'Química' | 'Biologia' | 'Linguagens' | 'Humanas';
 export type Area = 'Matemática' | 'Ciências da Natureza' | 'Linguagens' | 'Ciências Humanas';
-export type Exam = 'ENEM' | 'Vestibular' | 'Olimpíada';
+export type Exam = 'ENEM' | 'Vestibular';
 export type Difficulty = 'Fácil' | 'Média' | 'Difícil';
 export type Confidence = 'certeza' | 'duvida' | 'chute' | 'nao_consegui' | 'nao_informada';
 
-export type ErrorType =
-  | 'lacuna_conceitual'
-  | 'interpretacao'
-  | 'formula_incorreta'
-  | 'grandeza_constante'
-  | 'calculo'
-  | 'unidades'
-  | 'desatencao'
-  | 'alternativas_plausiveis'
-  | 'chute'
-  | 'memorizacao';
+/** Erro típico associado a uma alternativa (evidência fraca). */
+export type ErrorType = 'lacuna_conceitual' | 'interpretacao' | 'formula_incorreta' | 'grandeza_constante' | 'calculo' | 'unidades' | 'desatencao' | 'alternativas_plausiveis' | 'memorizacao';
+/** Autoclassificação opcional do estudante (Matemática e Ciências da Natureza). */
+export type ErrorCategory = 'lacuna' | 'conceitual' | 'interpretativa' | 'aplicacao' | 'procedimental' | 'atencao' | 'nao_sei';
+export type CpeStepId = 'comando' | 'prova' | 'eliminacao';
 
-export interface Alternative {
-  letter: 'A' | 'B' | 'C' | 'D' | 'E';
-  text: string;
-  correct?: boolean;
-  analysis: string;          // por que está certa/errada
-  errorType?: ErrorType;     // erro típico de quem marca esta alternativa
-  tutorPrompt?: string;      // feedback socrático específico
-  prerequisite?: string;     // erro típico ligado a um pré-requisito (skillId)
-}
-
+export interface Alternative { letter: 'A' | 'B' | 'C' | 'D' | 'E'; text: string; correct?: boolean; analysis: string; errorType?: ErrorType; tutorPrompt?: string; prerequisite?: string }
 export interface CPE { comando: string; prova: string; excesso: { letter: string; tipo: string; motivo: string }[] }
 
 export interface Question {
-  id: string;
-  exam: Exam;
-  style: string;               // ex.: "Estilo ENEM", "Estilo vestibular tradicional", "Estilo olimpíada"
-  subject: Subject;
-  area: Area;
-  topic: string;
-  skillId: string;
-  year: number;                // ano de elaboração
-  difficulty: Difficulty;
+  id: string; exam: Exam; style: string; subject: Subject; area: Area; topic: string; skillId: string; year: number; difficulty: Difficulty;
   type: 'objetiva' | 'aberta';
   source: 'original_nexo' | 'gerada_ia_demo';
-  context?: string;            // texto-base
-  statement: string;
-  alternatives?: Alternative[];
+  context?: string; statement: string; alternatives?: Alternative[];
   openAnswer?: { value: number; tolerance?: number; unit?: string; wrongMap?: { value: number; errorType: ErrorType; tutorPrompt: string }[] };
-  hints: [string, string, string];
-  explanation: string;
-  fastMethod: string;
-  cpe?: CPE;
+  hints: string[]; explanation: string; fastMethod: string; cpe?: CPE;
   flashcard: { front: string; back: string };
-  twinId?: string;
-  lessonId?: string;
-  /** Nível da questão quando usada como gêmea: 1 aplicação direta, 2 transferência contextual, 3 integração. */
+  twinId?: string; lessonId?: string;
+  /** Nível como questão gêmea: 1 aplicação direta, 2 transferência contextual, 3 integração. */
   twinLevel?: 1 | 2 | 3;
-  /** Outras habilidades combinadas (questões de integração). */
   integrates?: string[];
 }
 
-export interface Skill { id: string; name: string; subject: Subject; area: Area; lessonId?: string; subtopic?: string; competency?: string; prerequisites?: string[]; examWeight?: 'alta' | 'media' | 'baixa' }
+export interface Skill { id: string; name: string; subject: Subject; area: Area; lessonId?: string; prerequisites: string[]; /** Códigos da matriz oficial, ex.: "CN-H21". */ matrix: string[] }
 
-/** Taxonomia de causas de erro da Metodologia NEXO (hipóteses revisáveis). */
-export type ErrorCause = 'conceitual' | 'interpretacao' | 'calculo' | 'formula' | 'unidade' | 'atencao' | 'esquecimento' | 'confusao_alternativas' | 'lacuna_prerequisito' | 'indeterminada';
-/** Intervenções A–G da Metodologia NEXO. */
-export type InterventionCode = 'nenhuma' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-
+/** Contexto em que a questão foi respondida. Todos são resolução independente (sem IA). */
+export type AttemptMode = 'adaptativo' | 'bateria' | 'simulado' | 'diagnostico' | 'sessao' | 'revisao';
 export interface Attempt {
-  id: string;
-  qid: string;
-  skillId: string;
-  subject: Subject;
-  chosen: string;            // letra ou valor
-  correct: boolean;
-  confidence: Confidence;
+  id: string; qid: string; skillId: string; subject: Subject; chosen: string; correct: boolean; confidence: Confidence; ts: number; mode: AttemptMode;
+  /** Questão gêmea / inédita usada para comprovar. */
+  isTwin?: boolean; twinLevel?: 1 | 2 | 3;
+  timeSec?: number; justification?: string;
+  /** Houve ajuda antes da resposta: não conta como comprovação autônoma. */
+  assisted?: boolean;
   errorType?: ErrorType;
-  justification?: string;
-  hintsUsed: number;
-  ts: number;
-  mode: 'tutoria' | 'pratica' | 'simulado' | 'diagnostico' | 'sessao' | 'gemea';
-  isTwin?: boolean;
-  isNovel?: boolean;          // questão inédita para o aluno (gêmea/gerada)
-  timeSec?: number;
-  /** Evidência pedagógica inferida da resposta (hipótese revisável). */
-  evidence?: Evidence;
-  /** Situação A–F atribuída pelo motor de intervenção (pode ser corrigida pelo aluno). */
-  situation?: Situation;
-  /** O aluno corrigiu a classificação sugerida. */
-  reclassified?: boolean;
-  /** Revisão livre: não altera a programação adaptativa. */
-  free?: boolean;
-  /** Ciclo de domínio a que a tentativa pertence. */
-  cycleId?: string;
-  /** Causa diagnosticada (hipótese) e intervenção aplicada. */
-  cause?: ErrorCause;
-  intervention?: InterventionCode;
-  /** Respostas dadas depois da primeira (durante a correção). */
-  retries?: { chosen: string; correct: boolean; ts: number }[];
+  /** Autoclassificação do estudante; ausente = pulou o formulário. */
+  selfCategory?: ErrorCategory;
+  /** Resultado de cada etapa do CPE nesta correção. */
+  cpe?: Partial<Record<CpeStepId, 'demonstrada' | 'dificuldade' | 'pulada'>>;
+  corrected?: boolean;
 }
 
-export type Evidence =
-  | 'compreensao_demonstrada'
-  | 'confianca_declarada'
-  | 'acerto_duvida'
-  | 'acerto_com_dicas'
-  | 'acerto_eliminacao'
-  | 'acerto_raciocinio_incorreto'
-  | 'acerto_chute'
-  | 'acerto_sem_confianca'
-  | 'erro_conceitual'
-  | 'erro_interpretativo'
-  | 'erro_procedimental'
-  | 'erro_desatencao'
-  | 'nao_resolveu';
+export type Dimension = 'resolucao' | 'compreensao' | 'transferencia' | 'retencao';
+export type DimStatus = 'sem_evidencia' | 'parcial' | 'demonstrada' | 'negativa';
+export type DomainState = 'nao_avaliado' | 'em_aprendizagem' | 'provisorio' | 'consolidado';
 
-/** A: acerto confiante · B: acerto com dúvida · C: interpretação · D: conceitual · E: procedimental · F: desatenção · AMB: ambíguo (perguntar). */
-export type Situation = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'AMB';
-
-export type CycleStage = 'diagnostico' | 'investigacao' | 'ensino' | 'comprovacao' | 'consolidacao' | 'concluido';
-export interface MasteryCycle {
-  id: string; skillId: string; originQid: string; situation: Situation; stage: CycleStage;
-  status: 'ativo' | 'adiado' | 'concluido' | 'interrompido';
-  createdAt: number; updatedAt: number;
-  twinLevel: 1 | 2 | 3; twinAttempts: { qid: string; correct: boolean; level: number; ts: number }[];
-  history: { ts: number; stage: CycleStage; note: string }[];
+// ---------- Explicação ativa ----------
+export type ExplainLevel = 'iniciante' | 'intermediario' | 'avancado';
+export type ExplainResult = 'demonstrada' | 'parcial' | 'nao_demonstrada' | 'inconclusiva';
+export interface CriterionScore { id: 'correcao' | 'completude' | 'coerencia' | 'relacoes' | 'autonomia'; score: 0 | 1 | 2; note: string }
+export interface Explanation {
+  id: string; taskId: string; skillId: string; level: ExplainLevel; text: string; ts: number; result: ExplainResult; criteria: CriterionScore[];
+  /** Feita após ver a referência ou com ajuda: não comprova. */
+  assisted?: boolean; selfCheck?: 'completa' | 'parcial' | 'equivocada'; engine: string; demo: boolean; context?: 'livre' | 'sessao' | 'revisao';
 }
 
+// ---------- Sessões e pendências ----------
+export type SessionType = 'recuperacao' | 'aprendizagem' | 'aprofundamento' | 'comprovacao' | 'revisao' | 'redacao';
+export type StepKind = 'verificacao' | 'aula' | 'microaula' | 'conceito' | 'comparacao' | 'exemplo' | 'recordacao' | 'explicacao' | 'exercicio' | 'gemea' | 'inedita' | 'flashcards' | 'consolidacao' | 'red_aula' | 'red_analise' | 'red_explicacao' | 'red_paragrafo' | 'red_verificacao';
+export interface SessionStep { kind: StepKind; title: string; minutes: number; skillId?: string; ref?: string; count?: number }
+export interface SessionPlan { key: string; type: SessionType; title: string; question: string; reason: string; audit: string[]; skillIds: string[]; steps: SessionStep[]; minutes: number; priority: number }
+export interface SessionRecord extends Omit<SessionPlan, 'priority'> { id: string; idx: number; status: 'andamento' | 'concluida' | 'abandonada'; startedAt: number; finishedAt?: number; log: { idx: number; ts: number; outcome: 'feita' | 'pulada' | 'acerto' | 'erro'; ref?: string }[] }
+export interface Pending { key: string; type: SessionType; title: string; skillIds: string[]; status: 'adiada' | 'ignorada' | 'substituida'; createdAt: number; until: number; reason: string }
+
+// ---------- Atividades de resolução (bateria, simulado, diagnóstico) ----------
+export type ActivityKind = 'bateria' | 'simulado' | 'diagnostico';
+export interface ActivityAnswer { chosen: string; confidence: Confidence; timeSec: number }
+export interface Activity { id: string; kind: ActivityKind; title: string; qids: string[]; idx: number; answers: Record<string, ActivityAnswer>; status: 'andamento' | 'pausada' | 'concluida'; startedAt: number; finishedAt?: number; limitSec?: number; attemptIds?: string[] }
+
+// ---------- Revisões ----------
 export interface SkillReview { due: number; interval: number; ease: number; last?: number; lapses: number }
+export interface Flashcard { id: string; subject: Subject; topic: string; skillId: string; front: string; back: string; kind: 'curricular' | 'personalizado' | 'conceitual' }
+export type CardRating = 1 | 2 | 3 | 4; // 1 errei · 2 difícil · 3 bom · 4 fácil
+export interface CardState { s: number; d: number; due: number; last: number; reps: number; lapses: number; reviews: { ts: number; rating: CardRating }[] }
 
-export interface InterventionLogEntry {
-  ts: number; qid: string; skillId: string; situation: Situation; hypothesis: string; confidence: number;
-  intervention: string; cause?: ErrorCause; code?: InterventionCode; outcome?: 'compreendeu' | 'interrompeu' | 'adiou' | 'revelou_resposta' | 'reclassificou' | 'gemea_acerto' | 'gemea_erro';
-  engine: string;
-}
+export interface Profile { nickname: string; course: string; examYear: number; weeklyHours: number; goal: 'ENEM' }
 
-export type MasteryState = 'nao_estudado' | 'desenvolvimento' | 'provisorio' | 'consistente';
-
-export interface Flashcard { id: string; subject: Subject; topic: string; skillId: string; front: string; back: string; origin: 'curado' | 'questao' | 'ia_demo' }
-export interface CardState { box: number; due: number; last?: number; reviews: { ts: number; rating: CardRating; free?: boolean }[]; ease?: number; interval?: number; lapses?: number }
-export type CardRating = 'errei' | 'duvida' | 'seguro';
-
-export interface Profile {
-  nickname: string;
-  grade: string;
-  schoolType: 'federal' | 'publica' | 'particular' | 'outra';
-  schoolId?: string;
-  institution?: string;
-  goal: 'ENEM' | 'Vestibular' | 'Olimpíadas' | 'Combinada';
-  course: string;
-  difficulties: Subject[];
-  weeklyHours: number;
-  examYear: number;
-  personalGoal: string;
-  persona?: 'iniciante' | 'avancado' | 'olimpico' | 'custom';
-}
-
+// ---------- Redação ----------
+export type CompId = 'C1' | 'C2' | 'C3' | 'C4' | 'C5';
 export interface EssayEval {
-  competencies: { id: 'C1' | 'C2' | 'C3' | 'C4' | 'C5'; name: string; score: number; summary: string; points: string[]; justification?: string; evidence?: string[]; problems?: string[]; suggestions?: string[]; exercise?: string }[];
+  competencies: { id: CompId; name: string; score: number; summary: string; points: string[]; justification?: string; evidence?: string[]; problems?: string[]; suggestions?: string[]; exercise?: string }[];
   total: number;
   highlights: { start: number; end: number; comp: string; severity: 'erro' | 'atencao' | 'positivo'; message: string }[];
   aspects: { label: string; status: 'ok' | 'parcial' | 'ausente'; note: string }[];
@@ -162,9 +92,8 @@ export interface EssayEval {
   stats: { words: number; paragraphs: number; sentences: number; avgSentence: number; connectives: string[] };
   engine: string;
 }
-export interface EssayVersion { text: string; title?: string; ts: number; eval?: EssayEval }
+export interface EssayVersion { text: string; title?: string; ts: number; eval?: EssayEval; diagnostic?: boolean }
 export interface Essay { id: string; themeId: string; versions: EssayVersion[]; draft?: string }
-
-export interface XPEvent { ts: number; amount: number; reason: string; key: string }
+export interface EssayPractice { id: string; skillId: string; ts: number; themeId?: string; ok: boolean; kind: 'analise' | 'explicacao' | 'paragrafo' | 'verificacao' }
 
 export interface GeneratedQuestion { q: Question; validation: { check: string; ok: boolean; detail: string }[]; status: 'aprovada' | 'revisao' | 'rejeitada'; request: string; ts: number }

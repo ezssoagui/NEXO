@@ -1,27 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { startCpe, answerCpe, revealCpe } from '../src/engine/cpe';
+import { checkElimination, checkProof, ELIMINATION_TYPES, readCommand, revealCpe, splitSentences } from '../src/engine/cpe';
+import { usesCpe, usesErrorForm } from '../src/engine/correctionRules';
+import { QUESTIONS } from '../src/data/questions';
 import { startSocratic, answerSocratic } from '../src/engine/socratic';
 import { Q } from './helpers';
 
-describe('C–P–E adaptativo', () => {
-  it('investiga comando → prova → eliminação e encerra quando o aluno compreende', () => {
-    const q = Q('q23');
-    let t = startCpe(q, 'C');
-    expect(t.tag).toBe('C');
-    t = answerCpe(q, t.state, 'Pede a tese que o autor defende sobre leitura e celulares');
-    expect(t.state.step).toBe('prova'); // leitura correta do comando → pede a prova
-    t = answerCpe(q, t.state, 'achei que falava que a tela é melhor');
-    expect(t.text).toContain('não');
-    t = answerCpe(q, t.state, 'A minha alternativa vai além do texto: o texto não compara tela e papel, é extrapolação');
-    expect(t.state.step).toBe('fim'); expect(t.state.understood).toBe(true);
+describe('CPE', () => {
+  it('lê o comando, localiza a prova e identifica o erro da alternativa', () => {
+    const q = Q('v45');
+    expect(readCommand(q, 'o motivo principal da preocupação das autoridades com os quilombos')).toBe(true); expect(readCommand(q, 'fala de história')).toBe(false);
+    const ss = splitSentences(q.context!); expect(ss.filter((x) => checkProof(q, x))).toHaveLength(1);
+    expect(checkElimination(q, 'A', 'Inversão')).toBe(true); expect(checkElimination(q, 'A', 'Extrapolação')).toBe(false);
   });
-  it('pula etapas desnecessárias quando a justificativa já mostra o comando', () => {
-    const t = startCpe(Q('q23'), 'C', 'O autor defende a tese sobre o desafio da escola com textos longos');
-    expect(t.state.step).toBe('prova');
+  it('toda questão com CPE tem prova localizável no texto e tipos de erro reconhecidos', () => {
+    QUESTIONS.filter((x) => x.cpe).forEach((x) => { expect(splitSentences(x.context!).some((s) => checkProof(x, s)), x.id).toBe(true); x.cpe!.excesso.forEach((e) => expect(ELIMINATION_TYPES.some((t) => checkElimination(x, e.letter, t.id)), `${x.id} ${e.letter}`).toBe(true)); });
   });
-  it('encerra cedo se o aluno diz que entendeu', () => {
-    const q = Q('q23'); const t = answerCpe(q, startCpe(q, 'A').state, 'entendi');
-    expect(t.state.step).toBe('fim');
+  it('só é usado em erros médios e difíceis de Linguagens e Humanas; formulário só em Matemática e Natureza', () => {
+    expect(usesCpe(Q('v45'), false)).toBe(true); expect(usesCpe(Q('v45'), true)).toBe(false); expect(usesCpe(Q('v35'), false)).toBe(false); expect(usesCpe(Q('v06'), false)).toBe(false);
+    expect(usesErrorForm(Q('v06'), false)).toBe(true); expect(usesErrorForm(Q('v06'), true)).toBe(false); expect(usesErrorForm(Q('v45'), false)).toBe(false);
   });
   it('revela a explicação completa sob pedido', () => { expect(revealCpe(Q('q23'))).toContain('Comando'); });
 });

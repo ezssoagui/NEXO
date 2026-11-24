@@ -1,4 +1,5 @@
 import type { Subject } from '../types';
+import { EXTRA_LESSONS } from './lessonsExtra';
 
 export interface Lesson {
   id: string; title: string; subject: Subject; skillIds: string[]; level: 'Fundamentos' | 'Intermediário' | 'Avançado'; minutes: number;
@@ -18,7 +19,7 @@ export interface Lesson {
   transferId?: string;
 }
 
-export const LESSONS: Lesson[] = [
+const BASE: Lesson[] = [
   {
     id: 'l-proporcao', title: 'Razão, proporção e regra de três', subject: 'Matemática', skillIds: ['mat-proporcao'], level: 'Fundamentos', minutes: 9, origin: 'curado',
     micro: 'Antes de aplicar a regra de três, pergunte: quando uma grandeza aumenta, a outra aumenta (direta) ou diminui (inversa)? Essa decisão vem antes de qualquer conta.',
@@ -113,7 +114,7 @@ export const LESSONS: Lesson[] = [
     examUse: ['Montanhas-russas, quedas, rampas e usinas hidrelétricas.'],
     solved: { problem: 'Um carrinho parte do repouso a 7,2 m de altura em trilho sem atrito. Velocidade no ponto mais baixo?', steps: ['Conservação: mgh = mv²/2.', 'v = √(2·10·7,2) = √144.', 'v = 12 m/s.'] },
     checks: [{ after: 1, q: 'Dobrando a altura de queda (sem atrito), a velocidade final:', options: ['dobra', 'multiplica por √2', 'quadruplica'], answer: 1, feedback: 'v ∝ √h, então ×√2.' }],
-    exerciseIds: ['q05', 'q30'], transferId: 'q30',
+    exerciseIds: ['q05', 'v19'], transferId: 'v19',
   },
   {
     id: 'l-equilibrio', title: 'Equilíbrio químico e princípio de Le Chatelier', subject: 'Química', skillIds: ['qui-equilibrio'], level: 'Intermediário', minutes: 12, origin: 'curado',
@@ -293,4 +294,5 @@ export const LESSONS: Lesson[] = [
   },
 ];
 
+export const LESSONS: Lesson[] = [...BASE, ...EXTRA_LESSONS];
 export const lessonById = (id: string) => LESSONS.find((l) => l.id === id);

@@ -1,7 +1,7 @@
 import { appendFileSync, mkdirSync } from 'node:fs';
 import type { LLMProvider } from './providers';
 import { ProviderError } from './providers';
-import { DiagnoseSchema, EssaySchema, QuestionSchema, TutorReplySchema } from './schemas';
+import { DiagnoseSchema, EssaySchema, ExplainSchema, QuestionSchema, TutorReplySchema } from './schemas';
 import { pseudonymize, scrub } from './privacy';
 import { check, record, type Kind } from './usage';
 
@@ -10,8 +10,9 @@ import { check, record, type Kind } from './usage';
  * consumo e custo estimado. Erros voltam estruturados para que o front-end caia no modo demonstrativo identificado.
  */
 export interface HandlerResult { status: number; body: unknown }
-const TUTOR_POLICY = `Você é o Nexo Tutor, tutor de estudantes brasileiros do ensino médio (ENEM, vestibulares, olimpíadas).
+const TUTOR_POLICY = `Você é o Professor de IA do NEXO, para estudantes brasileiros que se preparam para o ENEM.
 Princípios: identifique o que faltou no raciocínio do estudante em vez de apenas dar a resposta. Faça no máximo UMA pergunta orientadora por vez.
+Adapte a profundidade ao nível informado (iniciante, intermediario, avancado). Explique diretamente quando pedirem; use perguntas só quando ajudarem.
 Considere o histórico da conversa; não repita perguntas já respondidas corretamente; aponte contradições com gentileza.
 Se o estudante pedir a resposta direta, dê-a de forma clara e breve. Não transforme dúvidas simples em textos longos (máximo ~120 palavras).
 Nunca invente fatos, fórmulas, referências ou gabaritos. Se não tiver segurança, diga isso e marque uncertain=true.
@@ -38,9 +39,9 @@ export async function tutorHandler(p: LLMProvider, body: any): Promise<HandlerRe
   if (!message.trim()) return { status: 400, body: { error: 'bad_request', message: 'Mensagem vazia.' } };
   const history = (Array.isArray(body?.history) ? body.history : []).slice(-10).map((h: any) => `${h.role === 'user' ? 'Estudante' : 'Tutor'}: ${scrub(String(h.text)).slice(0, 800)}`).join('\n');
   const q = body?.question;
-  const ctx = q ? `Questão: ${scrub(q.context ?? '')}\n${scrub(q.statement ?? '')}\nAlternativas: ${(q.alternatives ?? []).map((a: any) => `${a.letter}) ${a.text}`).join(' | ')}\nGabarito (oficial da plataforma): ${q.correct ?? 'não informado'}\nResposta do estudante: ${q.chosen ?? '—'}\nHipótese de dificuldade: ${body?.situation ?? 'não informada'}` : 'Sem questão em contexto.';
+  const ctx = q ? `Questão: ${scrub(q.context ?? '')}\n${scrub(q.statement ?? '')}\nAlternativas: ${(q.alternatives ?? []).map((a: any) => `${a.letter}) ${a.text}`).join(' | ')}\nGabarito (oficial da plataforma): ${q.correct ?? 'não informado'}\nResposta do estudante: ${q.chosen ?? '—'}` : 'Sem questão em contexto.';
   try {
-    const r = await p.structured({ system: TUTOR_POLICY, user: `Modo: ${body?.mode ?? 'socratico'}\n${ctx}\n\nConversa até agora:\n${history || '(início)'}\n\nNova mensagem do estudante: ${message}`, schema: TutorReplySchema, maxTokens: 1500, effort: 'low' });
+    const r = await p.structured({ system: TUTOR_POLICY, user: `Modo: ${body?.mode ?? 'socratico'}\nNível demonstrado: ${['iniciante', 'intermediario', 'avancado'].includes(body?.level) ? body.level : 'não informado'}\n${ctx}\n\nConversa até agora:\n${history || '(início)'}\n\nNova mensagem do estudante: ${message}`, schema: TutorReplySchema, maxTokens: 1500, effort: 'low' });
     const cost = record(user, 'tutor', r.model, r.usage);
     log({ kind: 'tutor', user, mode: body?.mode, situation: body?.situation, understood: r.data.student_understood, uncertain: r.data.uncertain, model: r.model, usage: r.usage, usd: cost.usd });
     return { status: 200, body: { data: r.data, engine: `${p.name}:${r.model}`, demo: false, usage: r.usage, costUsd: cost.usd } };
@@ -111,4 +112,26 @@ export async function diagnoseHandler(p: LLMProvider, body: any): Promise<Handle
     log({ kind: 'diagnose', user, cause: r.data.cause, model: r.model, usage: r.usage, usd: cost.usd });
     return { status: 200, body: { data: { ...r.data, quote, confidence: quote ? Math.min(1, r.data.confidence) : Math.min(0.5, r.data.confidence) }, engine: `${p.name}:${r.model}`, demo: false } };
   } catch (e) { return fail(e); }
+}
+
+const EXPLAIN_POLICY = `Você avalia uma EXPLICAÇÃO escrita por um estudante, com base em uma rubrica. Pontue cada critério com 0, 1 ou 2:
+correcao (ausência de erro científico), completude (ideias da rubrica presentes, com qualquer formulação equivalente), coerencia (frases que explicam, encadeadas),
+relacoes (ligações causais ou comparativas explícitas) e autonomia (formulação própria, não lista de termos nem cópia). Palavras-chave soltas não bastam.
+Aponte erros apenas com trecho LITERAL do estudante. Não dê nota final nem decida domínio: outro sistema decide. Responda em português do Brasil.`;
+/** Interpretação de explicação ativa: a IA só pontua critérios; erros sem trecho literal são descartados. */
+export async function explainHandler(p: LLMProvider, body: any): Promise<HandlerResult> {
+  const user = pseudonymize(String(body?.userId ?? '')); const g = gate(user, 'tutor'); if (g) return g;
+  const text = scrub(String(body?.text ?? '')).slice(0, 4000);
+  if (text.split(/\s+/).filter(Boolean).length < 5) return { status: 400, body: { error: 'bad_request', message: 'Explicação curta demais.' } };
+  try {
+    const rubric = (Array.isArray(body?.rubric) ? body.rubric : []).slice(0, 12).map((x: unknown) => `- ${String(x)}`).join('\n');
+    const r = await p.structured({ system: EXPLAIN_POLICY, user: `Pergunta: ${scrub(String(body?.prompt ?? ''))}\nNível: ${String(body?.level ?? '')}\nRubrica:\n${rubric}\nReferência (não exija as mesmas palavras): ${scrub(String(body?.reference ?? ''))}\n\nExplicação do estudante:\n"""\n${text}\n"""`, schema: ExplainSchema, maxTokens: 1500, effort: 'low' });
+    const flat = text.replace(/\s+/g, ' ').toLowerCase();
+    const errors = r.data.errors.filter((e) => e.quote.trim().length > 3 && flat.includes(e.quote.replace(/\s+/g, ' ').trim().toLowerCase()));
+    const clamp = (n: number) => Math.max(0, Math.min(2, Math.round(n)));
+    const criteria = (['correcao', 'completude', 'coerencia', 'relacoes', 'autonomia'] as const).map((id) => { const c = r.data.criteria.find((x) => x.id === id); const score = c ? clamp(c.score) : 1; return { id, note: c?.note ?? 'Não avaliado.', score: id === 'correcao' && score === 0 && !errors.length ? 1 : score }; });
+    const cost = record(user, 'tutor', r.model, r.usage);
+    log({ kind: 'explain', user, criteria: criteria.map((c) => c.score), model: r.model, usage: r.usage, usd: cost.usd });
+    return { status: 200, body: { data: { criteria, found: r.data.found, missing: r.data.missing, errors: errors.map((e) => `“${e.quote}”: ${e.why}`) }, engine: `${p.name}:${r.model}`, demo: false, usage: r.usage, costUsd: cost.usd } };
+  } catch (e) { log({ kind: 'explain', user, error: (e as Error).message }); return fail(e); }
 }

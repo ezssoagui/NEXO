@@ -207,7 +207,7 @@ function paraFeatures(t: string, role: ParagraphRole) {
     repertoire: REPERTOIRE_MARK.test(t) || SAFE_REPERTOIRE.some((r) => l.includes(r)),
     topic: /^(em primeiro lugar|primeiramente|além disso|ademais|outrossim|em segundo lugar|sob essa ótica|nesse sentido|de início|por outro lado|um dos|outro)/i.test(t.trim()),
     longSentences: sentences.filter((x) => x.split(/\s+/).length > 55).length,
-    iv: role === 'conclusao' ? { agente: AGENTS.some((a) => l.includes(a)), acao: ACTION.test(t), meio: MEANS.some((m) => l.includes(m)), finalidade: FINALITY.some((f) => l.includes(f)), detalhamento: DETAIL.some((d) => l.includes(d)) } : undefined,
+    iv: role === 'conclusao' ? { agente: AGENTS.some((a) => l.includes(a)), acao: ACTION.test(t), meio: MEANS.some((m) => l.includes(m)), finalidade: FINALITY.some((f) => l.includes(f)), detalhamento: DETAIL.some((d) => l.includes(d)) || AGENT_DETAIL.test(t) } : undefined,
   };
 }
 export function compareParagraph(before: string, after: string, role: ParagraphRole) {
@@ -230,4 +230,14 @@ export function compareParagraph(before: string, after: string, role: ParagraphR
   if (b.longSentences > a.longSentences) regressed.push('Período longo demais surgiu na nova versão (C1).');
   if (b.words < a.words * 0.6) remaining.push('A nova versão ficou bem mais curta: confira se o argumento não perdeu desenvolvimento.');
   return { improved, remaining, regressed, before: a, after: b, note: 'Comparação por regras verificáveis; a autoria e o estilo são seus — a NEXO não reescreve o texto por você.' };
+}
+
+/** Lista de verificação de um parágrafo novo, conforme a função dele no texto e o tema (estimativa por regras). */
+export function paragraphChecklist(text: string, role: ParagraphRole, theme: EssayTheme): { ok: boolean; label: string }[] {
+  const f = paraFeatures(text, role); const l = norm(text); const kw = theme.keywords.filter((k) => l.includes(norm(k))).length;
+  const out: { ok: boolean; label: string }[] = [{ ok: f.errors.length === 0, label: f.errors.length ? `Norma-padrão: ${f.errors[0]}` : 'Sem desvios identificados pelas regras' }];
+  if (role === 'introducao') { const miss = (theme.axes ?? []).filter((a) => !a.terms.some((t) => l.includes(t))).map((a) => a.label); out.push({ ok: miss.length === 0, label: miss.length ? `Partes do tema ausentes: ${miss.join(', ')}` : 'Todas as partes do tema aparecem' }, { ok: /(devido|em razão|por causa|sobretudo|decorre|motivad|fatores|seja pel|tanto .* quanto)/i.test(text), label: 'Tese que anuncia os eixos' }, { ok: f.connectives.length >= 1, label: 'Encadeamento com conectivo' }); }
+  if (role === 'desenvolvimento') out.push({ ok: kw >= 1, label: 'Relação com o tema' }, { ok: f.topic, label: 'Tópico frasal marcado' }, { ok: f.repertoire, label: 'Repertório sociocultural' }, { ok: f.causal >= 2, label: 'Causa e consequência explicadas' }, { ok: f.connectives.length >= 2, label: 'Dois ou mais conectivos diferentes' });
+  if (role === 'conclusao') (Object.entries(f.iv!) as [string, boolean][]).forEach(([k, ok]) => out.push({ ok, label: `Proposta: ${k === 'acao' ? 'ação' : k}` }));
+  return out;
 }

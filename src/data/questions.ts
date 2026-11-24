@@ -1,9 +1,10 @@
 import type { Question } from '../types';
 import { INTEGRATION_QUESTIONS } from './integration';
 import { PREREQ_QUESTIONS } from './prereq';
+import { EXTRA_QUESTIONS } from './questionsExtra';
 
 // Todas as questões abaixo são ORIGINAIS, elaboradas para esta demonstração (não são cópias de provas).
-// "Estilo ENEM/vestibular/olimpíada" indica apenas o formato.
+// "Estilo ENEM/vestibular" indica apenas o formato. Nenhuma passou por revisão pedagógica humana: a interface informa isso.
 
 export const QUESTIONS: Question[] = [
   {
@@ -127,16 +128,6 @@ export const QUESTIONS: Question[] = [
     hints: ['Princípio de Le Chatelier: o sistema reage contra a perturbação.', 'Compare os mols de gás de cada lado (4 × 2) e o sinal de ΔH.', 'Aumentar a pressão favorece o lado com menos mols gasosos: produtos.'],
     explanation: 'Pelo princípio de Le Chatelier, ao aumentar a pressão o sistema desloca-se para o lado com menor quantidade de mols gasosos. Reagentes: 1 + 3 = 4 mol; produtos: 2 mol. Logo, o aumento da pressão favorece a formação de NH₃. Aumentar a temperatura favoreceria o sentido endotérmico (inverso) e o catalisador não altera a posição do equilíbrio.',
     fastMethod: 'Pressão ↑ → lado com menos mols de gás. 4 → 2: produtos.',
-    cpe: {
-      comando: 'O enunciado pede uma alteração que DESLOQUE o equilíbrio para formar mais NH₃ — não uma que acelere a reação.',
-      prova: 'Equação com 4 mol de gás nos reagentes e 2 mol nos produtos; ΔH < 0 (direta exotérmica).',
-      excesso: [
-        { letter: 'A', tipo: 'Inversão', motivo: 'Calor favorece o sentido endotérmico, que é o inverso.' },
-        { letter: 'C', tipo: 'Relação imprecisa', motivo: 'Catalisador muda a velocidade, não a posição do equilíbrio.' },
-        { letter: 'D', tipo: 'Inversão', motivo: 'Retirar reagente desloca para os reagentes.' },
-        { letter: 'E', tipo: 'Inversão', motivo: 'Pressão menor favorece o lado com mais mols gasosos.' },
-      ],
-    },
     flashcard: { front: 'Catalisador desloca equilíbrio químico?', back: 'Não. Apenas diminui o tempo para atingir o equilíbrio.' },
   },
   {
@@ -154,16 +145,6 @@ export const QUESTIONS: Question[] = [
     hints: ['Atenção ao comando: ele pede o que NÃO desloca.', 'Conte os mols de gás de cada lado.', '2 mol = 2 mol: a pressão não afeta este equilíbrio.'],
     explanation: 'Mudanças de concentração e temperatura deslocam o equilíbrio. Já a pressão só afeta quando há diferença na quantidade de mols gasosos entre reagentes (1 + 1 = 2) e produtos (1 + 1 = 2). Como são iguais, aumentar a pressão não desloca o equilíbrio.',
     fastMethod: 'Mols gasosos iguais dos dois lados → pressão é irrelevante.',
-    cpe: {
-      comando: 'Identificar a alteração que NÃO provoca deslocamento (comando negativo).',
-      prova: 'Contagem de mols gasosos: 2 de cada lado.',
-      excesso: [
-        { letter: 'A', tipo: 'Contradição com o comando', motivo: 'Desloca no sentido direto.' },
-        { letter: 'B', tipo: 'Contradição com o comando', motivo: 'Desloca no sentido direto.' },
-        { letter: 'D', tipo: 'Contradição com o comando', motivo: 'Desloca no sentido inverso.' },
-        { letter: 'E', tipo: 'Contradição com o comando', motivo: 'Desloca no sentido direto.' },
-      ],
-    },
     flashcard: { front: 'Quando a pressão NÃO altera um equilíbrio gasoso?', back: 'Quando a quantidade de mols gasosos é igual nos dois lados.' },
   },
   {
@@ -448,12 +429,12 @@ export const QUESTIONS: Question[] = [
     fastMethod: 'Conector adversativo no início do argumento = estratégia de contraposição.',
     cpe: {
       comando: 'Identificar a estratégia argumentativa (como o texto argumenta).',
-      prova: '"costuma ser tratado como questão estética. No entanto, estudos ... associam..."',
+      prova: 'No entanto, estudos de climatologia urbana associam a cobertura vegetal à redução das ilhas de calor, ao aumento da infiltração da água da chuva e à melhoria do conforto térmico de pedestres.',
       excesso: [
         { letter: 'A', tipo: 'Extrapolação', motivo: 'O texto não fala de construções.' },
-        { letter: 'C', tipo: 'Relação imprecisa', motivo: 'Não há dados numéricos nem comparação com outras soluções.' },
+        { letter: 'C', tipo: 'Extrapolação', motivo: 'Não há dados numéricos nem comparação com outras soluções.' },
         { letter: 'D', tipo: 'Generalização', motivo: '"Negar qualquer valor" é absoluto; o texto apenas amplia a função.' },
-        { letter: 'E', tipo: 'Erro de gênero', motivo: 'Não há narração pessoal.' },
+        { letter: 'E', tipo: 'Fuga do comando', motivo: 'Não há narração pessoal.' },
       ],
     },
     flashcard: { front: 'Conector adversativo ("no entanto") na abertura do argumento sinaliza que estratégia?', back: 'Contraposição entre uma visão corrente e a tese do autor.' },
@@ -536,36 +517,9 @@ export const QUESTIONS: Question[] = [
     fastMethod: 'Pessimismo + soberano forte = Hobbes; direitos naturais = Locke; bondade natural = Rousseau.',
     flashcard: { front: 'Hobbes × Locke × Rousseau: estado de natureza?', back: 'Hobbes: guerra de todos contra todos; Locke: direitos naturais; Rousseau: bondade natural.' },
   },
-  {
-    id: 'q29', exam: 'Olimpíada', style: 'Estilo olimpíada de Matemática', subject: 'Matemática', area: 'Matemática', topic: 'Teoria dos números', skillId: 'mat-teoria-numeros',
-    year: 2026, difficulty: 'Difícil', type: 'aberta', source: 'original_nexo',
-    statement: 'Determine o resto da divisão de 2¹⁰⁰ por 7. Justifique sua resposta.',
-    openAnswer: { value: 2, wrongMap: [
-      { value: 4, errorType: 'calculo', tutorPrompt: 'Você encontrou o ciclo, mas confira a posição: 100 = 3·33 + 1. O expoente que sobra é 1, 2 ou 0?' },
-      { value: 1, errorType: 'calculo', tutorPrompt: '2³ ≡ 1 (mod 7). Mas 100 é múltiplo de 3? Qual o resto de 100 ÷ 3?' },
-    ] },
-    hints: ['Calcule as primeiras potências de 2 módulo 7.', '2¹ ≡ 2, 2² ≡ 4, 2³ ≡ 1 (mod 7): ciclo de período 3.', '100 = 3·33 + 1 → 2¹⁰⁰ = (2³)³³·2 ≡ 1·2 = 2.'],
-    explanation: 'Como 2³ = 8 ≡ 1 (mod 7), as potências de 2 se repetem em ciclo de período 3. Escrevendo 100 = 3·33 + 1: 2¹⁰⁰ = (2³)³³ · 2¹ ≡ 1³³ · 2 = 2 (mod 7). Resto: 2.',
-    fastMethod: 'Procure a menor potência congruente a 1 e reduza o expoente pelo período.',
-    flashcard: { front: '2³ módulo 7?', back: '1 (8 = 7 + 1). Potências de 2 mod 7 têm período 3.' },
-  },
-  {
-    id: 'q30', exam: 'Olimpíada', style: 'Estilo olimpíada de Física', subject: 'Física', area: 'Ciências da Natureza', topic: 'Energia e atrito', skillId: 'fis-energia',
-    year: 2026, difficulty: 'Difícil', type: 'aberta', source: 'original_nexo', lessonId: 'l-energia',
-    statement: 'Um bloco parte do repouso no topo de uma rampa sem atrito, de altura 5 m, e, ao chegar à base, entra em um piso horizontal cujo coeficiente de atrito cinético com o bloco é 0,25. Considere g = 10 m/s². Qual a distância, em metros, que o bloco percorre no piso até parar? Justifique.',
-    openAnswer: { value: 20, unit: 'm', wrongMap: [
-      { value: 1.25, errorType: 'formula_incorreta', tutorPrompt: 'Você multiplicou h por μ. Ao igualar mgh ao trabalho do atrito μmgd, como fica d?' },
-      { value: 5, errorType: 'lacuna_conceitual', tutorPrompt: 'A distância horizontal coincide com a altura da rampa? Que força dissipa a energia no piso?' },
-    ] },
-    hints: ['Toda a energia potencial inicial será dissipada pelo atrito no piso.', 'mgh = μ·m·g·d.', 'd = h/μ = 5/0,25 = 20 m.'],
-    explanation: 'Na rampa sem atrito, a energia se conserva: o bloco chega à base com energia cinética mgh. No piso, o trabalho do atrito (μmgd) dissipa essa energia: mgh = μmgd → d = h/μ = 5/0,25 = 20 m. Massa e g se cancelam.',
-    fastMethod: 'd = h/μ.',
-    flashcard: { front: 'Bloco desce de altura h sem atrito e para em piso com atrito μ: distância?', back: 'd = h/μ.' },
-  },
   ...INTEGRATION_QUESTIONS,
   ...PREREQ_QUESTIONS,
+  ...EXTRA_QUESTIONS,
 ];
 
 export const questionById = (id: string) => QUESTIONS.find((q) => q.id === id);
-export const DIAGNOSTIC_IDS = ['q01', 'q07', 'q13', 'q17', 'q23', 'q26'];
-export const SIMULADO_IDS = ['q03', 'q11', 'q15', 'q16', 'q19', 'q21', 'q24', 'q25', 'q27', 'q28'];
