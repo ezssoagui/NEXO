@@ -1,7 +1,9 @@
-// Estudante de demonstração com histórico FICTÍCIO: serve só para visualizar
-// como as telas ficam com dados. Tudo é gerado de forma determinística.
+// Histórico FICTÍCIO (3 semanas) para que todo perfil já comece com dados nas telas.
+// Gerado de forma determinística a partir do próprio perfil.
 import { useStore } from './useStore';
 import { QUESTIONS } from '../data/questions';
+import { SUBJECTS } from '../data/skills';
+import { TEAMS } from '../data/demo';
 import { FLASHCARDS } from '../data/flashcards';
 import { ESSAY_THEMES, DEMO_ESSAYS } from '../data/essays';
 import { evaluateEssay } from '../engine/essay';
@@ -16,8 +18,9 @@ export const DEMO_STUDENT: Profile = {
   personalGoal: 'Passar de 750 pontos no ENEM', persona: 'custom',
 };
 
-/** Probabilidade de acerto por disciplina (perfil: forte em Biologia/Linguagens, fraca em Física). */
-const SKILL: Record<Subject, number> = { Biologia: 0.85, Linguagens: 0.8, Humanas: 0.75, Química: 0.65, Matemática: 0.55, Física: 0.4 } as Record<Subject, number>;
+/** Probabilidade de acerto por disciplina: Marina tem valores próprios; os demais saem das dificuldades declaradas. */
+const MARINA_SKILL: Record<Subject, number> = { Biologia: 0.85, Linguagens: 0.8, Humanas: 0.75, Química: 0.65, Matemática: 0.55, Física: 0.4 };
+const LEVEL: Record<NonNullable<Profile['persona']>, number> = { iniciante: 0.62, avancado: 0.82, olimpico: 0.8, custom: 0.7 };
 const CAUSES: ErrorCause[] = ['conceitual', 'interpretacao', 'calculo', 'formula', 'atencao', 'unidade'];
 
 /** Gerador pseudoaleatório determinístico (mulberry32). */
@@ -25,15 +28,23 @@ function rng(seed: number) {
   return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 
-export function loadDemoStudent() {
+/** Semente estável por apelido, para cada perfil ter um histórico próprio. */
+const seedOf = (s: string) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 2026);
+
+export function loadDemoStudent() { loadStudentWithHistory(DEMO_STUDENT, { seed: 2026, skill: (s) => MARINA_SKILL[s], teamId: 'tm3' }); }
+
+/** Cria o estudante (substituindo o estado atual) já com histórico fictício. */
+export function loadStudentWithHistory(profile: Profile, opts: { seed?: number; skill?: (s: Subject) => number; teamId?: string } = {}) {
   const st = useStore.getState();
-  const r = rng(2026);
+  const level = LEVEL[profile.persona ?? 'custom'];
+  const skill = opts.skill ?? ((s: Subject) => (profile.difficulties.includes(s) ? level - 0.22 : level));
+  const r = rng(opts.seed ?? seedOf(profile.nickname));
   const pick = <T,>(xs: T[]) => xs[Math.floor(r() * xs.length)];
   const now = Date.now();
   const start = new Date(now - 21 * DAY); start.setHours(0, 0, 0, 0);
 
-  st.loginPersona('iniciante'); // zera o estado
-  useStore.setState({ profile: DEMO_STUDENT, schoolId: DEMO_STUDENT.schoolId, diagnosticDone: true, teamId: 'tm3' });
+  st.createProfile(profile); // zera o estado
+  useStore.setState({ profile, diagnosticDone: true, teamId: opts.teamId ?? TEAMS.find((t) => t.schoolId && t.schoolId === profile.schoolId)?.id });
 
   // 1) Questões respondidas nas últimas 3 semanas (mais estudo e melhora recente).
   const objective = QUESTIONS.filter((q) => q.type === 'objetiva' && q.alternatives?.length);
@@ -45,7 +56,7 @@ export function loadDemoStudent() {
       const q = pick(objective);
       const ts = start.getTime() + d * DAY + (18 + r() * 4) * 3600000 + i * 240000;
       if (ts > now) continue;
-      const p = Math.min(0.95, SKILL[q.subject] + (recent ? 0.1 : 0));
+      const p = Math.min(0.95, skill(q.subject) + (recent ? 0.1 : 0));
       const correct = r() < p;
       const right = q.alternatives!.find((a) => a.correct)!;
       const wrongs = q.alternatives!.filter((a) => !a.correct);
@@ -86,10 +97,14 @@ export function loadDemoStudent() {
   });
 
   // 4) Simulados.
-  const simHistory = [
-    { ts: now - 18 * DAY, name: 'Simulado ENEM — Natureza', correct: 11, total: 20, pct: 55 },
-    { ts: now - 10 * DAY, name: 'Simulado ENEM — Matemática', correct: 12, total: 20, pct: 60 },
-    { ts: now - 3 * DAY, name: 'Simulado ENEM — Natureza', correct: 14, total: 20, pct: 70 },
-  ];
+  const avg = SUBJECTS.reduce((s, x) => s + skill(x), 0) / SUBJECTS.length;
+  const names = profile.goal === 'ENEM' ? ['Simulado ENEM — Natureza', 'Simulado ENEM — Matemática', 'Simulado ENEM — Natureza']
+    : profile.goal === 'Olimpíadas' ? ['Olimpíadas', 'Simulado rápido', 'Olimpíadas']
+    : profile.goal === 'Vestibular' ? ['Vestibular (estilo)', 'Simulado rápido', 'Vestibular (estilo)']
+    : ['Simulado ENEM — Natureza', 'Vestibular (estilo)', 'Simulado ENEM — Natureza'];
+  const simHistory = names.map((name, i) => {
+    const correct = Math.round(20 * Math.min(0.95, avg - 0.1 + i * 0.07));
+    return { ts: now - [18, 10, 3][i] * DAY, name, correct, total: 20, pct: correct * 5 };
+  });
   useStore.setState({ cardStates, simHistory });
 }

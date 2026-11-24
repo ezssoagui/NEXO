@@ -2,13 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, Brain, Target, PenLine, Layers, ShieldCheck, Moon, Sun } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { PERSONAS } from '../store/seed';
-import { loadDemoStudent } from '../store/demoStudent';
+import { loadDemoStudent, loadStudentWithHistory } from '../store/demoStudent';
 import { Logo } from '../components/ui';
 
 export default function Welcome() {
   const nav = useNavigate();
-  const { loginPersona, loginRole, settings, setSetting } = useStore();
-  const enter = (p: keyof typeof PERSONAS) => { loginPersona(p); nav('/diagnostico'); };
+  const { loginRole, settings, setSetting } = useStore();
+  const enter = (p: keyof typeof PERSONAS) => { loadStudentWithHistory(PERSONAS[p].profile); nav('/inicio'); };
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy-950 via-navy-900 to-navy-800 text-white">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
@@ -35,7 +35,7 @@ export default function Welcome() {
 
         <section id="perfis" className="mt-16">
           <h2 className="text-2xl font-bold !text-white">Começar com um perfil de exemplo</h2>
-          <p className="mt-1 text-slate-400">O perfil apenas preenche o cadastro. Tudo começa zerado — sem histórico, XP, flashcards ou redações —, como um estudante que acabou de entrar.</p>
+          <p className="mt-1 text-slate-400">Cada perfil já vem com 3 semanas de histórico fictício: questões, XP, flashcards, redações e simulados.</p>
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {(Object.keys(PERSONAS) as (keyof typeof PERSONAS)[]).map((k) => (
               <button key={k} onClick={() => enter(k)} className="group rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition hover:border-mint-400/60 hover:bg-white/10">
@@ -47,7 +47,7 @@ export default function Welcome() {
             ))}
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
-            <button className="btn !border !border-white/20 text-white hover:bg-white/10" onClick={() => { loginPersona('avancado'); loginRole('admin'); useStore.getState().finishDiagnostic(); nav('/admin'); }}><ShieldCheck size={16} /> Painel administrativo (demo)</button>
+            <button className="btn !border !border-white/20 text-white hover:bg-white/10" onClick={() => { loadStudentWithHistory(PERSONAS.avancado.profile); loginRole('admin'); nav('/admin'); }}><ShieldCheck size={16} /> Painel administrativo (demo)</button>
           </div>
         </section>
         <p className="mt-16 text-xs text-slate-500">Nesta demonstração nenhum dado pessoal real é coletado: tudo fica salvo apenas no seu navegador (localStorage) e pode ser apagado em Perfil → Privacidade. Análises de “IA” são simulações por regras, identificadas como tal.</p>

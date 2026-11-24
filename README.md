@@ -22,7 +22,7 @@ ANTHROPIC_API_KEY=sk-ant-... npm run server   # backend em :8787; o Vite encamin
 
 Sem chave, o backend responde 503 e a interface continua no **modo demonstrativo, identificado** (selo "IA em modo demonstrativo" no topo e motor indicado em cada resposta). Veja `.env.example`.
 
-Todo estudante começa com **dados zerados**. Os perfis de exemplo (Lia, Caio, Iara) apenas preenchem o cadastro.
+Todo perfil começa com **3 semanas de histórico fictício** (inclusive Lia, Caio e Iara). No cadastro, desmarque “Começar com dados de exemplo” para iniciar do zero.
 
 ## Metodologia: Diagnosticar → Investigar → Ensinar → Comprovar → Consolidar
 

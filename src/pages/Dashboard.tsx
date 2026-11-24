@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Play, Target, Layers, Brain, ArrowRight, Compass, Shuffle, TrendingUp, AlertTriangle, Trophy, BookOpen, ListChecks, Route as RouteIcon, PenLine } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -15,10 +15,14 @@ import CyclesCard from '../components/CyclesCard';
 import type { ErrorCause } from '../types';
 
 const DAY = 86400000;
+/** Saudação conforme o horário local do dispositivo. */
+const greetingFor = (h: number) => (h < 6 ? 'Boa madrugada' : h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite');
 export default function Dashboard() {
   const nav = useNavigate();
   const { profile, attempts, cardStates, customCards, essays, xpEvents, diagnosticDone, skillReviews, settings, setSetting, simHistory } = useStore();
   const [minutes, setMinutes] = useState<5 | 10 | 20 | 40>(10);
+  const [greeting, setGreeting] = useState(() => greetingFor(new Date().getHours()));
+  useEffect(() => { const t = setInterval(() => setGreeting(greetingFor(new Date().getHours())), 60000); return () => clearInterval(t); }, []);
   const real = attempts.filter((a) => !a.free);
   const recs = recommendations(real, skillReviews, Date.now(), 3);
   const m = allMastery(real);
@@ -43,7 +47,7 @@ export default function Dashboard() {
       <section className="relative flex min-h-[18rem] flex-col justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 to-navy-700 p-6 text-white sm:min-h-[20rem] sm:p-10">
         <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-mint-500/20 blur-2xl" aria-hidden />
         <div className="relative flex flex-wrap items-center justify-between gap-3">
-          <div><p className="text-sm text-mint-300">Olá, {profile?.nickname}</p><h1 className="mt-1 text-2xl font-extrabold !text-white sm:text-3xl">Bom voltar a estudar. Vamos evoluir hoje?</h1></div>
+          <div><p className="text-sm text-mint-300">NEXO</p><h1 className="mt-1 text-2xl font-extrabold !text-white sm:text-3xl">{greeting}, {profile?.nickname}. Vamos evoluir hoje?</h1></div>
           <div className="flex rounded-xl bg-white/10 p-1 text-sm" role="radiogroup" aria-label="Modo de estudo">
             <button role="radio" aria-checked={adaptive} onClick={() => setSetting('studyMode', 'adaptativo')} className={cx('flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold', adaptive ? 'bg-white text-navy-900' : 'text-white/80')}><Compass size={14} /> Adaptativo</button>
             <button role="radio" aria-checked={!adaptive} onClick={() => setSetting('studyMode', 'livre')} className={cx('flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold', !adaptive ? 'bg-white text-navy-900' : 'text-white/80')}><Shuffle size={14} /> Livre</button>

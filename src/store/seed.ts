@@ -1,8 +1,8 @@
 import type { Profile } from '../types';
 
 /**
- * Perfis de exemplo: apenas PREENCHEM o cadastro. Todos começam com dados zerados
- * (sem histórico, XP, flashcards ou redações), como um estudante que acabou de entrar.
+ * Perfis de exemplo: preenchem o cadastro. O histórico fictício que os acompanha
+ * é gerado em demoStudent.ts.
  */
 export const PERSONAS: Record<'iniciante' | 'avancado' | 'olimpico', { label: string; desc: string; profile: Profile }> = {
   iniciante: {
