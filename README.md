@@ -24,6 +24,8 @@ Sem chave, o backend responde 503 e a interface continua no **modo demonstrativo
 
 Todo perfil começa com **3 semanas de histórico fictício** (inclusive Lia, Caio e Iara). No cadastro, desmarque “Começar com dados de exemplo” para iniciar do zero.
 
+As regras de negócio do sistema estão consolidadas em [`docs/REGRAS_DE_NEGOCIO.md`](docs/REGRAS_DE_NEGOCIO.md).
+
 ## Estratégia de preparação
 
 `src/data/incidence.ts` e `src/engine/strategy.ts` ordenam e dosam o estudo:
