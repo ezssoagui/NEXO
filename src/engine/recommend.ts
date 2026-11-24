@@ -1,6 +1,7 @@
-import type { Attempt, CardState, MasteryCycle, Profile, SkillReview, Subject } from '../types';
+import type { Attempt, CardState, MasteryCycle, Profile, SkillReview } from '../types';
 import { allMastery } from './mastery';
 import { isDue } from './srs';
+import { byDifficulty, exerciseLoad, nextUnseen, priorityWeight, studyPhase, type Phase } from './strategy';
 import { LESSONS } from '../data/lessons';
 import { QUESTIONS } from '../data/questions';
 import { SKILLS, skillById } from '../data/skills';
@@ -8,9 +9,10 @@ import { SKILLS, skillById } from '../data/skills';
 export function weakSkills(attempts: Attempt[], profile?: Profile | null): string[] {
   const m = allMastery(attempts);
   const lastErr = (id: string) => Math.max(0, ...attempts.filter((a) => a.skillId === id && !a.correct).map((a) => a.ts));
-  const dev = m.filter((x) => x.state === 'desenvolvimento').sort((a, b) => lastErr(b.skillId) - lastErr(a.skillId)).map((x) => x.skillId);
+  const w = (id: string) => priorityWeight(id, profile?.goal);
+  const dev = m.filter((x) => x.state === 'desenvolvimento').sort((a, b) => w(b.skillId) - w(a.skillId) || lastErr(b.skillId) - lastErr(a.skillId)).map((x) => x.skillId);
   const prov = m.filter((x) => x.state === 'provisorio').map((x) => x.skillId);
-  const diff = profile ? m.filter((x) => x.state === 'nao_estudado' && profile.difficulties.includes(x.skill.subject)).map((x) => x.skillId) : [];
+  const diff = profile ? m.filter((x) => x.state === 'nao_estudado' && profile.difficulties.includes(x.skill.subject)).sort((a, b) => w(b.skillId) - w(a.skillId)).map((x) => x.skillId) : [];
   return [...new Set([...dev, ...diff, ...prov])];
 }
 
@@ -32,7 +34,7 @@ export function nextRecommendation(attempts: Attempt[], cards: Record<string, Ca
   const weak = weakSkills(attempts, profile)[0];
   if (weak) {
     const l = LESSONS.find((x) => x.skillIds.includes(weak));
-    const q = QUESTIONS.find((x) => x.skillId === weak && !attempts.some((a) => a.qid === x.id));
+    const q = nextUnseen(weak, attempts);
     if (q) return { title: skillById(weak)!.name, reason: 'Habilidade em desenvolvimento: uma questão nova ajuda a consolidar.', to: `/questoes/${q.id}`, cta: 'Resolver questão' };
     if (l) return { title: l.title, reason: 'Revisar a explicação antes de novas questões.', to: `/aulas/${l.id}`, cta: 'Abrir microaula' };
   }
@@ -40,41 +42,66 @@ export function nextRecommendation(attempts: Attempt[], cards: Record<string, Ca
   return fresh ? { title: `Explorar: ${fresh.topic}`, reason: 'Conteúdo ainda não estudado.', to: `/questoes/${fresh.id}`, cta: 'Começar' } : { title: 'Simulado rápido', reason: 'Você já passou por todo o banco demonstrativo.', to: '/simulados', cta: 'Fazer simulado' };
 }
 
-export interface SessionStep { kind: 'explicacao' | 'questao' | 'flashcards' | 'gemea' | 'paragrafo'; title: string; ref?: string; count?: number; minutes: number }
-export function buildSession(minutes: 5 | 10 | 20 | 40, attempts: Attempt[], profile: Profile | null): { focus: string; steps: SessionStep[] } {
-  const weak = weakSkills(attempts, profile);
+export interface SessionStep { kind: 'recordacao' | 'explicacao' | 'questao' | 'flashcards' | 'gemea' | 'paragrafo'; title: string; ref?: string; count?: number; minutes: number }
+/**
+ * Sessão: recuperação ativa antes de reler (se o assunto já foi visto), questões da mais fácil para a mais difícil,
+ * e questões feitas há menos de 7 dias guardadas para depois. Na reta final não há conteúdo novo; nos dias de prova, só revisão leve.
+ */
+export function buildSession(minutes: 5 | 10 | 20 | 40, attempts: Attempt[], profile: Profile | null, now = Date.now()): { focus: string; phase: Phase; steps: SessionStep[] } {
+  const { phase } = studyPhase(profile, now);
+  const all = weakSkills(attempts, profile);
+  const studied = (id: string) => attempts.some((a) => a.skillId === id);
+  const late = phase === 'reta_final' || phase === 'descanso';
+  const weak = late && all.some(studied) ? all.filter(studied) : all;
   const focus = weak[0] ?? 'fis-potencia';
-  const l = LESSONS.find((x) => x.skillIds.includes(focus)) ?? LESSONS[0];
-  const qs = QUESTIONS.filter((q) => q.skillId === focus || (weak.includes(q.skillId))).filter((q) => q.type === 'objetiva');
-  const unseen = [...qs.filter((q) => !attempts.some((a) => a.qid === q.id)), ...qs];
-  const q = (i: number) => unseen[i % Math.max(1, unseen.length)]?.id ?? 'q01';
-  const steps: SessionStep[] = [];
-  if (minutes === 5) {
-    steps.push({ kind: 'explicacao', title: 'Explicação essencial', ref: l.id, minutes: 1 }, { kind: 'questao', title: 'Uma questão', ref: q(0), minutes: 3 }, { kind: 'flashcards', title: 'Um flashcard', count: 1, minutes: 1 });
-  } else if (minutes === 10) {
-    steps.push({ kind: 'explicacao', title: 'Explicação essencial', ref: l.id, minutes: 2 }, { kind: 'questao', title: 'Questão 1', ref: q(0), minutes: 3 }, { kind: 'questao', title: 'Questão 2', ref: q(1), minutes: 3 }, { kind: 'flashcards', title: 'Revisão rápida', count: 3, minutes: 2 });
-  } else if (minutes === 20) {
-    steps.push({ kind: 'explicacao', title: 'Microaula', ref: l.id, minutes: 5 }, { kind: 'questao', title: 'Questão 1', ref: q(0), minutes: 4 }, { kind: 'questao', title: 'Questão 2', ref: q(1), minutes: 4 }, { kind: 'gemea', title: 'Questão gêmea (transferência)', ref: q(0), minutes: 4 }, { kind: 'flashcards', title: 'Revisão espaçada', count: 5, minutes: 3 });
-  } else {
-    steps.push({ kind: 'explicacao', title: 'Aula completa', ref: l.id, minutes: 10 }, ...[0, 1, 2].map((i) => ({ kind: 'questao' as const, title: `Questão ${i + 1}`, ref: q(i), minutes: 4 })), { kind: 'gemea', title: 'Questão gêmea', ref: q(0), minutes: 4 }, { kind: 'flashcards', title: 'Revisão espaçada', count: 10, minutes: 6 }, { kind: 'paragrafo', title: 'Laboratório C3: um parágrafo', minutes: 8 });
-  }
-  return { focus, steps };
+  if (phase === 'descanso') return { focus, phase, steps: [{ kind: 'flashcards', title: 'Revisão bem leve', count: 5, minutes: 5 }] };
+  const l = LESSONS.find((x) => x.skillIds.includes(focus));
+  const lastTs = (id: string) => Math.max(0, ...attempts.filter((a) => a.qid === id).map((a) => a.ts));
+  const rank = (q: (typeof QUESTIONS)[number]) => { const t = lastTs(q.id); return !t ? 0 : now - t >= 7 * 86400000 ? 1 : 2; };
+  const group = (id: string) => (id === focus ? 0 : 1);
+  const pool = QUESTIONS.filter((q) => q.type === 'objetiva' && (q.skillId === focus || weak.includes(q.skillId)))
+    .sort((a, b) => Number(rank(a) === 2) - Number(rank(b) === 2) || group(a.skillId) - group(b.skillId) || rank(a) - rank(b) || byDifficulty(a, b));
+  const q = (i: number) => pool[i % Math.max(1, pool.length)]?.id ?? 'q01';
+  const recall = studied(focus);
+  const intro = (short: number, long: number): SessionStep[] => [
+    ...(recall ? [{ kind: 'recordacao' as const, title: 'Recordar sem consultar', ref: l?.id, minutes: short }] : []),
+    ...(l && !late && (!recall || minutes >= 20) ? [{ kind: 'explicacao' as const, title: minutes === 40 ? 'Aula completa' : minutes === 20 ? 'Microaula' : 'Explicação essencial', ref: l.id, minutes: recall ? long - short : long }] : []),
+  ];
+  const qs = (n: number, min: number): SessionStep[] => Array.from({ length: n }, (_, i) => ({ kind: 'questao' as const, title: `Questão ${i + 1}`, ref: q(i), minutes: min }));
+  const twin: SessionStep = { kind: 'gemea', title: 'Questão gêmea (transferência)', ref: q(0), minutes: 4 };
+  const cards = (count: number, min: number): SessionStep => ({ kind: 'flashcards', title: 'Revisão espaçada', count, minutes: min });
+  const steps: SessionStep[] = minutes === 5 ? [...intro(1, 1), ...qs(1, 3), cards(1, 1)]
+    : minutes === 10 ? [...intro(2, 2), ...qs(2, 3), cards(3, 2)]
+    : minutes === 20 ? [...intro(2, 5), ...qs(late ? 3 : 2, 4), twin, cards(5, 3)]
+    : [...intro(3, 10), ...qs(late ? 5 : 3, 4), twin, cards(10, 6), { kind: 'paragrafo', title: 'Laboratório C3: um parágrafo', minutes: 8 }];
+  return { focus, phase, steps };
 }
 
 const DAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-export function weekPlan(profile: Profile | null, attempts: Attempt[]) {
-  const weak = weakSkills(attempts, profile);
-  const hours = profile?.weeklyHours ?? 6;
-  const perDay = Math.max(15, Math.round((hours * 60) / 6 / 5) * 5);
-  const subjects: Subject[] = profile?.difficulties.length ? profile.difficulties : ['Matemática', 'Linguagens'];
-  return DAYS.map((d, i) => {
-    if (i === 6) return { day: d, minutes: 0, tasks: ['Descanso (o descanso faz parte do aprendizado)'] };
-    const sk = weak[i % Math.max(1, weak.length)] ?? SKILLS[i].id;
-    const tasks = [`${skillById(sk)?.name ?? 'Revisão'}: microaula + 2 questões`, 'Flashcards pendentes (5 min)'];
-    if (i === 2) tasks.push('Redação: um parágrafo no laboratório C3');
-    if (i === 5) tasks.push('Simulado rápido (10 questões)');
-    if (i % 2 === 1) tasks.push(`Reforço em ${subjects[i % subjects.length]}`);
-    return { day: d, minutes: i === 5 ? perDay + 20 : perDay, tasks };
+/** Semana em blocos: seg–qui com assuntos alternados, quarta com redação, sexta para pendências e revisão, sábado simulado, domingo livre. */
+export function weekPlan(profile: Profile | null, attempts: Attempt[], now = Date.now()) {
+  const { phase } = studyPhase(profile, now);
+  const perDay = Math.max(15, Math.round(((profile?.weeklyHours ?? 6) * 60) / 6 / 5) * 5);
+  const order = [...new Set([...weakSkills(attempts, profile), ...SKILLS.map((s) => s.id).sort((a, b) => priorityWeight(b, profile?.goal) - priorityWeight(a, profile?.goal))])];
+  const open = order.filter((id) => !exerciseLoad(id, attempts).enough);
+  const queue = open.length >= 2 ? open : order;
+  const first = queue.filter((_, i) => i % 2 === 0), second = queue.filter((_, i) => i % 2 === 1);
+  const name = (id: string) => skillById(id)!.name;
+  const half = Math.max(5, Math.round(perDay / 2 / 5) * 5);
+  const d = new Date(now);
+  const sat = new Date(now); sat.setDate(d.getDate() + 5 - ((d.getDay() + 6) % 7));
+  const lastSat = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 7).getMonth() !== sat.getMonth();
+  return DAYS.map((day, i) => {
+    if (i === 6) return { day, minutes: 0, tasks: ['Descanso (o descanso faz parte do aprendizado)'] };
+    if (phase === 'descanso') return { day, minutes: 0, tasks: ['Descanse a mente; no máximo, alguns flashcards'] };
+    if (i === 4) return { day, minutes: perDay, tasks: ['Pendências da semana', 'Revisão da semana: recordar sem consultar + questões', 'Flashcards pendentes'] };
+    if (i === 5) return { day, minutes: perDay + 20, tasks: [phase === 'base' || phase === 'pos' ? 'Simulado rápido (10 questões)' : 'Simulado com tempo de prova, sem pausa', 'Corrigir logo em seguida, começando pelos erros fáceis', ...(lastSat ? ['Revisão geral do mês'] : [])] };
+    const a = first[i % first.length], b = second[i % second.length];
+    const rev = phase === 'reta_final';
+    const tasks = [rev ? `Revisão ativa: ${name(a)} (${half} min)` : `Bloco 1: ${name(a)} — teoria + questões (${half} min)`];
+    tasks.push(i === 2 ? `Bloco 2: redação — um texto ou parágrafo (${half} min)` : rev ? `Bateria de questões: ${name(b)} (${half} min)` : `Bloco 2: ${name(b)} — ${phase === 'consolidacao' ? 'questões e revisão' : 'teoria + questões'} (${half} min)`);
+    tasks.push('Flashcards pendentes (5 min)');
+    return { day, minutes: perDay, tasks };
   });
 }
 

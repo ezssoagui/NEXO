@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pause, Play, Timer, Bot, TrendingUp, AlertTriangle } from 'lucide-react';
 import { QUESTIONS, SIMULADO_IDS } from '../data/questions';
@@ -25,7 +25,8 @@ export default function Simulados() {
   const [i, setI] = useState(0); const [res, setRes] = useState<Attempt[]>([]);
   const [left, setLeft] = useState(0); const [paused, setPaused] = useState(false);
   const [startTs, setStartTs] = useState(0);
-  const ids = useMemo(() => mode?.ids() ?? [], [mode]);
+  const [ids, setIds] = useState<string[]>([]);
+  const later = () => setIds([...ids.slice(0, i), ...ids.slice(i + 1), ids[i]]);
   useEffect(() => { if (!mode || paused || i >= ids.length) return; const t = setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000); return () => clearInterval(t); }, [mode, paused, i, ids.length]);
   const history = simHistory;
   const finished = mode && (i >= ids.length || left === 0);
@@ -34,7 +35,8 @@ export default function Simulados() {
   if (!mode) return (
     <div>
       <PageHeader title="Simulados" subtitle="Treine com tempo controlado. Correção completa só ao final, como na prova." />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{MODES.map((m) => <button key={m.id} onClick={() => { setMode(m); setI(0); setRes([]); setLeft(m.minutes * 60); setPaused(false); setStartTs(Date.now()); }} className="card text-left transition hover:border-mint-400"><div className="flex items-center gap-2 font-semibold"><Timer size={16} /> {m.name}</div><p className="muted mt-1 text-sm">{m.desc}</p><div className="mt-3 flex gap-2"><Badge>{m.ids().length} questões</Badge><Badge>{m.minutes} min</Badge><Badge tone={m.pause ? 'mint' : 'amber'}>{m.pause ? 'Permite pausa' : 'Sem pausa'}</Badge></div></button>)}</div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{MODES.map((m) => <button key={m.id} onClick={() => { setMode(m); setIds(m.ids()); setI(0); setRes([]); setLeft(m.minutes * 60); setPaused(false); setStartTs(Date.now()); }} className="card text-left transition hover:border-mint-400"><div className="flex items-center gap-2 font-semibold"><Timer size={16} /> {m.name}</div><p className="muted mt-1 text-sm">{m.desc}</p><div className="mt-3 flex gap-2"><Badge>{m.ids().length} questões</Badge><Badge>{m.minutes} min</Badge><Badge tone={m.pause ? 'mint' : 'amber'}>{m.pause ? 'Permite pausa' : 'Sem pausa'}</Badge></div></button>)}</div>
+      <Card className="mt-6"><h2 className="section-title mb-2">Estratégia de prova</h2><ul className="muted list-disc space-y-1 pl-5 text-sm"><li>Leia o comando antes do texto-base: você passa a saber o que procurar.</li><li>Deixe as questões demoradas para depois e garanta primeiro as rápidas.</li><li>Sem certeza? Elimine os absurdos e marque a confiança: isso orienta a revisão.</li><li>Corrija assim que terminar, enquanto ainda lembra das dúvidas.</li></ul></Card>
       {history.length > 0 && <Card className="mt-6"><h2 className="section-title mb-2">Simulados anteriores</h2><ul className="space-y-1 text-sm">{history.slice(-6).reverse().map((h) => <li key={h.ts} className="flex justify-between"><span>{h.name} · {new Date(h.ts).toLocaleDateString('pt-BR')}</span><strong>{h.pct}%</strong></li>)}</ul></Card>}
     </div>
   );
@@ -47,10 +49,11 @@ export default function Simulados() {
         <span className="font-semibold">{mode.name}</span><span className="muted text-sm">{i + 1}/{ids.length}</span>
         <Progress value={i / ids.length} className="flex-1" />
         <span className={cx('font-mono text-sm font-bold', left < 120 && 'text-red-600')}>{Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}</span>
+        {i < ids.length - 1 && !paused && <button className="btn-ghost btn-sm" onClick={later}>Deixar para depois</button>}
         {mode.pause && <button className="btn-ghost btn-sm" onClick={() => setPaused(!paused)} aria-label={paused ? 'Retomar' : 'Pausar'}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>}
         <button className="btn-ghost btn-sm" onClick={() => setI(ids.length)}>Encerrar</button>
       </div>
-      {paused ? <Card className="text-center"><p className="font-semibold">Simulado pausado</p><button className="btn-primary mt-3" onClick={() => setPaused(false)}>Retomar</button></Card> : <QuestionPlayer q={q} mode="simulado" onDone={(a) => { setRes([...res, a]); setI(i + 1); }} />}
+      {paused ? <Card className="text-center"><p className="font-semibold">Simulado pausado</p><button className="btn-primary mt-3" onClick={() => setPaused(false)}>Retomar</button></Card> : <QuestionPlayer key={q.id} q={q} mode="simulado" onDone={(a) => { setRes([...res, a]); setI(i + 1); }} />}
     </div>
   );
 }
@@ -59,7 +62,9 @@ function Result({ mode, ids, res, prev, onBack }: { mode: Mode; ids: string[]; r
   const qs = ids.map((id) => QUESTIONS.find((q) => q.id === id)!) as Question[];
   const correct = res.filter((r) => r.correct).length; const pct = Math.round((correct / ids.length) * 100);
   const byArea = [...new Set(qs.map((q) => q.area))].map((area) => { const aq = qs.filter((q) => q.area === area); const ar = res.filter((r) => aq.some((q) => q.id === r.qid)); return { area, n: aq.length, c: ar.filter((r) => r.correct).length }; });
-  const wrong = res.filter((r) => !r.correct);
+  // Erros fáceis primeiro: são os que mais afetam a coerência em provas com TRI.
+  const rankD = { 'Fácil': 0, 'Média': 1, 'Difícil': 2 } as const; const dOf = (r: Attempt) => rankD[qs.find((q) => q.id === r.qid)!.difficulty];
+  const wrong = res.filter((r) => !r.correct).sort((a, b) => dOf(a) - dOf(b));
   const diffErr = ['Fácil', 'Média', 'Difícil'].map((d) => ({ d, n: wrong.filter((r) => qs.find((q) => q.id === r.qid)?.difficulty === d).length }));
   const skills = [...new Set(res.map((r) => r.skillId))].map((s) => ({ s, ok: res.filter((r) => r.skillId === s && r.correct && r.confidence !== 'chute').length, tot: res.filter((r) => r.skillId === s).length }));
   const strong = skills.filter((x) => x.ok === x.tot && x.tot > 0); const weak = skills.filter((x) => x.ok < x.tot);

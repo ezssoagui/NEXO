@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, RefreshCcw, HeartHandshake } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { PageHeader, Card, Badge, Tabs, cx } from '../components/ui';
 import { recoveryPlan, weakSkills, weekPlan } from '../engine/recommend';
+import { exerciseLoad, incidenceNote, PHASE_INFO, STUDY_LEVELS, studyLevel, studyPhase } from '../engine/strategy';
 import { LESSONS } from '../data/lessons';
 import { QUESTIONS } from '../data/questions';
 import { skillById } from '../data/skills';
@@ -15,10 +16,12 @@ export default function Trilha() {
   const weak = weakSkills(attempts, profile);
   const focus = [...weak, ...LESSONS.flatMap((l) => l.skillIds)].filter((v, i, a) => a.indexOf(v) === i).slice(0, 5);
   const [days, setDays] = useState(7); const [mins, setMins] = useState(30);
+  const ph = studyPhase(profile);
   const rec = recoveryPlan(days, mins, attempts, cardStates, profile);
   return (
     <div>
       <PageHeader title="Minha trilha" subtitle={`Plano adaptativo para ${profile?.goal === 'Combinada' ? 'ENEM + vestibular' : profile?.goal} · ${profile?.course} · prova em ${profile?.examYear}`} />
+      <Card className="mb-5 !p-4"><div className="flex flex-wrap items-center gap-2"><Badge tone="mint">{PHASE_INFO[ph.phase].label}</Badge>{ph.daysLeft !== null && ph.daysLeft >= 0 && <span className="muted text-xs">cerca de {ph.daysLeft} dias para a prova (data estimada; confira o edital)</span>}</div><p className="mt-1 text-sm">{PHASE_INFO[ph.phase].tip}</p></Card>
       <Tabs tabs={[{ id: 'trilha', label: 'Trilha adaptativa' }, { id: 'semana', label: 'Plano da semana' }, { id: 'recuperacao', label: 'Plano de recuperação' }]} value={tab} onChange={setTab} />
       {tab === 'trilha' && <div className="space-y-4">{focus.map((sk) => {
         const l = LESSONS.find((x) => x.skillIds.includes(sk)); const qs = QUESTIONS.filter((q) => q.skillId === sk);
@@ -34,6 +37,7 @@ export default function Trilha() {
           { t: 'Revisão posterior (outro dia)', done: st.state === 'consistente', to: '/flashcards' },
         ];
         return <Card key={sk}><div className="mb-3 flex flex-wrap items-center gap-2"><h2 className="font-bold">{skillById(sk)?.name}</h2><Badge>{skillById(sk)?.subject}</Badge><Badge tone={st.state === 'consistente' ? 'mint' : st.state === 'provisorio' ? 'sky' : st.state === 'desenvolvimento' ? 'amber' : 'slate'}>{MASTERY_LABEL[st.state]}</Badge>{weak.includes(sk) && <Badge tone="red">prioridade</Badge>}</div>
+          {(() => { const ld = exerciseLoad(sk, attempts); const lv = studyLevel(sk, attempts); const note = profile?.goal === 'Olimpíadas' ? null : incidenceNote(sk); return <p className="muted mb-3 text-xs">Nível {lv + 1}/5: {STUDY_LEVELS[lv]} · {ld.max ? `exercícios: ${ld.done} (dose ${ld.min}–${ld.max})` : 'só leitura e revisão'} · {ld.note}{note && <><br />{note}</>}</p>; })()}
           <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{steps.map((s, i) => <li key={s.t}>{s.to ? <Link to={s.to} className={cx('flex items-start gap-2 rounded-xl border p-2.5 text-xs transition hover:border-mint-400', s.done ? 'border-mint-300 bg-mint-50 dark:border-mint-500/30 dark:bg-mint-500/10' : 'border-slate-200 dark:border-navy-700')}>{s.done ? <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-mint-600" /> : <Circle size={14} className="mt-0.5 shrink-0 text-slate-400" />}<span><strong>{i + 1}.</strong> {s.t}</span></Link> : <span className="flex gap-2 rounded-xl border border-dashed p-2.5 text-xs opacity-60">{i + 1}. {s.t}</span>}</li>)}</ol>
         </Card>;
       })}</div>}

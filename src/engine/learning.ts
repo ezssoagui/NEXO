@@ -6,6 +6,7 @@ import { prerequisitesOf, skillById, SKILLS, INTERVENTION_LABELS, CAUSE_LABELS }
 import { LESSONS } from '../data/lessons';
 import { QUESTIONS } from '../data/questions';
 import { hasGenerator } from './generator';
+import { exerciseLoad, nextUnseen, priorityWeight, type Goal } from './strategy';
 
 /**
  * NEXO LEARNING ENGINE
@@ -119,26 +120,26 @@ export function redecide(input: DecideInput, extra: Partial<DiagnosisInput>): Pe
 
 // ---------------- Recomendações por habilidade (Princípio 7) ----------------
 export interface SkillRec { skillId: string; action: NextKind; reason: string; priority: number; state: MasteryState; to?: string }
-export function recommendForSkill(skillId: string, attempts: Attempt[], reviews: Record<string, SkillReview> = {}, now = Date.now()): SkillRec {
+export function recommendForSkill(skillId: string, attempts: Attempt[], reviews: Record<string, SkillReview> = {}, now = Date.now(), goal: Goal = 'ENEM'): SkillRec {
   const m = skillMastery(attempts, skillId); const ind = masteryIndicators(attempts, skillId, now);
-  const sk = skillById(skillId)!; const weight = sk.examWeight === 'alta' ? 1.3 : sk.examWeight === 'baixa' ? 0.6 : 1;
+  const weight = priorityWeight(skillId, goal); const load = exerciseLoad(skillId, attempts);
   const due = reviews[skillId] && reviews[skillId].due <= now;
   const weakPre = prerequisitesOf(skillId).find((p) => { const pm = skillMastery(attempts, p); return pm.state === 'desenvolvimento' && attempts.some((a) => a.skillId === p && !a.correct); });
   const lesson = lessonFor(skillId); const seen = new Set(attempts.map((a) => a.qid));
-  const unseen = QUESTIONS.find((q) => q.skillId === skillId && !seen.has(q.id) && !q.integrates);
+  const unseen = nextUnseen(skillId, attempts);
   const conc = attempts.filter((a) => a.skillId === skillId && !a.correct && a.cause === 'conceitual').length;
   const r = (action: NextKind, reason: string, priority: number, to?: string): SkillRec => ({ skillId, action, reason, priority: +(priority * weight).toFixed(2), state: m.state, to });
   if (m.regressed) return r('revisao', 'Já esteve em domínio, mas falhou numa avaliação posterior (possível esquecimento).', 9, `/questoes/${(unseen ?? QUESTIONS.find((q) => q.skillId === skillId))!.id}`);
   if (weakPre) return r('prerequisitos', `Depende de ${skillById(weakPre)?.name}, que ainda está em desenvolvimento.`, 8, lessonFor(weakPre) ? `/aulas/${lessonFor(weakPre)!.id}` : undefined);
   if (m.state === 'desenvolvimento' && conc >= 2) return r('explicar', `${conc} erros conceituais nesta habilidade: vale uma explicação antes de mais questões.`, 7.5, lesson ? `/aulas/${lesson.id}` : undefined);
-  if (m.state === 'desenvolvimento') return r('praticar', `Em desenvolvimento: ${ind.wrong} erro(s) e ${ind.secure} acerto(s) seguro(s) até agora.`, 7, unseen ? `/questoes/${unseen.id}` : `/questoes/${QUESTIONS.find((q) => q.skillId === skillId)!.id}?gemea=1`);
+  if (m.state === 'desenvolvimento') return r('praticar', `Em desenvolvimento: ${ind.wrong} erro(s) e ${ind.secure} acerto(s) seguro(s) até agora.${load.enough ? ` ${load.note}` : ''}`, load.enough ? 5 : 7, unseen ? `/questoes/${unseen.id}` : `/questoes/${QUESTIONS.find((q) => q.skillId === skillId)!.id}?gemea=1`);
   if (due) return r('revisao', `Revisão vencida (último contato há ${ind.daysSinceLast} dia(s)).`, 6, '/flashcards');
   if (m.fragile) return r('praticar', 'O último acerto foi frágil (dúvida, dicas ou tentativa): falta uma verificação.', 5.5, unseen ? `/questoes/${unseen.id}` : undefined);
   if (m.state === 'provisorio') return r('praticar', ind.novelCorrect ? 'Domínio provisório: falta confirmar em outro dia.' : 'Domínio provisório: falta comprovar em questão inédita.', 4, unseen ? `/questoes/${unseen.id}` : undefined);
   if (m.state === 'consistente') { const hard = QUESTIONS.find((q) => !seen.has(q.id) && (q.integrates?.includes(skillId) || (q.skillId === skillId && (q.integrates || q.difficulty === 'Difícil')))); return hard ? r('desafio', 'Domínio consistente: hora de um desafio mais difícil.', 2, `/questoes/${hard.id}`) : r('avancar', 'Domínio consistente: siga para outros conteúdos.', 1); }
-  return r('explicar', 'Ainda não estudada.', 3 + (sk.examWeight === 'alta' ? 1 : 0), lesson ? `/aulas/${lesson.id}` : unseen ? `/questoes/${unseen.id}` : undefined);
+  return r('explicar', 'Ainda não estudada.', 3.5, lesson ? `/aulas/${lesson.id}` : unseen ? `/questoes/${unseen.id}` : undefined);
 }
-export function recommendations(attempts: Attempt[], reviews: Record<string, SkillReview> = {}, now = Date.now(), limit = 3) {
-  return SKILLS.map((s) => recommendForSkill(s.id, attempts, reviews, now)).sort((a, b) => b.priority - a.priority).slice(0, limit);
+export function recommendations(attempts: Attempt[], reviews: Record<string, SkillReview> = {}, now = Date.now(), limit = 3, goal: Goal = 'ENEM') {
+  return SKILLS.map((s) => recommendForSkill(s.id, attempts, reviews, now, goal)).sort((a, b) => b.priority - a.priority).slice(0, limit);
 }
 export { INTERVENTION_LABELS, MASTERY_LABEL, hasGenerator };

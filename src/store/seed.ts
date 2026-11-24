@@ -11,7 +11,7 @@ export const PERSONAS: Record<'iniciante' | 'avancado' | 'olimpico', { label: st
   },
   avancado: {
     label: 'Caio — avançado, instituto federal', desc: '3º ano, Instituto Federal, ENEM + vestibular (Engenharia Elétrica).',
-    profile: { nickname: 'Caio', grade: '3º ano do ensino médio', schoolType: 'federal', schoolId: 's1', institution: 'Instituto Federal Litoral Norte (fictício)', goal: 'Combinada', course: 'Engenharia Elétrica', difficulties: ['Linguagens', 'Humanas'], weeklyHours: 14, examYear: 2026, personalGoal: 'Média 780 no ENEM', persona: 'avancado' },
+    profile: { nickname: 'Caio', grade: '3º ano do ensino médio', schoolType: 'federal', schoolId: 's1', institution: 'Instituto Federal Litoral Norte (fictício)', goal: 'Combinada', course: 'Engenharia Elétrica', difficulties: ['Linguagens', 'Humanas'], weeklyHours: 14, examYear: 2027, personalGoal: 'Média 780 no ENEM', persona: 'avancado' },
   },
   olimpico: {
     label: 'Iara — foco em olimpíadas', desc: '1º ano, escola particular, olimpíadas de Matemática e Física.',

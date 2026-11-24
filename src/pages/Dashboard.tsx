@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [greeting, setGreeting] = useState(() => greetingFor(new Date().getHours()));
   useEffect(() => { const t = setInterval(() => setGreeting(greetingFor(new Date().getHours())), 60000); return () => clearInterval(t); }, []);
   const real = attempts.filter((a) => !a.free);
-  const recs = recommendations(real, skillReviews, Date.now(), 3);
+  const recs = recommendations(real, skillReviews, Date.now(), 3, profile?.goal);
   const m = allMastery(real);
   const strong = m.filter((x) => x.state === 'consistente' || x.state === 'provisorio');
   const attention = m.filter((x) => x.state === 'desenvolvimento' || x.regressed || x.fragile);

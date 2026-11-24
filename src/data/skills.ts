@@ -1,7 +1,8 @@
+import { INCIDENCE, tierOf } from './incidence';
 import type { Skill, Subject, Area, ErrorType, ErrorCause, InterventionCode } from '../types';
 
 // subtopic, competency (descrição autoral, não código oficial da matriz), prerequisites e examWeight alimentam o Motor de Domínio.
-const S = (id: string, name: string, subject: Subject, area: Area, subtopic: string, competency: string, prerequisites: string[], examWeight: 'alta' | 'media' | 'baixa', lessonId?: string): Skill => ({ id, name, subject, area, subtopic, competency, prerequisites, examWeight, lessonId });
+const S = (id: string, name: string, subject: Subject, area: Area, subtopic: string, competency: string, prerequisites: string[], examWeight: 'alta' | 'media' | 'baixa', lessonId?: string): Skill => ({ id, name, subject, area, subtopic, competency, prerequisites, examWeight: INCIDENCE[id] ? tierOf(id) : examWeight, lessonId });
 export const SKILLS: Skill[] = [
   S('mat-proporcao', 'Razão, proporção e regra de três', 'Matemática', 'Matemática', 'Grandezas diretamente e inversamente proporcionais', 'Resolver situações-problema com proporcionalidade', [], 'alta', 'l-proporcao'),
   S('fis-potencia', 'Potência elétrica e grandezas constantes', 'Física', 'Ciências da Natureza', 'Potência, tensão, corrente e resistência', 'Relacionar grandezas físicas em circuitos do cotidiano', ['mat-proporcao'], 'alta', 'l-potencia'),

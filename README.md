@@ -24,6 +24,17 @@ Sem chave, o backend responde 503 e a interface continua no **modo demonstrativo
 
 Todo perfil começa com **3 semanas de histórico fictício** (inclusive Lia, Caio e Iara). No cadastro, desmarque “Começar com dados de exemplo” para iniciar do zero.
 
+## Estratégia de preparação
+
+`src/data/incidence.ts` e `src/engine/strategy.ts` ordenam e dosam o estudo:
+
+- **Incidência:** assuntos que mais caem no ENEM (2016–2025, fonte: Dossiê ENEM 2025, Aprova Total) e assuntos-base têm prioridade. Vale metade para vestibular e preparação combinada, e não se aplica a olimpíadas.
+- **Carga de exercícios:** dose por relevância, encerrada pela segurança nas últimas respostas, com teto.
+- **Básico primeiro:** questões da mais fácil para a mais difícil.
+- **Recuperação ativa:** a sessão pede que o estudante recorde antes de reler.
+- **Fases:** base, consolidação (≤ 90 dias), reta final (≤ 30) e dias de prova (≤ 2). A data é estimada (primeiro domingo de novembro).
+- **Redação:** verifica cada parte do recorte temático e o detalhamento do agente.
+
 ## Metodologia: Diagnosticar → Investigar → Ensinar → Comprovar → Consolidar
 
 | Situação (hipótese revisável) | Intervenção |

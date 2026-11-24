@@ -14,7 +14,7 @@ const DAY = 86400000;
 
 export const DEMO_STUDENT: Profile = {
   nickname: 'Marina', grade: '3º ano do ensino médio', schoolType: 'publica', schoolId: 's2', institution: 'EEEFM Vale Verde (fictícia)',
-  goal: 'ENEM', course: 'Medicina', difficulties: ['Física', 'Matemática'], weeklyHours: 12, examYear: 2026,
+  goal: 'ENEM', course: 'Medicina', difficulties: ['Física', 'Matemática'], weeklyHours: 12, examYear: 2027,
   personalGoal: 'Passar de 750 pontos no ENEM', persona: 'custom',
 };
 

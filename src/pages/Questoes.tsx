@@ -25,9 +25,9 @@ export default function Questoes() {
 }
 
 function Bank({ initialSkill }: { initialSkill: string }) {
-  const { attempts, generated, skillReviews } = useStore();
+  const { attempts, generated, skillReviews, profile } = useStore();
   const [f, setF] = useState({ q: '', exam: '', subject: '', skill: initialSkill, difficulty: '', type: '', status: '', year: '', foco: '', origem: '' });
-  const recSkills = useMemo(() => new Set(recommendations(attempts, skillReviews, Date.now(), 5).map((r) => r.skillId)), [attempts, skillReviews]);
+  const recSkills = useMemo(() => new Set(recommendations(attempts, skillReviews, Date.now(), 5, profile?.goal).map((r) => r.skillId)), [attempts, skillReviews, profile?.goal]);
   const prereqSkills = useMemo(() => new Set([...recSkills].flatMap((s) => prerequisitesOf(s))), [recSkills]);
   const pool = useMemo(() => [...QUESTIONS, ...generated.filter((g) => g.status === 'aprovada').map((g) => g.q)], [generated]);
   const statusOf = (id: string) => { const a = attempts.filter((x) => x.qid === id).sort((x, y) => y.ts - x.ts)[0]; if (!a) return 'nao_resolvida'; if (!a.correct) return 'errada'; if (a.confidence !== 'certeza') return 'duvida'; return 'acertada'; };

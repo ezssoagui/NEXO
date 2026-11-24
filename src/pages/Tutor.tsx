@@ -23,7 +23,7 @@ export default function Tutor() {
     const ctxMsgs: Msg[] = [];
     if (!state.context) {
       const lastErr = [...attempts].reverse().find((a) => !a.correct && a.cause && a.cause !== 'indeterminada');
-      const rec = recommendations(attempts, useStore.getState().skillReviews, Date.now(), 1)[0];
+      const rec = recommendations(attempts, useStore.getState().skillReviews, Date.now(), 1, profile?.goal)[0];
       if (lastErr) ctxMsgs.push({ role: 'tutor', text: `Pelo seu histórico registrado: em ${new Date(lastErr.ts).toLocaleDateString('pt-BR')} a questão ${lastErr.qid} (${skillById(lastErr.skillId)?.name}) teve como causa provável **${CAUSE_LABELS[lastErr.cause!].label.toLowerCase()}**. Se quiser, retomamos esse ponto — ou pergunte o que preferir.`, reply: { text: '', actions: [{ label: 'Retomar esse ponto', to: `/tutor?q=${lastErr.qid}&a=${lastErr.id}` }] } });
       else if (rec && attempts.length) ctxMsgs.push({ role: 'tutor', text: `Seu Motor de Domínio recomenda agora: **${skillById(rec.skillId)?.name}** — ${rec.reason}` });
     }
