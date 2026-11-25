@@ -1,41 +1,88 @@
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, ArrowRight, RotateCw } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Check } from 'lucide-react';
+import type { Attempt, SessionRecord, SessionStep } from '../types';
 import { useStore } from '../store/useStore';
-import { buildSession } from '../engine/recommend';
-import { lessonById } from '../data/lessons';
-import { questionById } from '../data/questions';
-import { FLASHCARDS } from '../data/flashcards';
-import { skillById } from '../data/skills';
-import { selectTwin, isNone } from '../engine/twins';
+import { useAllCards, useDomains } from '../store/selectors';
+import { comparisonById } from '../data/comparisons';
+import { explainTaskById } from '../data/explainTasks';
+import { essaySkillById } from '../data/essaySkills';
+import { DIM_LABEL, DIM_STATUS_LABEL, skillName } from '../engine/domain';
+import { TYPE_LABEL } from '../engine/recommender';
+import { nextUnseen, unseenFor } from '../engine/strategy';
+import { chooseLevel, isNone, selectTwin, TWIN_LEVEL_LABEL } from '../engine/twins';
+import { isDue } from '../engine/fsrs';
 import QuestionPlayer from '../components/QuestionPlayer';
-import { PageHeader, Card, Progress, Badge, Rich, cx } from '../components/ui';
-import { evaluateParagraph } from '../engine/essay';
+import ExplainPlayer from '../components/ExplainPlayer';
+import { CardDeck, CompareCard, RecallCard, TeachCard } from '../components/Activities';
+import { EssayStep } from '../components/EssaySteps';
+import { Badge, Empty, Progress, StateBadge, cx, dimDot } from '../components/ui';
+import type { Dimension } from '../types';
 
+/** Sessão personalizada: cada etapa pode ser pulada; a sessão pode ser interrompida e retomada. */
 export default function Sessao() {
-  const [sp] = useSearchParams(); const min = (+(sp.get('min') ?? 10) || 10) as 5 | 10 | 20 | 40;
-  const { attempts, profile, cardStates, rateCard, addGenerated, addXP, notify } = useStore();
-  const session = useMemo(() => buildSession(min, attempts, profile), []); // eslint-disable-line
-  const [i, setI] = useState(0); const [answered, setAnswered] = useState(false);
-  const [flip, setFlip] = useState(false); const [cardIdx, setCardIdx] = useState(0);
-  const [para, setPara] = useState({ topico: '', repertorio: '', articulacao: '', consequencia: '' });
-  const twin = useMemo(() => { const st = session.steps.find((s) => s.kind === 'gemea'); if (!st) return null; const t = selectTwin(questionById(st.ref!)!, 1, attempts); if (isNone(t)) return null; if (t.kind === 'gerada') addGenerated({ q: t.q, validation: [{ check: 'Validação automática', ok: true, detail: 'Aprovada.' }], status: 'aprovada', request: 'Sessão', ts: Date.now() }); return t; }, []); // eslint-disable-line
-  const step = session.steps[i];
-  const cards = useMemo(() => { const sk = session.focus; const due = FLASHCARDS.filter((c) => cardStates[c.id] && cardStates[c.id].due <= Date.now()); const rel = FLASHCARDS.filter((c) => c.skillId === sk); return [...rel, ...due].filter((v, k, a) => a.indexOf(v) === k); }, []); // eslint-disable-line
-  const next = () => { setAnswered(false); setFlip(false); setCardIdx(0); if (i + 1 >= session.steps.length) addXP(10 + min, `Sessão de ${min} minutos concluída`, `sess-${new Date().toDateString()}-${min}`); setI(i + 1); };
-
-  if (!step) return (
-    <Card className="mx-auto max-w-xl text-center"><CheckCircle2 className="mx-auto text-mint-600" size={40} /><h1 className="mt-3 text-2xl font-bold">Sessão concluída!</h1><p className="muted mt-1">Foco de hoje: {skillById(session.focus)?.name}. Seu Radar de Domínio e o calendário de revisões foram atualizados.</p><div className="mt-5 flex justify-center gap-2"><Link to="/inicio" className="btn-primary">Voltar ao início</Link><Link to="/desempenho" className="btn-ghost">Ver desempenho</Link></div></Card>
-  );
+  const { id = '' } = useParams(); const nav = useNavigate(); const s = useStore((x) => x.sessions.find((y) => y.id === id)); const advance = useStore((x) => x.advanceSession); const abandon = useStore((x) => x.abandonSession);
+  if (!s) return <Empty title="Sessão não encontrada" action={<Link className="btn-primary" to="/percurso">Ver percurso</Link>} />;
+  if (s.status === 'concluida') return <Finished s={s} />;
+  const step = s.steps[s.idx]; const next = (outcome: SessionRecord['log'][number]['outcome'] = 'feita', ref?: string) => advance(s.id, outcome, ref);
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader title={min === 5 ? 'Meu Professor de 5 Minutos' : `Sessão de ${min} minutos`} subtitle={`Foco escolhido pela NEXO: ${skillById(session.focus)?.name}`} />
-      <div className="mb-5 flex flex-wrap gap-2">{session.steps.map((s, k) => <span key={k} className={cx('chip', k < i ? 'bg-mint-100 text-mint-800 dark:bg-mint-500/15 dark:text-mint-300' : k === i ? 'bg-navy-800 text-white' : 'bg-slate-100 text-slate-500 dark:bg-navy-800')}>{k + 1}. {s.title} · {s.minutes}′</span>)}</div>
-      <Progress value={i / session.steps.length} className="mb-5" />
-      {step.kind === 'explicacao' && (() => { const l = lessonById(step.ref!)!; return <Card><Badge tone="mint">{step.title}</Badge><h2 className="mt-2 text-xl font-bold">{l.title}</h2><Rich className="mt-2" text={l.micro} />{min >= 20 && l.explanation.slice(0, min === 40 ? 4 : 2).map((p) => <p key={p} className="my-2 text-sm leading-relaxed">{p}</p>)}<div className="mt-3 grid gap-2 sm:grid-cols-3">{l.visual.map((v) => <div key={v.label} className="rounded-xl bg-navy-50 p-3 text-center text-sm dark:bg-navy-800"><div className="muted text-xs">{v.label}</div><div className="font-bold">{v.value}</div></div>)}</div><div className="mt-4 flex gap-2"><button className="btn-primary" onClick={next}>Entendi, próxima etapa <ArrowRight size={16} /></button>{min === 40 && <Link to={`/aulas/${l.id}`} className="btn-ghost">Abrir aula completa</Link>}</div></Card>; })()}
-      {(step.kind === 'questao' || step.kind === 'gemea') && (() => { const q = step.kind === 'gemea' ? twin?.q : questionById(step.ref!); if (!q) return <button className="btn-primary" onClick={next}>Pular</button>; return <><QuestionPlayer key={q.id + i} q={q} mode="tutoria" isTwin={step.kind === 'gemea'} onDone={() => next()} />{!answered && <button className="muted mt-2 text-xs underline" onClick={next}>Pular etapa</button>}</>; })()}
-      {step.kind === 'flashcards' && (() => { const c = cards[cardIdx]; const total = Math.min(step.count ?? 1, cards.length); if (!c || cardIdx >= total) return <Card className="text-center"><p>Revisão concluída.</p><button className="btn-primary mt-3" onClick={next}>Continuar</button></Card>; return <Card className="text-center !p-8"><Badge>{cardIdx + 1}/{total}</Badge><p className="mt-4 text-lg font-bold">{c.front}</p>{flip ? <><p className="mt-4">{c.back}</p><div className="mt-6 grid grid-cols-3 gap-2">{(['errei', 'duvida', 'seguro'] as const).map((r) => <button key={r} className="btn-ghost" onClick={() => { notify(rateCard(c.id, r)); setFlip(false); setCardIdx(cardIdx + 1); }}>{({ errei: 'Não sei', duvida: 'Quase sei', seguro: 'Sei' } as const)[r]}</button>)}</div></> : <button className="btn-primary mt-6" onClick={() => setFlip(true)}><RotateCw size={16} /> Mostrar resposta</button>}</Card>; })()}
-      {step.kind === 'paragrafo' && <Card><h2 className="font-bold">Laboratório C3 · um parágrafo</h2><p className="muted text-sm">Tema livre entre os temas de redação. Siga a estrutura.</p>{(['topico', 'repertorio', 'articulacao', 'consequencia'] as const).map((k) => <textarea key={k} aria-label={k} className="input mt-2" rows={2} placeholder={{ topico: 'Tópico frasal', repertorio: 'Repertório', articulacao: 'Articulação argumentativa', consequencia: 'Consequência' }[k]} value={para[k]} onChange={(e) => setPara({ ...para, [k]: e.target.value })} />)}<button className="btn-primary mt-3" onClick={() => { const fb = evaluateParagraph(para); notify(`${fb.filter((f) => f.ok).length}/4 partes bem construídas.`); next(); }}>Analisar e concluir</button></Card>}
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-8"><p className="text-xs font-medium text-brand-700 dark:text-brand-300">{TYPE_LABEL[s.type]}</p><h1 className="mt-1 text-xl font-semibold">{s.title}</h1>
+        <Progress value={s.idx / s.steps.length} className="mt-4" label="Progresso da sessão" />
+        <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">{s.steps.map((x, i) => <li key={i} aria-current={i === s.idx ? 'step' : undefined} className={cx('flex items-center gap-1', i === s.idx ? 'font-medium text-ink-900 dark:text-white' : 'text-ink-400')}>{i < s.idx && <Check size={12} />}{x.title}</li>)}</ol>
+      </div>
+      <div key={`${s.id}-${s.idx}`} className="animate-fadeUp"><StepView s={s} step={step} next={next} /></div>
+      <div className="mt-10 flex gap-2 border-t border-ink-100 pt-4 dark:border-ink-800">{step.kind !== 'consolidacao' && <button className="btn-quiet text-xs" onClick={() => next('pulada')}>Pular etapa</button>}<button className="btn-quiet text-xs" onClick={() => nav('/percurso')}>Sair e continuar depois</button><button className="btn-quiet text-xs" onClick={() => { abandon(s.id); nav('/percurso'); }}>Encerrar</button></div>
     </div>
   );
+}
+type Next = (o?: SessionRecord['log'][number]['outcome'], ref?: string) => void;
+
+function StepView({ s, step, next }: { s: SessionRecord; step: SessionStep; next: Next }) {
+  const sk = step.skillId!; const cards = useAllCards(); const states = useStore((x) => x.cardStates); const seeLesson = useStore((x) => x.seeLesson);
+  const deck = useMemo(() => { const rel = cards.filter((c) => s.skillIds.includes(c.skillId) && (!states[c.id] || isDue(states[c.id]))); const due = cards.filter((c) => isDue(states[c.id])); return [...new Set([...rel, ...due])].slice(0, step.count ?? 6); }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
+  switch (step.kind) {
+    case 'aula': case 'microaula': case 'exemplo': case 'conceito': return <TeachCard kind={step.kind} skillId={sk} lessonId={step.ref} onDone={() => { if (step.ref) seeLesson(step.ref); next(); }} />;
+    case 'recordacao': return <RecallCard skillId={sk} onDone={() => next()} />;
+    case 'comparacao': { const c = comparisonById(step.ref!); return c ? <CompareCard c={c} onDone={() => next()} /> : <Skip next={next} />; }
+    case 'explicacao': { const t = explainTaskById(step.ref!); return t ? <ExplainPlayer task={t} context="sessao" onDone={(r) => next(r === 'demonstrada' ? 'acerto' : 'feita', t.id)} /> : <Skip next={next} />; }
+    case 'flashcards': return <CardDeck cards={deck} onDone={() => next()} />;
+    case 'verificacao': return <Check1 skillId={sk} s={s} next={next} />;
+    case 'gemea': case 'inedita': case 'exercicio': return <Series step={step} next={next} />;
+    case 'consolidacao': return <Consolidation s={s} next={next} />;
+    default: { const es = essaySkillById(step.ref!); return es ? <EssayStep kind={step.kind} skill={es} onDone={(ok) => next(ok ? 'acerto' : 'feita', es.id)} /> : <Skip next={next} />; }
+  }
+}
+const Skip = ({ next, text }: { next: Next; text?: string }) => <Empty title="Etapa indisponível" text={text ?? 'O material desta etapa não está mais disponível.'} action={<button className="btn-primary" onClick={() => next('pulada')}>Continuar</button>} />;
+
+/** Verificação inicial: se o estudante já sabe, pula a aula. */
+function Check1({ skillId, s, next }: { skillId: string; s: SessionRecord; next: Next }) {
+  const goto = useStore((x) => x.gotoSessionStep); const q = useMemo(() => nextUnseen(skillId, useStore.getState().attempts), [skillId]);
+  if (!q) return <Skip next={next} />;
+  const done = (a: Attempt) => {
+    next(a.correct ? 'acerto' : 'erro', q.id);
+    if (a.correct && a.confidence !== 'chute') { const after = s.steps.findIndex((x, i) => i > s.idx && !['aula', 'microaula', 'conceito', 'exemplo'].includes(x.kind)); if (after > s.idx + 1) goto(s.id, after); }
+  };
+  return <><p className="muted mb-4 text-sm">Antes da aula, uma questão para ver o que você já sabe. Se acertar com segurança, a explicação é dispensada.</p><QuestionPlayer q={q} mode="sessao" onDone={done} /></>;
+}
+
+/** Uma ou mais questões inéditas (gêmeas ou de integração). */
+function Series({ step, next }: { step: SessionStep; next: Next }) {
+  const [n, setN] = useState(0); const total = step.count ?? 1; const twin = step.kind === 'gemea';
+  const pick = useMemo(() => {
+    const st = useStore.getState();
+    if (twin) { const t = selectTwin(step.skillId!, chooseLevel(step.skillId!, st.attempts), st.attempts); if (isNone(t)) return null; if (t.kind === 'gerada') st.addGenerated({ q: t.q, validation: [], status: 'aprovada', request: 'Sessão', ts: Date.now() }); return t; }
+    const q = unseenFor(step.skillId!, st.attempts, { integrates: step.ref === 'integra' })[0] ?? nextUnseen(step.skillId!, st.attempts); return q ? { q, level: undefined, note: '' } : null;
+  }, [n, step, twin]); // eslint-disable-line react-hooks/exhaustive-deps -- n escolhe a próxima questão
+  if (!pick) return <Skip next={next} text="Não há, no momento, questão inédita e confiável. A comprovação fica para a revisão." />;
+  return <><div className="mb-4 flex flex-wrap items-center gap-2"><Badge tone="brand">{twin ? 'Questão gêmea' : step.ref === 'integra' ? 'Integração' : 'Questão inédita'}</Badge>{twin && pick.level && <Badge>{TWIN_LEVEL_LABEL[pick.level]}</Badge>}{total > 1 && <span className="muted text-xs">{n + 1} de {total}</span>}</div><QuestionPlayer key={pick.q.id} q={pick.q} mode="sessao" isTwin={twin} twinLevel={pick.level} onDone={(a) => (n + 1 < total ? setN(n + 1) : next(a.correct ? 'acerto' : 'erro', pick.q.id))} /></>;
+}
+
+function Consolidation({ s, next }: { s: SessionRecord; next: Next }) {
+  const domains = useDomains(); const reviews = useStore((x) => x.skillReviews);
+  return <div><Badge tone="brand">Consolidação</Badge><h2 className="mt-3 text-lg font-semibold">Como ficou</h2><ul className="mt-4 space-y-6">{s.skillIds.map((id) => { const d = domains.get(id)!; const r = reviews[id]; return <li key={id}><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-medium">{skillName(id)}</span><StateBadge state={d.state} /></div><div className="mt-2 grid gap-1.5 sm:grid-cols-2">{(Object.keys(DIM_LABEL) as Dimension[]).map((k) => <span key={k} className="muted flex items-center gap-2 text-xs"><span className={cx('h-2 w-2 rounded-full', dimDot(d.dims[k].status))} />{DIM_LABEL[k]}: {DIM_STATUS_LABEL[d.dims[k].status].toLowerCase()}</span>)}</div>{r && <p className="muted mt-2 text-xs">{r.due <= Date.now() ? 'Revisão disponível' : `Próxima revisão em ${Math.ceil((r.due - Date.now()) / 86400000)} dia(s)`}</p>}</li>; })}</ul><button className="btn-primary mt-8" onClick={() => next()}>Concluir sessão</button></div>;
+}
+function Finished({ s }: { s: SessionRecord }) {
+  const ok = s.log.filter((l) => l.outcome === 'acerto').length; const skipped = s.log.filter((l) => l.outcome === 'pulada').length;
+  return <div className="mx-auto max-w-xl pt-8"><Empty title="Sessão concluída" text={`${s.title}. ${s.log.length - skipped} etapa(s) feita(s)${skipped ? `, ${skipped} pulada(s)` : ''}${ok ? `, ${ok} comprovação(ões)` : ''}.`} action={<><Link className="btn-primary" to="/inicio">Início</Link>{s.skillIds[0] && <Link className="btn-ghost" to={`/conteudos/habilidade/${s.skillIds[0]}`}>Ver evidências</Link>}</>} /></div>;
 }

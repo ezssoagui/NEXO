@@ -1,76 +1,91 @@
-import type { Skill, Subject, Area, ErrorType, ErrorCause, InterventionCode } from '../types';
+import type { Area, ErrorCategory, ErrorType, Skill, Subject } from '../types';
 
-// subtopic, competency (descrição autoral, não código oficial da matriz), prerequisites e examWeight alimentam o Motor de Domínio.
-const S = (id: string, name: string, subject: Subject, area: Area, subtopic: string, competency: string, prerequisites: string[], examWeight: 'alta' | 'media' | 'baixa', lessonId?: string): Skill => ({ id, name, subject, area, subtopic, competency, prerequisites, examWeight, lessonId });
+/**
+ * REGISTRO DE HABILIDADES avaliáveis no protótipo (as que possuem atividades cadastradas).
+ * A posição de cada uma na hierarquia curricular está em curriculum.ts; `matrix` aponta para a matriz oficial (matrix.ts).
+ * Para cadastrar uma nova habilidade: inclua-a aqui e no conteúdo correspondente do currículo.
+ */
+const CN: Area = 'Ciências da Natureza', CH: Area = 'Ciências Humanas', LC: Area = 'Linguagens', MT: Area = 'Matemática';
+const S = (id: string, name: string, subject: Subject, area: Area, matrix: string[], prerequisites: string[] = [], lessonId?: string): Skill => ({ id, name, subject, area, matrix, prerequisites, lessonId });
+
 export const SKILLS: Skill[] = [
-  S('mat-proporcao', 'Razão, proporção e regra de três', 'Matemática', 'Matemática', 'Grandezas diretamente e inversamente proporcionais', 'Resolver situações-problema com proporcionalidade', [], 'alta', 'l-proporcao'),
-  S('fis-potencia', 'Potência elétrica e grandezas constantes', 'Física', 'Ciências da Natureza', 'Potência, tensão, corrente e resistência', 'Relacionar grandezas físicas em circuitos do cotidiano', ['mat-proporcao'], 'alta', 'l-potencia'),
-  S('fis-cinematica', 'Velocidade média e conversão de unidades', 'Física', 'Ciências da Natureza', 'Movimento uniforme e unidades', 'Interpretar movimentos e converter unidades', ['mat-proporcao'], 'media', 'l-cinematica'),
-  S('fis-energia', 'Conservação da energia mecânica', 'Física', 'Ciências da Natureza', 'Energia potencial e cinética', 'Aplicar princípios de conservação', ['fis-cinematica'], 'media', 'l-energia'),
-  S('fis-ondas', 'Ondas: velocidade, frequência e comprimento', 'Física', 'Ciências da Natureza', 'Equação fundamental da ondulatória', 'Relacionar grandezas ondulatórias', ['mat-proporcao'], 'media'),
-  S('qui-equilibrio', 'Deslocamento de equilíbrio (Le Chatelier)', 'Química', 'Ciências da Natureza', 'Fatores que deslocam o equilíbrio', 'Prever o comportamento de sistemas químicos', [], 'media', 'l-equilibrio'),
-  S('qui-estequiometria', 'Estequiometria e proporção em mols', 'Química', 'Ciências da Natureza', 'Relações massa–mol–coeficientes', 'Quantificar transformações químicas', ['mat-proporcao'], 'alta', 'l-esteq'),
-  S('qui-concentracao', 'Concentração de soluções', 'Química', 'Ciências da Natureza', 'Porcentagem m/V e concentração comum', 'Quantificar soluções do cotidiano', ['mat-proporcao'], 'media', 'l-solucoes'),
-  S('qui-ph', 'pH e caráter ácido-básico', 'Química', 'Ciências da Natureza', 'Escala de pH', 'Interpretar acidez em contextos ambientais', ['qui-concentracao'], 'media', 'l-solucoes'),
-  S('bio-hormonios', 'Hormônios e efeitos fisiológicos', 'Biologia', 'Ciências da Natureza', 'Controle da glicemia', 'Relacionar hormônios a efeitos fisiológicos', [], 'media', 'l-hormonios'),
-  S('bio-ecologia', 'Cadeias alimentares e bioacumulação', 'Biologia', 'Ciências da Natureza', 'Magnificação trófica', 'Analisar impactos ambientais em ecossistemas', [], 'alta'),
-  S('bio-genetica', 'Genética mendeliana e probabilidade', 'Biologia', 'Ciências da Natureza', 'Primeira Lei de Mendel', 'Calcular probabilidades em heranças', ['mat-probabilidade'], 'media', 'l-genetica'),
-  S('mat-porcentagem', 'Porcentagem e variações sucessivas', 'Matemática', 'Matemática', 'Fatores de aumento e desconto', 'Resolver problemas com porcentagem', ['mat-proporcao'], 'alta', 'l-porcentagem'),
-  S('mat-probabilidade', 'Probabilidade', 'Matemática', 'Matemática', 'Espaço amostral e eventos', 'Quantificar incertezas', ['mat-proporcao'], 'media', 'l-probabilidade'),
-  S('mat-funcoes', 'Função afim em contexto', 'Matemática', 'Matemática', 'Parte fixa e taxa de variação', 'Modelar situações com funções', ['mat-proporcao'], 'media'),
-  S('mat-geometria', 'Volume e capacidade', 'Matemática', 'Matemática', 'Volume de sólidos e conversão m³/L', 'Calcular medidas em situações reais', ['mat-proporcao'], 'media'),
-  S('mat-estatistica', 'Média, mediana e moda', 'Matemática', 'Matemática', 'Medidas de tendência central', 'Interpretar dados estatísticos', [], 'alta'),
-  S('mat-teoria-numeros', 'Aritmética modular (olimpíada)', 'Matemática', 'Matemática', 'Restos e periodicidade', 'Demonstrar propriedades numéricas', [], 'baixa'),
-  S('lin-interpretacao', 'Interpretação e estratégia argumentativa', 'Linguagens', 'Linguagens', 'Tese, prova textual e eliminação', 'Compreender e analisar textos argumentativos', [], 'alta', 'l-cpe'),
-  S('lin-funcoes', 'Funções da linguagem', 'Linguagens', 'Linguagens', 'Emissor, receptor e mensagem', 'Reconhecer intenções comunicativas', [], 'media'),
-  S('hum-historia', 'Era Vargas e trabalho', 'Humanas', 'Ciências Humanas', 'Trabalhismo e Estado Novo', 'Relacionar processos históricos e cidadania', [], 'media', 'l-vargas'),
-  S('hum-geografia', 'Urbanização brasileira', 'Humanas', 'Ciências Humanas', 'Periferização e segregação', 'Analisar a produção do espaço urbano', [], 'alta'),
-  S('hum-filosofia', 'Contratualismo', 'Humanas', 'Ciências Humanas', 'Hobbes, Locke e Rousseau', 'Comparar concepções de Estado', [], 'media'),
+  // Física
+  S('fis-cinematica', 'Velocidade média e conversão de unidades', 'Física', CN, ['CN-H20'], ['mat-proporcao'], 'l-cinematica'),
+  S('fis-dinamica', 'Força resultante e leis de Newton', 'Física', CN, ['CN-H20'], ['fis-cinematica'], 'l-dinamica'),
+  S('fis-centripeta', 'Força centrípeta', 'Física', CN, ['CN-H20'], ['fis-dinamica'], 'l-dinamica'),
+  S('fis-energia', 'Conservação da energia mecânica', 'Física', CN, ['CN-H20', 'CN-H23'], ['fis-cinematica'], 'l-energia'),
+  S('fis-ondas', 'Velocidade, frequência e comprimento de onda', 'Física', CN, ['CN-H1'], ['mat-proporcao']),
+  S('fis-potencia', 'Potência elétrica e grandezas constantes', 'Física', CN, ['CN-H5', 'CN-H21'], ['mat-proporcao'], 'l-potencia'),
+  S('fis-energia-eletrica', 'Consumo de energia elétrica', 'Física', CN, ['CN-H5', 'CN-H6'], ['fis-potencia'], 'l-potencia'),
+  S('fis-campo-magnetico', 'Campo magnético', 'Física', CN, ['CN-H21'], ['fis-potencia'], 'l-magnetismo'),
+  S('fis-forca-magnetica', 'Força magnética', 'Física', CN, ['CN-H21'], ['fis-campo-magnetico', 'fis-dinamica'], 'l-magnetismo'),
+  S('fis-inducao', 'Indução eletromagnética', 'Física', CN, ['CN-H21', 'CN-H23'], ['fis-campo-magnetico'], 'l-magnetismo'),
+  // Química
+  S('qui-separacao', 'Separação de misturas', 'Química', CN, ['CN-H8', 'CN-H18']),
+  S('qui-estequiometria', 'Estequiometria e proporção em mols', 'Química', CN, ['CN-H25'], ['mat-proporcao'], 'l-esteq'),
+  S('qui-concentracao', 'Concentração de soluções', 'Química', CN, ['CN-H24', 'CN-H25'], ['mat-proporcao'], 'l-solucoes'),
+  S('qui-ph', 'pH e caráter ácido-básico', 'Química', CN, ['CN-H24', 'CN-H27'], ['qui-concentracao'], 'l-solucoes'),
+  S('qui-equilibrio', 'Deslocamento de equilíbrio (Le Chatelier)', 'Química', CN, ['CN-H24', 'CN-H21'], [], 'l-equilibrio'),
+  S('qui-eletroquimica', 'Pilhas e oxirredução', 'Química', CN, ['CN-H21', 'CN-H26']),
+  // Biologia
+  S('bio-citologia', 'Transporte através da membrana', 'Biologia', CN, ['CN-H14', 'CN-H15']),
+  S('bio-hormonios', 'Hormônios e controle da glicemia', 'Biologia', CN, ['CN-H14'], [], 'l-hormonios'),
+  S('bio-osmorregulacao', 'Osmorregulação: ADH e aldosterona', 'Biologia', CN, ['CN-H14'], [], 'l-osmorregulacao'),
+  S('bio-ecologia', 'Cadeias alimentares e bioacumulação', 'Biologia', CN, ['CN-H9', 'CN-H10']),
+  S('bio-genetica', 'Genética mendeliana', 'Biologia', CN, ['CN-H13'], ['mat-probabilidade'], 'l-genetica'),
+  // Matemática
+  S('mat-proporcao', 'Razão, proporção e regra de três', 'Matemática', MT, ['MT-H16'], [], 'l-proporcao'),
+  S('mat-porcentagem', 'Porcentagem e variações sucessivas', 'Matemática', MT, ['MT-H3'], ['mat-proporcao'], 'l-porcentagem'),
+  S('mat-estatistica', 'Média, mediana e moda', 'Matemática', MT, ['MT-H27']),
+  S('mat-probabilidade', 'Probabilidade', 'Matemática', MT, ['MT-H28'], ['mat-proporcao'], 'l-probabilidade'),
+  S('mat-funcoes', 'Função afim em contexto', 'Matemática', MT, ['MT-H20', 'MT-H21'], ['mat-proporcao']),
+  S('mat-quadratica', 'Função quadrática em contexto', 'Matemática', MT, ['MT-H21'], ['mat-funcoes']),
+  S('mat-areas', 'Áreas de figuras planas', 'Matemática', MT, ['MT-H8'], ['mat-proporcao']),
+  S('mat-geometria', 'Volume e capacidade', 'Matemática', MT, ['MT-H8', 'MT-H12'], ['mat-areas']),
+  // Linguagens
+  S('lin-interpretacao', 'Interpretação e estratégia argumentativa', 'Linguagens', LC, ['LC-H23', 'LC-H24'], [], 'l-cpe'),
+  S('lin-generos', 'Gêneros textuais e sua função social', 'Linguagens', LC, ['LC-H18', 'LC-H21']),
+  S('lin-funcoes', 'Funções da linguagem', 'Linguagens', LC, ['LC-H19']),
+  S('lin-variacao', 'Variação linguística', 'Linguagens', LC, ['LC-H25', 'LC-H26']),
+  S('lit-leitura', 'Leitura do texto literário', 'Linguagens', LC, ['LC-H16', 'LC-H17'], ['lin-interpretacao']),
+  S('lin-ingles', 'Leitura em língua inglesa', 'Linguagens', LC, ['LC-H5', 'LC-H7']),
+  // Ciências Humanas
+  S('his-colonia', 'Escravidão e resistência no Brasil', 'Humanas', CH, ['CH-H3', 'CH-H15']),
+  S('hum-historia', 'Era Vargas e trabalho', 'Humanas', CH, ['CH-H22'], [], 'l-vargas'),
+  S('hum-geografia', 'Urbanização brasileira', 'Humanas', CH, ['CH-H18', 'CH-H19']),
+  S('geo-agrario', 'Espaço agrário brasileiro', 'Humanas', CH, ['CH-H18', 'CH-H19']),
+  S('hum-filosofia', 'Contratualismo', 'Humanas', CH, ['CH-H23', 'CH-H24']),
+  S('fil-antiga', 'Sócrates e os sofistas', 'Humanas', CH, ['CH-H14', 'CH-H23']),
+  S('soc-cultura', 'Indústria cultural', 'Humanas', CH, ['CH-H21', 'CH-H4']),
+  S('soc-movimentos', 'Movimentos sociais e cidadania', 'Humanas', CH, ['CH-H13', 'CH-H22']),
 ];
 
 export const skillById = (id: string) => SKILLS.find((s) => s.id === id);
-export const SUBJECTS: Subject[] = ['Matemática', 'Física', 'Química', 'Biologia', 'Linguagens', 'Humanas'];
-export const AREAS: Area[] = ['Linguagens', 'Matemática', 'Ciências da Natureza', 'Ciências Humanas'];
+export const prerequisitesOf = (id: string) => skillById(id)?.prerequisites ?? [];
+/** Áreas corrigidas com o método CPE (as demais usam o formulário de classificação de erros). */
+export const isVerbalArea = (area: Area) => area === 'Linguagens' || area === 'Ciências Humanas';
 
+/** Erro típico associado a uma alternativa (evidência fraca: nunca define sozinha a causa). */
 export const ERROR_LABELS: Record<ErrorType, { label: string; tip: string }> = {
   lacuna_conceitual: { label: 'Lacuna conceitual', tip: 'Volte à explicação do conceito antes de novas questões.' },
-  interpretacao: { label: 'Interpretação inadequada', tip: 'Releia o comando e sublinhe o que é pedido (C do C-P-E).' },
-  formula_incorreta: { label: 'Fórmula ou procedimento incorreto', tip: 'Liste as fórmulas possíveis e escolha pela informação disponível.' },
-  grandeza_constante: { label: 'Não reconheceu a grandeza constante', tip: 'Antes de calcular, pergunte: o que NÃO muda nesta situação?' },
-  calculo: { label: 'Erro de cálculo', tip: 'Refaça a conta com estimativa de ordem de grandeza.' },
+  interpretacao: { label: 'Interpretação inadequada', tip: 'Releia o comando e sublinhe o que é pedido.' },
+  formula_incorreta: { label: 'Relação ou procedimento inadequado', tip: 'Liste as relações possíveis e escolha pela informação disponível.' },
+  grandeza_constante: { label: 'Grandeza constante não reconhecida', tip: 'Antes de calcular, pergunte: o que NÃO muda nesta situação?' },
+  calculo: { label: 'Erro de cálculo', tip: 'Refaça a conta estimando a ordem de grandeza.' },
   unidades: { label: 'Conversão de unidades', tip: 'Escreva as unidades em cada passo e converta antes de substituir.' },
-  desatencao: { label: 'Desatenção', tip: 'Confira o enunciado ao final: a resposta responde exatamente ao que foi pedido?' },
-  alternativas_plausiveis: { label: 'Confusão entre alternativas plausíveis', tip: 'Use o E do C-P-E: procure excesso, generalização ou inversão.' },
-  chute: { label: 'Acerto por chute', tip: 'O acerto não conta como domínio. Faça uma questão semelhante.' },
-  memorizacao: { label: 'Falha de memorização/recuperação', tip: 'Transforme em flashcard e revise em intervalos crescentes.' },
+  desatencao: { label: 'Leitura incompleta', tip: 'Confira se a resposta atende exatamente ao que foi pedido.' },
+  alternativas_plausiveis: { label: 'Confusão entre alternativas próximas', tip: 'Procure excesso, generalização ou inversão.' },
+  memorizacao: { label: 'Falha de recuperação', tip: 'Transforme em flashcard e revise em intervalos crescentes.' },
 };
 
-export const SUBJECT_COLORS: Record<Subject, string> = {
-  'Matemática': '#2f5494', 'Física': '#0a9573', 'Química': '#7c3aed', 'Biologia': '#16a34a', 'Linguagens': '#d97706', 'Humanas': '#db2777',
-};
-
-export const prerequisitesOf = (id: string) => skillById(id)?.prerequisites ?? [];
-
-export const CAUSE_LABELS: Record<ErrorCause, { label: string; tip: string }> = {
-  conceitual: { label: 'Erro conceitual', tip: 'Falta ou confusão de um conceito.' },
-  interpretacao: { label: 'Erro de interpretação', tip: 'O comando ou o texto foi lido de outra forma.' },
-  calculo: { label: 'Erro de cálculo', tip: 'Procedimento certo, operação errada.' },
-  formula: { label: 'Erro de aplicação de fórmula', tip: 'Relação escolhida ou aplicada de forma inadequada.' },
-  unidade: { label: 'Erro de unidade ou conversão', tip: 'Unidades não convertidas ou convertidas errado.' },
-  atencao: { label: 'Erro de atenção', tip: 'Leitura incompleta ou distração.' },
-  esquecimento: { label: 'Esquecimento', tip: 'Já demonstrado antes, mas não recuperado agora.' },
-  confusao_alternativas: { label: 'Confusão entre alternativas', tip: 'Dúvida entre opções plausíveis.' },
-  lacuna_prerequisito: { label: 'Lacuna de pré-requisito', tip: 'Depende de um conhecimento anterior ainda não dominado.' },
-  indeterminada: { label: 'Causa ainda indeterminada', tip: 'Ainda não há evidência suficiente.' },
-};
-
-export const INTERVENTION_LABELS: Record<InterventionCode, { label: string; desc: string }> = {
-  nenhuma: { label: 'Sem intervenção', desc: 'Seguir em frente.' },
-  A: { label: 'A — Dica progressiva', desc: 'Pistas graduais, sem entregar a resposta.' },
-  B: { label: 'B — Tutoria socrática', desc: 'Uma pergunta por vez para reconstruir o raciocínio.' },
-  C: { label: 'C — Microaula', desc: 'Explicação curta e contextualizada do conceito que falta.' },
-  D: { label: 'D — Aula estruturada', desc: 'Fundamentos, exemplos, aplicações e exercícios.' },
-  E: { label: 'E — Correção direta', desc: 'Aponta o erro de forma breve.' },
-  F: { label: 'F — Reconstrução do procedimento', desc: 'Refaz a resolução etapa por etapa.' },
-  G: { label: 'G — Revisão de pré-requisitos', desc: 'Verifica e reforça o conhecimento anterior necessário.' },
-};
+/** Formulário opcional de Matemática e Ciências da Natureza (autoclassificação = evidência, não verdade absoluta). */
+export const ERROR_CATEGORIES: { id: ErrorCategory; label: string; hint: string }[] = [
+  { id: 'lacuna', label: 'Lacuna de conhecimento', hint: 'Não conhecia o conteúdo.' },
+  { id: 'conceitual', label: 'Conceitual', hint: 'Compreendia incorretamente o conceito.' },
+  { id: 'interpretativa', label: 'Interpretativa', hint: 'Não interpretei corretamente o enunciado.' },
+  { id: 'aplicacao', label: 'Aplicação', hint: 'Conhecia a teoria, mas não sabia utilizá-la.' },
+  { id: 'procedimental', label: 'Procedimental', hint: 'Errei o cálculo ou alguma etapa.' },
+  { id: 'atencao', label: 'Atenção', hint: 'Sabia resolver, mas cometi um descuido.' },
+  { id: 'nao_sei', label: 'Não sei identificar', hint: '' },
+];
+export const errorCategoryLabel = (id: ErrorCategory) => ERROR_CATEGORIES.find((c) => c.id === id)!.label;

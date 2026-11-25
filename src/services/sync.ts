@@ -21,9 +21,8 @@ export async function connect(mode: 'login' | 'register', nickname: string, pass
   const r = await api(`/api/auth/${mode}`, { body: { nickname, password, adminCode } });
   const st = useStore.getState();
   st.setAccount({ nickname: r.nickname, token: r.token, role: r.role });
-  if (r.role === 'admin') st.loginRole('admin');
   const remote = await api('/api/learning/state', { token: r.token });
-  if (remote?.state && (remote.state.attempts?.length ?? 0) >= st.attempts.length) st.hydrate({ ...remote.state, role: r.role === 'admin' ? st.role : remote.state.role });
+  if (remote?.state && (remote.state.attempts?.length ?? 0) >= st.attempts.length) st.hydrate(remote.state);
   else await push();
   useStore.getState().setAccount({ ...useStore.getState().account!, syncedAt: Date.now() });
   return r;
@@ -40,12 +39,12 @@ let started = false;
 /** Sincroniza automaticamente (com atraso) sempre que o estado muda e há conta conectada. */
 export function startSync() {
   if (started) return; started = true;
-  let timer: ReturnType<typeof setTimeout> | undefined; let lastAttempts = -1, lastXp = -1, lastCards = '';
+  let timer: ReturnType<typeof setTimeout> | undefined; let last = '';
   useStore.subscribe((s) => {
     if (!s.account) return;
-    const cards = Object.keys(s.cardStates).length + ':' + s.essays.length + ':' + s.cycles.length;
-    if (s.attempts.length === lastAttempts && s.xpEvents.length === lastXp && cards === lastCards) return;
-    lastAttempts = s.attempts.length; lastXp = s.xpEvents.length; lastCards = cards;
+    const sig = [s.attempts.length, s.explanations.length, s.sessions.length, s.pendings.length, s.essayPractice.length, Object.keys(s.cardStates).length, s.essays.reduce((n, e) => n + e.versions.length, 0), s.activities.length].join(':');
+    if (sig === last) return;
+    last = sig;
     clearTimeout(timer);
     timer = setTimeout(() => push().then(() => { const a = useStore.getState().account; if (a) useStore.getState().setAccount({ ...a, syncedAt: Date.now() }); }).catch((e) => useStore.getState().notify(`Não foi possível sincronizar: ${e.message}`)), 2000);
   });

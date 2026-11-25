@@ -3,8 +3,8 @@ import { QUESTIONS } from '../data/questions';
 import { skillById } from '../data/skills';
 
 /**
- * Gerador DEMONSTRATIVO de questões originais: templates paramétricos + validação automática.
- * Em produção, este módulo seria substituído por um provedor de LLM chamado no servidor, mantendo a mesma etapa de validação.
+ * Gerador PARAMÉTRICO de questões gêmeas (não é IA): modelos com números variáveis + validação automática que recalcula o gabarito.
+ * O que sai daqui nunca é apresentado como revisado por pessoas.
  */
 const fmt = (n: number, d = 2) => n.toLocaleString('pt-BR', { maximumFractionDigits: d });
 const pick = <T,>(a: T[], r: () => number) => a[Math.floor(r() * a.length)];
@@ -135,19 +135,37 @@ const GENERATORS: Record<string, { label: string; keywords: string[]; make: (r: 
       };
     },
   },
+  'fis-forca-magnetica': { label: 'Força magnética em fio', keywords: [], make: (r) => {
+    const B = pick([0.1, 0.2, 0.3, 0.5], r), i = pick([2, 4, 5, 6], r), L = pick([0.4, 0.5, 0.8, 1.5], r); const ans = B * i * L;
+    return simple({ skillId: 'fis-forca-magnetica', topic: 'Magnetismo', unit: 'N', ans, context: `Em um alto-falante didático, um trecho de fio de ${fmt(L)} m conduz corrente de ${fmt(i)} A, perpendicular a um campo magnético uniforme de ${fmt(B)} T.`, statement: 'A intensidade da força magnética sobre esse trecho, em newton, é', wrong: [[B * i, 'desatencao', 'Esqueceu o comprimento do fio.'], [B * L, 'desatencao', 'Esqueceu a corrente.'], [(B * i) / L, 'formula_incorreta', 'Dividiu pelo comprimento em vez de multiplicar.'], [i * L, 'desatencao', 'Esqueceu o campo.']], recompute: () => L * (i * B), explanation: `F = B·i·L = ${fmt(B)}·${fmt(i)}·${fmt(L)} = ${fmt(ans, 3)} N.`, fast: 'Multiplique B, i e L.', card: ['Força sobre fio perpendicular ao campo?', 'F = B·i·L'] });
+  } },
+  'fis-energia-eletrica': { label: 'Consumo de energia', keywords: [], make: (r) => {
+    const P = pick([150, 200, 500, 1200], r), h = pick([2, 3, 4, 6], r); const ans = (P / 1000) * h * 30; const ap = pick(['ventilador', 'computador', 'refrigerador de bancada', 'ar-condicionado portátil'], r);
+    return simple({ skillId: 'fis-energia-eletrica', topic: 'Eletrodinâmica', unit: 'kWh', ans, context: `Um ${ap} de ${fmt(P)} W permanece ligado ${h} horas por dia em um escritório.`, statement: 'A energia consumida em 30 dias, em kWh, é', wrong: [[P * h * 30, 'unidades', 'Não converteu watt para quilowatt.'], [(P / 1000) * h, 'desatencao', 'É o consumo de um único dia.'], [(P / 1000) * 30, 'desatencao', 'Considerou uma hora por dia.'], [(P / 1000) * h * 365, 'interpretacao', 'Considerou um ano inteiro.']], recompute: () => (P * h * 30) / 1000, explanation: `E = ${fmt(P / 1000)} kW × ${h * 30} h = ${fmt(ans)} kWh.`, fast: 'kW × horas no mês.', card: ['Energia em kWh?', 'P(kW) × t(h)'] });
+  } },
+  'fis-dinamica': { label: 'Segunda lei de Newton', keywords: [], make: (r) => {
+    const m = pick([4, 5, 8, 20], r), a = pick([2, 3, 5], r), at = pick([8, 10, 12], r); const F = m * a + at;
+    return simple({ skillId: 'fis-dinamica', topic: 'Dinâmica', unit: 'm/s²', ans: a, context: `Um carrinho de ${m} kg é empurrado por uma força horizontal de ${F} N em um corredor cujo piso exerce atrito de ${at} N.`, statement: 'A aceleração do carrinho, em m/s², é', wrong: [[F / m, 'desatencao', 'Ignorou o atrito.'], [(F + at) / m, 'formula_incorreta', 'Somou o atrito.'], [F - at, 'interpretacao', 'É a força resultante, não a aceleração.'], [at / m, 'interpretacao', 'Usou só o atrito.']], recompute: () => (F - at) / m, explanation: `a = (${F} − ${at})/${m} = ${fmt(a)} m/s².`, fast: 'Resultante ÷ massa.', card: ['2ª lei de Newton?', 'F resultante = m·a'] });
+  } },
+  'mat-estatistica': { label: 'Média ponderada', keywords: [], make: (r) => {
+    const p1 = pick([1, 2], r), p2 = pick([3, 4], r), n1 = pick([4, 5, 6], r), n2 = pick([7, 8, 9], r); const ans = (p1 * n1 + p2 * n2) / (p1 + p2);
+    return simple({ skillId: 'mat-estatistica', topic: 'Estatística', unit: 'pontos', ans, context: `Em um processo seletivo, a entrevista tem peso ${p1} e a prova escrita tem peso ${p2}. Um candidato obteve ${n1} na entrevista e ${n2} na prova escrita.`, statement: 'A média ponderada do candidato é', wrong: [[(n1 + n2) / 2, 'lacuna_conceitual', 'Média simples, sem pesos.'], [(p2 * n1 + p1 * n2) / (p1 + p2), 'desatencao', 'Trocou os pesos.'], [p1 * n1 + p2 * n2, 'desatencao', 'Não dividiu pela soma dos pesos.'], [(p1 * n1 + p2 * n2) / 2, 'formula_incorreta', 'Dividiu por 2.']], recompute: () => (n2 * p2 + n1 * p1) / (p2 + p1), explanation: `(${p1}·${n1} + ${p2}·${n2})/(${p1} + ${p2}) = ${fmt(ans)}.`, fast: 'Some valor × peso e divida pela soma dos pesos.', card: ['Média ponderada?', 'Σ(valor × peso)/Σ pesos'] });
+  } },
+  'mat-proporcao': { label: 'Proporção inversa', keywords: [], make: (r) => {
+    const a = pick([4, 6, 8], r), t = pick([6, 9, 12], r), k = pick([2, 3], r); const ans = t / k;
+    return simple({ skillId: 'mat-proporcao', topic: 'Proporção', unit: 'h', ans, context: `${a} impressoras idênticas, no mesmo ritmo, concluem um pedido em ${t} horas. A gráfica usará ${a * k} impressoras iguais no próximo pedido, de mesmo tamanho.`, statement: 'O tempo necessário, em horas, será de', wrong: [[t * k, 'formula_incorreta', 'Tratou como proporção direta.'], [t, 'desatencao', 'Manteve o tempo.'], [Math.max(0.5, t - k), 'formula_incorreta', 'Subtraiu em vez de dividir.'], [t / (k * k), 'calculo', 'Dividiu duas vezes.']], recompute: () => (a * t) / (a * k), explanation: `Inversa: ${a}·${t} = ${a * k}·x → x = ${fmt(ans)} h.`, fast: 'Mais máquinas, menos tempo: divida.', card: ['Grandezas inversas: o que é constante?', 'O produto.'] });
+  } },
 };
+
+/** Modelo compacto: gabarito e distratores numéricos ligados a erros típicos. */
+interface Simple { skillId: string; topic: string; unit: string; ans: number; context: string; statement: string; wrong: [number, ErrorType, string][]; recompute: () => number; explanation: string; fast: string; card: [string, string] }
+function simple(x: Simple): Draft {
+  const sk = skillById(x.skillId)!;
+  return { topic: x.topic, subject: sk.subject, area: sk.area, lessonId: sk.lessonId, unit: x.unit, context: x.context, statement: x.statement, correct: { v: x.ans, text: `${fmt(x.ans, 3)}.` }, distractors: x.wrong.map(([v, errorType, analysis]) => ({ v, text: `${fmt(v, 3)}.`, errorType, analysis, tutorPrompt: analysis })), recompute: x.recompute, hints: ['', '', ''], explanation: x.explanation, fastMethod: x.fast, flashcard: { front: x.card[0], back: x.card[1] } };
+}
 
 export const hasGenerator = (id: string) => !!GENERATORS[id];
 export const GENERATOR_SKILLS = Object.entries(GENERATORS).map(([id, g]) => ({ id, label: g.label }));
-
-export function parseRequest(text: string) {
-  const t = text.toLowerCase();
-  const nums: Record<string, number> = { uma: 1, um: 1, duas: 2, dois: 2, 'três': 3, tres: 3, quatro: 4, cinco: 5 };
-  let qty = 1; const m = t.match(/(\d+)\s*quest/); if (m) qty = +m[1]; else Object.entries(nums).forEach(([w, n]) => { if (new RegExp(`\\b${w}\\s+quest`).test(t)) qty = n; });
-  const skill = Object.entries(GENERATORS).find(([, g]) => g.keywords.some((k) => t.includes(k)))?.[0];
-  const difficulty: Difficulty = /difíc|dificil|avançad/.test(t) ? 'Difícil' : /fácil|facil|básic/.test(t) ? 'Fácil' : 'Média';
-  return { qty: Math.min(5, Math.max(1, qty)), skill, difficulty };
-}
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 
@@ -165,7 +183,7 @@ export function generate(skillId: string, opts: { difficulty?: Difficulty; seed?
   const alternatives: Alternative[] = alts.map((a, i) => ({ letter: LETTERS[i], text: a.text, correct: a.ok || undefined, analysis: a.analysis, errorType: a.errorType, tutorPrompt: a.tutorPrompt }));
   const id = `G-${String(seq++).padStart(2, '0')}-${Math.floor(r() * 900 + 100)}`;
   const q: Question = {
-    id, exam: 'ENEM', style: 'Estilo ENEM (gerada)', subject: d.subject, area: d.area, topic: d.topic, skillId, year: new Date().getFullYear(), difficulty: opts.difficulty ?? 'Média',
+    id, exam: 'ENEM', style: 'Estilo ENEM (modelo paramétrico)', subject: d.subject, area: d.area, topic: d.topic, skillId, year: new Date().getFullYear(), difficulty: opts.difficulty ?? 'Média',
     type: 'objetiva', source: 'gerada_ia_demo', context: fault === 2 ? d.context.replace(/ (W|km|mL|g)\b/, '') : d.context, statement: d.statement, alternatives, hints: d.hints, explanation: d.explanation,
     fastMethod: d.fastMethod, flashcard: d.flashcard, lessonId: d.lessonId,
   };
@@ -184,17 +202,6 @@ export function generate(skillId: string, opts: { difficulty?: Difficulty; seed?
   ];
   const fails = validation.filter((v) => !v.ok).length;
   return { q, validation, status: fails === 0 ? 'aprovada' : fails === 1 ? 'revisao' : 'rejeitada', request: opts.request ?? g.label, ts: Date.now() };
-}
-
-/** Questão Gêmea: mesmo conceito, contexto diferente. */
-export function twinFor(q: Question, seenIds: Set<string>): { q: Question; kind: 'gerada' | 'banco' | 'relacionada' } | null {
-  if (GENERATORS[q.skillId]) { const g = generate(q.skillId); if (g && g.status === 'aprovada') return { q: g.q, kind: 'gerada' }; }
-  if (q.twinId) { const t = QUESTIONS.find((x) => x.id === q.twinId); if (t) return { q: t, kind: 'banco' }; }
-  const same = QUESTIONS.filter((x) => x.skillId === q.skillId && x.id !== q.id);
-  const pickQ = same.find((x) => !seenIds.has(x.id)) ?? same[0];
-  if (pickQ) return { q: pickQ, kind: 'banco' };
-  const rel = QUESTIONS.find((x) => x.area === q.area && x.id !== q.id && !seenIds.has(x.id));
-  return rel ? { q: rel, kind: 'relacionada' } : null;
 }
 
 export const generatorLabel = (id: string) => GENERATORS[id]?.label ?? skillById(id)?.name ?? id;

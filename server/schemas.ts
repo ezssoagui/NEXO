@@ -33,3 +33,10 @@ export const DiagnoseSchema = z.object({
   confidence: z.number().describe('0 a 1'),
   quote: z.string().nullable().describe('Trecho literal da justificativa que sustenta a conclusão.'),
 });
+
+export const ExplainSchema = z.object({
+  criteria: z.array(z.object({ id: z.enum(['correcao', 'completude', 'coerencia', 'relacoes', 'autonomia']), score: z.number().int().describe('0, 1 ou 2'), note: z.string() })),
+  found: z.array(z.string()), missing: z.array(z.string()),
+  errors: z.array(z.object({ quote: z.string().describe('Trecho LITERAL do estudante.'), why: z.string() })),
+});
+export type ExplainAI = z.infer<typeof ExplainSchema>;

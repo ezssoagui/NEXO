@@ -1,13 +1,16 @@
-import type { Attempt, Question } from '../src/types';
+import type { Attempt, Explanation, Question } from '../src/types';
 import { questionById } from '../src/data/questions';
-import { classifyResponse } from '../src/engine/intervention';
+import { explainTaskById } from '../src/data/explainTasks';
 
+export const DAY = 86400000;
+export const T0 = new Date('2026-08-03T12:00:00').getTime();
 let n = 0;
 export const Q = (id: string) => questionById(id)! as Question;
-/** Cria uma tentativa como o QuestionPlayer faria (com evidência e situação do motor). */
-export function attempt(id: string, chosen: string, confidence: Attempt['confidence'], extra: Partial<Attempt> = {}, history: Attempt[] = []): Attempt {
-  const q = Q(id);
-  const correct = q.type === 'aberta' ? Math.abs(+chosen - q.openAnswer!.value) < 1e-6 : !!q.alternatives!.find((a) => a.letter === chosen)?.correct;
-  const h = classifyResponse(q, { correct, confidence, hintsUsed: extra.hintsUsed ?? 0, justification: extra.justification, chosen, timeSec: extra.timeSec }, history);
-  return { id: `t${n++}`, qid: id, skillId: q.skillId, subject: q.subject, chosen, correct, confidence, hintsUsed: 0, ts: Date.now(), mode: 'tutoria', evidence: h.evidence, situation: h.situation, errorType: correct ? undefined : q.alternatives?.find((a) => a.letter === chosen)?.errorType, ...extra };
+export function at(qid: string, correct: boolean, day: number, extra: Partial<Attempt> = {}): Attempt {
+  const q = Q(qid); const alt = q.alternatives!.find((a) => !!a.correct === correct)!;
+  return { id: `t${n++}`, qid, skillId: q.skillId, subject: q.subject, chosen: alt.letter, correct, confidence: correct ? 'certeza' : 'duvida', ts: T0 + day * DAY + n, mode: 'adaptativo', errorType: correct ? undefined : alt.errorType, ...extra };
+}
+export function ex(taskId: string, result: Explanation['result'], day: number, extra: Partial<Explanation> = {}): Explanation {
+  const t = explainTaskById(taskId)!;
+  return { id: `x${n++}`, taskId, skillId: t.skillId, level: t.level, text: '', ts: T0 + day * DAY, result, criteria: [], engine: 'teste', demo: true, ...extra };
 }

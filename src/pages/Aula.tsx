@@ -1,81 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, XCircle, ShieldCheck, FileClock, Flag, Lightbulb, AlertTriangle, Target, Layers, BookOpen, Sigma, Bot } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { lessonById } from '../data/lessons';
-import { FLASHCARDS } from '../data/flashcards';
+import { disciplineOf } from '../data/curriculum';
+import { tasksForSkill } from '../data/explainTasks';
 import { useStore } from '../store/useStore';
-import { Badge, Card, Empty, Modal, cx } from '../components/ui';
-import { questionById } from '../data/questions';
-
-const STEPS = ['Explicação inicial', 'Exemplo resolvido', 'Padrões', 'Aplicação guiada', 'Questão individual', 'Correção argumentada', 'Transferência', 'Revisão posterior'];
+import { Choice, DemoTag, Empty, Rich, cx } from '../components/ui';
 
 export default function Aula() {
-  const { id = '' } = useParams(); const l = lessonById(id);
-  const { report, notify, addXP, cardStates } = useStore();
-  const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [rep, setRep] = useState(false);
-  if (!l) return <Empty title="Aula não encontrada" action={<Link to="/aulas" className="btn-primary">Voltar</Link>} />;
-  const cards = FLASHCARDS.filter((c) => l.skillIds.includes(c.skillId));
-  const Check = ({ idx }: { idx: number }) => {
-    const c = l.checks[idx]; const a = answers[idx];
-    return (
-      <div className="my-4 rounded-2xl border border-mint-300 bg-mint-50/60 p-4 dark:border-mint-500/30 dark:bg-mint-500/5">
-        <div className="mb-2 text-xs font-bold uppercase tracking-wider text-mint-800 dark:text-mint-300">Pergunta rápida</div>
-        <div className="font-medium">{c.q}</div>
-        <div className="mt-2 flex flex-wrap gap-2">{c.options.map((o, i) => <button key={o} disabled={a !== undefined} onClick={() => { setAnswers({ ...answers, [idx]: i }); if (i === c.answer) addXP(3, 'Pergunta rápida da aula', `chk-${l.id}-${idx}`); }} className={cx('rounded-xl border px-3 py-2 text-sm', a === undefined ? 'border-slate-300 bg-white hover:border-mint-500 dark:border-navy-600 dark:bg-navy-900' : i === c.answer ? 'border-mint-500 bg-mint-100 dark:bg-mint-500/20' : i === a ? 'border-red-400 bg-red-50 dark:bg-red-500/10' : 'opacity-50')}>{o}</button>)}</div>
-        {a !== undefined && <p className="mt-2 flex items-start gap-2 text-sm">{a === c.answer ? <CheckCircle2 size={16} className="mt-0.5 text-mint-600" /> : <XCircle size={16} className="mt-0.5 text-red-500" />}{c.feedback}</p>}
-      </div>
-    );
-  };
+  const { id = '' } = useParams(); const l = lessonById(id); const see = useStore((s) => s.seeLesson); const [ans, setAns] = useState<Record<number, number>>({});
+  useEffect(() => { if (l) see(l.id); }, [l, see]);
+  if (!l) return <Empty title="Aula não encontrada" action={<Link to="/conteudos?aba=aulas" className="btn-primary">Ver aulas</Link>} />;
+  const Check = ({ i }: { i: number }) => { const c = l.checks[i]; const a = ans[i]; return <div className="my-6 border-l-2 border-brand-500 pl-4"><p className="text-sm font-medium">{c.q}</p><div className="mt-2 flex flex-wrap gap-2" role="radiogroup">{c.options.map((o, k) => <Choice key={o} disabled={a !== undefined} active={a === k} onClick={() => setAns((p) => ({ ...p, [i]: k }))}>{o}</Choice>)}</div>{a !== undefined && <p className={cx('mt-2 text-sm', a === c.answer ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-800 dark:text-amber-300')}>{c.feedback}</p>}</div>; };
+  const List = ({ title, items }: { title: string; items: string[] }) => (items.length ? <section><h2 className="section-title">{title}</h2><ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{items.map((x) => <li key={x}>{x}</li>)}</ul></section> : null);
   return (
-    <div className="mx-auto max-w-3xl">
-      <Link to="/aulas" className="btn-ghost btn-sm mb-4"><ArrowLeft size={14} /> Aulas</Link>
-      <div className="flex flex-wrap gap-2"><Badge>{l.subject}</Badge><Badge tone="navy">{l.level}</Badge><Badge>{l.minutes} min</Badge>{l.origin === 'curado' ? <Badge tone="mint"><ShieldCheck size={12} /> Conteúdo curado e revisado (equipe demo)</Badge> : <Badge tone="amber"><FileClock size={12} /> Produzido com IA · revisão editorial pendente</Badge>}</div>
-      <h1 className="mt-3 text-3xl font-extrabold">{l.title}</h1>
-
-      <nav aria-label="Etapas do ensino progressivo" className="mt-5 flex gap-1 overflow-x-auto pb-1">{STEPS.map((s, i) => <span key={s} className="chip shrink-0 bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-slate-300">{i + 1}. {s}</span>)}</nav>
-
-      <Card className="mt-5 !bg-navy-900 !text-white dark:!bg-navy-800"><div className="text-xs font-bold uppercase tracking-wider text-mint-300">Microaula · 1 minuto</div><p className="mt-2 text-lg leading-relaxed">{l.micro}</p></Card>
-
-      <section className="mt-6"><h2 className="mb-2 flex items-center gap-2 text-xl font-bold"><BookOpen size={20} /> Explicação completa</h2>
-        {l.explanation.map((p, i) => <div key={i}><p className="my-3 leading-relaxed">{p}</p>{l.checks.map((c, ci) => c.after === i + 1 ? <Check key={ci} idx={ci} /> : null)}</div>)}
-      </section>
-
-      <section className="mt-6"><h2 className="mb-3 text-xl font-bold">Resumo visual</h2>
-        <div className="grid gap-3 sm:grid-cols-3">{l.visual.map((v) => <div key={v.label} className="rounded-2xl border-2 border-navy-100 p-4 text-center dark:border-navy-700"><div className="muted text-xs font-semibold uppercase">{v.label}</div><div className="mt-2 font-display text-lg font-bold text-navy-800 dark:text-mint-300">{v.value}</div></div>)}</div>
-      </section>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Card><h3 className="mb-2 font-bold">Conceitos fundamentais</h3><ul className="list-disc space-y-1 pl-5 text-sm">{l.concepts.map((c) => <li key={c}>{c}</li>)}</ul></Card>
-        <Card><h3 className="mb-2 flex items-center gap-2 font-bold"><Target size={16} /> Reconheça o padrão</h3><ul className="list-disc space-y-1 pl-5 text-sm">{l.patterns.map((c) => <li key={c}>{c}</li>)}</ul></Card>
+    <article className="mx-auto max-w-2xl">
+      <Link to="/conteudos?aba=aulas" className="muted mb-5 inline-flex items-center gap-1 text-sm hover:underline"><ArrowLeft size={14} /> Aulas</Link>
+      <div className="flex flex-wrap items-center gap-2 text-xs"><span className="muted">{disciplineOf(l.skillIds[0])} · {l.level} · {l.minutes} min</span><DemoTag title="Conteúdo autoral do protótipo.">Sem revisão pedagógica humana</DemoTag></div>
+      <h1 className="mt-2 text-2xl font-semibold">{l.title}</h1>
+      <div className="mt-5 text-lg leading-relaxed text-ink-700 dark:text-ink-200"><Rich text={l.micro} /></div>
+      <div className="mt-6 space-y-4 text-[15px] leading-relaxed">{l.explanation.map((p, i) => <div key={i}><p>{p}</p>{l.checks.map((c, k) => (c.after === i + 1 ? <Check key={k} i={k} /> : null))}</div>)}</div>
+      {l.visual.length > 0 && <dl className="mt-8 grid gap-4 border-y border-ink-200 py-4 text-sm dark:border-ink-800 sm:grid-cols-3">{l.visual.map((v) => <div key={v.label}><dt className="muted text-xs">{v.label}</dt><dd className="mt-0.5 font-medium">{v.value}</dd></div>)}</dl>}
+      <div className="mt-8 space-y-8">
+        {l.formulas.length > 0 && <section><h2 className="section-title">Relações</h2><ul className="mt-2 space-y-2 text-sm">{l.formulas.map((f) => <li key={f.expr}><code className="font-mono font-medium">{f.expr}</code> <span className="muted">{f.vars ? `${f.vars}. ` : ''}{f.when}</span></li>)}</ul></section>}
+        <section><h2 className="section-title">Exemplo resolvido</h2><p className="mt-2 text-sm font-medium">{l.solved.problem}</p><ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">{l.solved.steps.map((s) => <li key={s}>{s}</li>)}</ol></section>
+        <List title="Como reconhecer" items={l.patterns} /><List title="Erros frequentes" items={l.mistakes} /><List title="No ENEM" items={l.examUse} />
       </div>
-
-      {l.formulas.length > 0 && <section className="mt-6"><h2 className="mb-3 flex items-center gap-2 text-xl font-bold"><Sigma size={20} /> Fórmulas e variáveis</h2><div className="space-y-2">{l.formulas.map((f) => <div key={f.expr} className="card !p-4"><span className="formula !text-base">{f.expr}</span>{f.vars && <p className="muted mt-2 text-sm">{f.vars}</p>}<p className="mt-1 text-sm"><strong>Quando usar:</strong> {f.when}</p></div>)}</div></section>}
-
-      <section className="mt-6"><h2 className="mb-2 text-xl font-bold">Exemplos</h2><ul className="list-disc space-y-1 pl-5">{l.examples.map((e) => <li key={e}>{e}</li>)}</ul></section>
-
-      <section className="mt-6"><h2 className="mb-3 text-xl font-bold">Questão resolvida</h2><Card><p className="font-medium">{l.solved.problem}</p><ol className="mt-3 space-y-2">{l.solved.steps.map((s, i) => <li key={i} className="flex gap-3 text-sm"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-mint-500 text-xs font-bold text-navy-950">{i + 1}</span>{s}</li>)}</ol></Card></section>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Card><h3 className="mb-2 flex items-center gap-2 font-bold text-red-700 dark:text-red-400"><AlertTriangle size={16} /> Erros frequentes</h3><ul className="list-disc space-y-1 pl-5 text-sm">{l.mistakes.map((c) => <li key={c}>{c}</li>)}</ul></Card>
-        <Card><h3 className="mb-2 flex items-center gap-2 font-bold"><Lightbulb size={16} /> Aplicações em provas</h3><ul className="list-disc space-y-1 pl-5 text-sm">{l.examUse.map((c) => <li key={c}>{c}</li>)}</ul></Card>
-      </div>
-
-      <section className="mt-6"><h2 className="mb-3 text-xl font-bold">Exercícios de fixação</h2>
-        <div className="grid gap-2 sm:grid-cols-2">{l.exerciseIds.map((qid, i) => { const q = questionById(qid)!; return <Link key={qid} to={`/questoes/${qid}`} className="card !p-4 hover:border-mint-400"><Badge tone={i === 0 ? 'mint' : 'sky'}>{i === 0 ? 'Questão individual' : 'Transferência'}</Badge><div className="mt-2 text-sm font-medium">{q.topic} · {q.difficulty}</div><p className="muted line-clamp-2 text-xs">{q.context ?? q.statement}</p></Link>; })}</div>
-      </section>
-
-      <section className="mt-6"><h2 className="mb-3 flex items-center gap-2 text-xl font-bold"><Layers size={20} /> Flashcards e revisão</h2>
-        <div className="grid gap-2 sm:grid-cols-2">{cards.slice(0, 6).map((c) => <div key={c.id} className="rounded-xl border border-slate-200 p-3 text-sm dark:border-navy-700"><div className="font-medium">{c.front}</div><div className="muted mt-1">{c.back}</div>{cardStates[c.id] && <Badge tone="mint">no seu baralho</Badge>}</div>)}</div>
-        <div className="mt-3 flex flex-wrap gap-2"><Link to="/flashcards" className="btn-primary btn-sm">Revisar flashcards</Link><Link to={`/tutor?modo=aprender`} className="btn-ghost btn-sm"><Bot size={14} /> Tirar dúvida com a tutora</Link><Link to="/ensinar" className="btn-ghost btn-sm">Aprender ensinando</Link></div>
-      </section>
-
-      <div className="mt-8 rounded-2xl bg-slate-100 p-4 text-xs text-slate-600 dark:bg-navy-900 dark:text-slate-400">
-        <strong>Origem e revisão:</strong> {l.origin === 'curado' ? 'conteúdo redigido e revisado pela equipe pedagógica da demonstração.' : 'rascunho produzido com apoio de IA; aguarda revisão editorial humana antes de ser marcado como revisado (ver fila no painel administrativo).'} Encontrou um problema? <button className="inline-flex items-center gap-1 font-semibold underline" onClick={() => setRep(true)}><Flag size={12} /> Denunciar erro</button>
-      </div>
-      <Modal open={rep} onClose={() => setRep(false)} title="Denunciar erro no material">
-        <form onSubmit={(e) => { e.preventDefault(); report(l.id, (new FormData(e.currentTarget).get('r') as string) || '—'); setRep(false); notify('Relato enviado para a revisão editorial.'); }}><textarea name="r" className="input" rows={3} aria-label="Descrição" placeholder="Descreva o problema" /><button className="btn-primary mt-3">Enviar</button></form>
-      </Modal>
-    </div>
+      <div className="mt-10 border-t border-ink-200 pt-6 dark:border-ink-800"><h2 className="section-title">Agora é com você</h2><p className="muted mt-1 text-sm">Assistir à aula não comprova aprendizagem.</p><div className="mt-4 flex flex-wrap gap-2">{l.skillIds.filter((s) => tasksForSkill(s).length).slice(0, 1).map((s) => <Link key={s} className="btn-primary" to={`/explicar/${s}`}>Explicar o conceito</Link>)}{l.exerciseIds.slice(0, 2).map((q, i) => <Link key={q} className="btn-ghost" to={`/questoes/${q}`}>Questão {i + 1}</Link>)}<Link className="btn-ghost" to={`/professor?skill=${l.skillIds[0]}`}>Tirar dúvida</Link></div></div>
+    </article>
   );
 }

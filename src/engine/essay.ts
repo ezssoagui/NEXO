@@ -13,6 +13,8 @@ const AGENTS = ['ministério', 'governo federal', 'poder legislativo', 'poder ex
 const MEANS = ['por meio de', 'mediante', 'através de', 'por intermédio de', 'com o auxílio de', 'com o apoio de', 'a partir de'];
 const FINALITY = ['a fim de', 'para que', 'com o objetivo de', 'com a finalidade de', 'visando', 'com o intuito de', 'de modo a'];
 const DETAIL = ['ou seja', 'isto é', 'por exemplo', 'tais como', 'como oficinas', 'a exemplo de', 'com destaque para', 'paralelamente', 'de modo que', 'as quais', 'os quais', 'que contemplem'];
+/** Detalhamento do agente por aposto: "o Ministério X, órgão responsável por…,". */
+const AGENT_DETAIL = /,\s*(órgão|instância|instituição|entidade|pasta|responsável|responsáveis)\s[^,.]{8,},/i;
 const ACTION = /\b(deve|devem|deverá|deverão|cabe a|cabe ao|cabe às|cabe aos|precisa|precisam|é necessário que|é fundamental que)\b/i;
 const SAFE_REPERTOIRE = ['bauman', 'constituição federal de 1988', 'constituição de 1988', 'estatuto da criança e do adolescente', 'declaração universal dos direitos humanos', 'paulo freire', 'durkheim', 'kant', 'aristóteles', 'hannah arendt', 'simone de beauvoir', 'milton santos', 'sérgio buarque', 'foucault', 'habermas', 'byung-chul han', 'emenda constitucional', 'artigo 6º', 'sus', 'raps', 'lei de diretrizes e bases'];
 const REPERTOIRE_MARK = /\b(segundo|de acordo com|conforme|consoante|para o filósofo|para a filósofa|o sociólogo|a socióloga|o filósofo|a filósofa|constituição|declaração universal|estatuto|lei n|historiador|pensador|como disse|obra|o livro|o filme|a série)\b/i;
@@ -78,11 +80,15 @@ export function evaluateEssay(text: string, theme: EssayTheme): EssayEval {
   const productive = repParas.some((i) => i > 0 && i < paragraphs.length - 1 && (paragraphs[i].split(/[.!?]+\s/).length >= 3) && CAUSAL.some((c) => norm(paragraphs[i]).includes(c)));
   let c2 = kw.length === 0 ? 40 : 80;
   if (kw.length >= 3) c2 += 40; if (repParas.length) c2 += 40; if (productive && wrongFacts === 0) c2 += 40; if (paragraphs.length < 4) c2 -= 40; if (wrongFacts) c2 -= 40;
+  // Recorte do tema: cada parte precisa aparecer no texto (senão há risco de tangenciar) e, de preferência, já na introdução.
+  const axesMissing = (t: string) => (theme.axes ?? []).filter((a) => !a.terms.some((x) => t.includes(x))).map((a) => a.label);
+  const missText = axesMissing(lower); const missIntro = axesMissing(norm(paragraphs[0] ?? '')).filter((x) => !missText.includes(x));
+  if (missText.length) c2 = Math.min(c2, 120);
   c2 = level(c2);
   const c2p = [`Palavras-chave do tema presentes: ${kw.length ? kw.slice(0, 5).join(', ') : 'nenhuma (risco de tangenciamento)'}.`,
     repParas.length ? `Repertório identificado em ${repParas.length} parágrafo(s)${safeRep.length ? ` (${safeRep.join(', ')})` : ''}.` : 'Nenhum repertório sociocultural identificado.',
     productive ? 'Repertório articulado ao argumento (há relação causal no mesmo parágrafo).' : 'Repertório pouco articulado ou ausente: explique como ele sustenta sua tese.',
-    ...(wrongFacts ? ['Há repertório possivelmente incorreto (ver destaques).'] : []), ...(doubtful ? ['Há citação de autoria não verificável (ver destaques).'] : [])];
+    ...(missText.length ? [`Partes do tema não identificadas: ${missText.join(', ')} (risco de tangenciamento).`] : []), ...(missIntro.length ? [`Partes do tema ausentes da introdução: ${missIntro.join(', ')}.`] : []), ...(wrongFacts ? ['Há repertório possivelmente incorreto (ver destaques).'] : []), ...(doubtful ? ['Há citação de autoria não verificável (ver destaques).'] : [])];
 
   // C3
   const intro = paragraphs[0] ?? ''; const devs = paragraphs.slice(1, -1); const concl = paragraphs[paragraphs.length - 1] ?? '';
@@ -106,7 +112,7 @@ export function evaluateEssay(text: string, theme: EssayTheme): EssayEval {
 
   // C5
   const cl = norm(concl);
-  const iv = { agente: AGENTS.some((a) => cl.includes(a)), acao: ACTION.test(concl), meio: MEANS.some((m) => cl.includes(m)), finalidade: FINALITY.some((f) => cl.includes(f)), detalhamento: DETAIL.some((d) => cl.includes(d)) };
+  const iv = { agente: AGENTS.some((a) => cl.includes(a)), acao: ACTION.test(concl), meio: MEANS.some((m) => cl.includes(m)), finalidade: FINALITY.some((f) => cl.includes(f)), detalhamento: DETAIL.some((d) => cl.includes(d)) || AGENT_DETAIL.test(concl) };
   const genericAgent = iv.agente && !AGENTS.slice(0, -1).some((a) => cl.includes(a));
   const vague = /alguma coisa|algo para|resolver esse problema/i.test(concl);
   let c5 = Object.values(iv).filter(Boolean).length * 40; if (vague) c5 = Math.max(0, c5 - 40);
@@ -132,7 +138,7 @@ export function evaluateEssay(text: string, theme: EssayTheme): EssayEval {
     comp('C2', 'Compreensão do tema e repertório', c2, c2 >= 160 ? 'Tema bem abordado, com repertório.' : 'Amplie o repertório e articule-o ao tema.', c2p,
       `${kw.length} palavra(s)-chave do tema presentes; repertório ${repParas.length ? (productive ? 'identificado e articulado ao argumento' : 'identificado, mas pouco articulado') : 'não identificado'}${wrongFacts ? '; há informação possivelmente incorreta' : ''}.`,
       repSent.length ? repSent : allSent.filter((x) => theme.keywords.some((k) => norm(x).includes(norm(k)))),
-      [...(kw.length < 3 ? ['Pouca relação explícita com as palavras-chave do tema (risco de tangenciamento).'] : []), ...(repParas.length ? [] : ['Ausência de repertório sociocultural.']), ...(repParas.length && !productive ? ['O repertório aparece, mas não é explicado nem ligado ao argumento.'] : []), ...highlights.filter((h) => h.comp === 'C2').map((h) => h.message)],
+      [...(missText.length ? [`O texto não menciona: ${missText.join(', ')}.`] : []), ...(missIntro.length ? [`Retome na introdução: ${missIntro.join(', ')}.`] : []), ...(kw.length < 3 ? ['Pouca relação explícita com as palavras-chave do tema (risco de tangenciamento).'] : []), ...(repParas.length ? [] : ['Ausência de repertório sociocultural.']), ...(repParas.length && !productive ? ['O repertório aparece, mas não é explicado nem ligado ao argumento.'] : []), ...highlights.filter((h) => h.comp === 'C2').map((h) => h.message)],
       ['Depois de citar um repertório, explique em uma frase como ele comprova sua tese ("Isso evidencia que...").', ...(wrongFacts || doubtful ? ['Use apenas repertórios que você consegue confirmar.'] : [])],
       repParas.length ? 'Reescreva o parágrafo com repertório acrescentando uma frase de articulação: repertório → por que ele sustenta o argumento.' : 'Escolha um repertório que você domina (lei, dado verificado, obra, fato histórico) e insira-o em um desenvolvimento.'),
     comp('C3', 'Seleção e organização dos argumentos', c3, c3 >= 160 ? 'Argumentação organizada e desenvolvida.' : 'Desenvolva causas e consequências em cada argumento.', c3p,
@@ -201,7 +207,7 @@ function paraFeatures(t: string, role: ParagraphRole) {
     repertoire: REPERTOIRE_MARK.test(t) || SAFE_REPERTOIRE.some((r) => l.includes(r)),
     topic: /^(em primeiro lugar|primeiramente|além disso|ademais|outrossim|em segundo lugar|sob essa ótica|nesse sentido|de início|por outro lado|um dos|outro)/i.test(t.trim()),
     longSentences: sentences.filter((x) => x.split(/\s+/).length > 55).length,
-    iv: role === 'conclusao' ? { agente: AGENTS.some((a) => l.includes(a)), acao: ACTION.test(t), meio: MEANS.some((m) => l.includes(m)), finalidade: FINALITY.some((f) => l.includes(f)), detalhamento: DETAIL.some((d) => l.includes(d)) } : undefined,
+    iv: role === 'conclusao' ? { agente: AGENTS.some((a) => l.includes(a)), acao: ACTION.test(t), meio: MEANS.some((m) => l.includes(m)), finalidade: FINALITY.some((f) => l.includes(f)), detalhamento: DETAIL.some((d) => l.includes(d)) || AGENT_DETAIL.test(t) } : undefined,
   };
 }
 export function compareParagraph(before: string, after: string, role: ParagraphRole) {
@@ -224,4 +230,14 @@ export function compareParagraph(before: string, after: string, role: ParagraphR
   if (b.longSentences > a.longSentences) regressed.push('Período longo demais surgiu na nova versão (C1).');
   if (b.words < a.words * 0.6) remaining.push('A nova versão ficou bem mais curta: confira se o argumento não perdeu desenvolvimento.');
   return { improved, remaining, regressed, before: a, after: b, note: 'Comparação por regras verificáveis; a autoria e o estilo são seus — a NEXO não reescreve o texto por você.' };
+}
+
+/** Lista de verificação de um parágrafo novo, conforme a função dele no texto e o tema (estimativa por regras). */
+export function paragraphChecklist(text: string, role: ParagraphRole, theme: EssayTheme): { ok: boolean; label: string }[] {
+  const f = paraFeatures(text, role); const l = norm(text); const kw = theme.keywords.filter((k) => l.includes(norm(k))).length;
+  const out: { ok: boolean; label: string }[] = [{ ok: f.errors.length === 0, label: f.errors.length ? `Norma-padrão: ${f.errors[0]}` : 'Sem desvios identificados pelas regras' }];
+  if (role === 'introducao') { const miss = (theme.axes ?? []).filter((a) => !a.terms.some((t) => l.includes(t))).map((a) => a.label); out.push({ ok: miss.length === 0, label: miss.length ? `Partes do tema ausentes: ${miss.join(', ')}` : 'Todas as partes do tema aparecem' }, { ok: /(devido|em razão|por causa|sobretudo|decorre|motivad|fatores|seja pel|tanto .* quanto)/i.test(text), label: 'Tese que anuncia os eixos' }, { ok: f.connectives.length >= 1, label: 'Encadeamento com conectivo' }); }
+  if (role === 'desenvolvimento') out.push({ ok: kw >= 1, label: 'Relação com o tema' }, { ok: f.topic, label: 'Tópico frasal marcado' }, { ok: f.repertoire, label: 'Repertório sociocultural' }, { ok: f.causal >= 2, label: 'Causa e consequência explicadas' }, { ok: f.connectives.length >= 2, label: 'Dois ou mais conectivos diferentes' });
+  if (role === 'conclusao') (Object.entries(f.iv!) as [string, boolean][]).forEach(([k, ok]) => out.push({ ok, label: `Proposta: ${k === 'acao' ? 'ação' : k}` }));
+  return out;
 }

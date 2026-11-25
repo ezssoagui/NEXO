@@ -1,24 +1,23 @@
 import type { Attempt, Question } from '../types';
-import { QUESTIONS } from '../data/questions';
 import { LESSONS } from '../data/lessons';
 import { ERROR_LABELS, SKILLS, skillById } from '../data/skills';
 import { startSocratic, answerSocratic, type SocraticState } from './socratic';
-import { readJustification } from './concepts';
+import { CONCEPTS, readJustification } from './concepts';
 
 /**
- * Nexo Tutor — MOTOR DEMONSTRATIVO baseado em regras e em uma base de conhecimento curada.
+ * Professor de IA — MOTOR DEMONSTRATIVO baseado em regras e em uma base de conhecimento curada.
  * Não é um modelo de linguagem. Em produção, a mesma interface (TutorService) chamaria um LLM no servidor,
  * com o comportamento pedagógico definido aqui como "política" do tutor.
  */
-export type TutorMode = 'aprender' | 'socratico' | 'corrigir' | 'desafio' | 'revisao' | 'olimpiada';
+export type TutorMode = 'explicar' | 'socratico' | 'corrigir' | 'revisao';
 export const MODES: { id: TutorMode; label: string; desc: string }[] = [
-  { id: 'aprender', label: 'Aprender', desc: 'Explica o assunto desde os fundamentos.' },
-  { id: 'socratico', label: 'Socrático', desc: 'Perguntas orientadoras em vez da resposta pronta.' },
-  { id: 'corrigir', label: 'Corrigir meus erros', desc: 'Analisa sua tentativa e localiza a falha.' },
-  { id: 'desafio', label: 'Desafio', desc: 'Questões progressivamente mais difíceis.' },
-  { id: 'revisao', label: 'Revisão final', desc: 'Foco nos conteúdos prioritários.' },
-  { id: 'olimpiada', label: 'Olimpíada', desc: 'Problemas abertos com mais profundidade.' },
+  { id: 'explicar', label: 'Explicar', desc: 'Explicação direta, na profundidade do seu nível.' },
+  { id: 'socratico', label: 'Perguntas guiadas', desc: 'Perguntas orientadoras, uma por vez.' },
+  { id: 'corrigir', label: 'Analisar meu raciocínio', desc: 'Localiza onde a resolução desviou.' },
+  { id: 'revisao', label: 'Revisar', desc: 'Conteúdos prioritários do seu perfil.' },
 ];
+/** Contexto pedagógico somente leitura: o professor não altera indicadores. */
+export interface TutorContext { attempts: Attempt[]; weakSkills: string[]; levels?: Record<string, 'iniciante' | 'intermediario' | 'avancado'>; demonstrated?: string[] }
 
 interface KB { keywords: string[]; socratic: string[]; styles: { analogia: string; matematica: string; cotidiano: string; avancada: string }; keyConcepts: { term: RegExp; label: string }[] }
 export const KNOWLEDGE: Record<string, KB> = {
@@ -97,7 +96,7 @@ export function detectSkill(text: string): string | undefined {
     ?? SKILLS.find((s) => t.includes(s.name.toLowerCase().split(' ')[0]))?.id;
 }
 
-export interface TutorState { mode: TutorMode; skill?: string; step: number; directRequests: number; challenge?: { qid: string; level: number }; context?: { q: Question; attempt?: Attempt }; soc?: SocraticState }
+export interface TutorState { mode: TutorMode; skill?: string; step: number; directRequests: number; context?: { q: Question; attempt?: Attempt }; soc?: SocraticState }
 export interface TutorReply { text: string; actions?: { label: string; send?: string; to?: string }[]; diagnosis?: string; uncertain?: boolean }
 
 const DIRECT = /(explica|explique|me (d[aá]|diga) a resposta|direto|desisto|n[aã]o sei|resposta)/i;
@@ -109,24 +108,26 @@ export function greet(mode: TutorMode, ctx?: TutorState['context']): TutorReply 
     return { text: `Vamos olhar juntos para a questão **${ctx.q.id}** (${ctx.q.topic}). ${alt?.tutorPrompt ?? 'Me conte como você pensou.'}`, diagnosis: ctx.attempt.errorType ? ERROR_LABELS[ctx.attempt.errorType].label : undefined, actions: [{ label: 'Dica conceitual', send: 'dica 1' }, { label: 'Indique o caminho', send: 'dica 2' }, { label: 'Quero a resolução', send: 'explique direto' }] };
   }
   const g: Record<TutorMode, string> = {
-    aprender: 'Sobre qual assunto você quer aprender? Ex.: "potência elétrica", "equilíbrio químico", "insulina", "porcentagem", "interpretação de texto".',
-    socratico: 'Vou te guiar com perguntas, sem entregar a resposta de cara. Se quiser a explicação direta a qualquer momento, é só pedir. Qual assunto?',
-    corrigir: 'Cole aqui sua resolução (ou explique como pensou) e diga o assunto. Vou procurar a etapa em que o raciocínio desviou.',
-    desafio: 'Modo desafio: vou propor questões que ficam mais difíceis conforme você acerta. Responda com a letra. Digite "começar".',
-    revisao: 'Modo revisão final: vou listar seus conteúdos prioritários com um resumo de cada. Digite "revisar".',
-    olimpiada: 'Modo olimpíada: problemas abertos, com justificativa. Digite "problema" para receber o primeiro.',
+    explicar: 'Sobre qual assunto você quer uma explicação? Ex.: "potência elétrica", "equilíbrio químico", "insulina", "porcentagem".',
+    socratico: 'Vou guiar com perguntas, uma por vez. Se preferir a explicação direta, é só pedir. Qual assunto?',
+    corrigir: 'Escreva como você pensou e diga o assunto. Vou procurar a etapa em que o raciocínio desviou.',
+    revisao: 'Posso listar seus conteúdos prioritários com um resumo de cada.',
   };
-  return { text: g[mode], actions: mode === 'desafio' ? [{ label: 'Começar', send: 'começar' }] : mode === 'revisao' ? [{ label: 'Revisar', send: 'revisar' }] : mode === 'olimpiada' ? [{ label: 'Problema', send: 'problema' }] : [{ label: 'Potência elétrica', send: 'potência elétrica' }, { label: 'Equilíbrio químico', send: 'equilíbrio químico' }, { label: 'Interpretação (C-P-E)', send: 'interpretação de texto' }] };
+  return { text: g[mode], actions: mode === 'revisao' ? [{ label: 'Revisar', send: 'revisar' }] : [{ label: 'Potência elétrica', send: 'potência elétrica' }, { label: 'Equilíbrio químico', send: 'equilíbrio químico' }, { label: 'Porcentagem', send: 'porcentagem' }] };
 }
 
-function explainSkill(skill: string): string {
+const LV = { iniciante: 'basico', intermediario: 'intermediario', avancado: 'avancado' } as const;
+function explainSkill(skill: string, level: 'iniciante' | 'intermediario' | 'avancado' = 'intermediario'): string {
   const l = LESSONS.find((x) => x.skillIds.includes(skill));
   const kb = KNOWLEDGE[skill];
-  if (!l) return kb ? kb.styles.matematica : '';
+  const map = CONCEPTS[skill];
+  if (!l) return map ? map.summary[LV[level]] : kb ? kb.styles.matematica : '';
+  if (level === 'avancado' && map) return `**${l.title}** · aprofundamento\n\n${map.summary.avancado}\n\n**Para ir além:** tente dizer em que condições essa conclusão deixa de valer.`;
+  if (level === 'iniciante' && map) return `**${l.title}**\n\n${map.summary.basico}\n\n${l.micro}\n\n**Erro frequente:** ${l.mistakes[0]}`;
   return `**${l.title}**\n\n${l.micro}\n\n${l.explanation.slice(0, 2).join('\n\n')}${l.formulas.length ? `\n\nFórmulas: ${l.formulas.map((f) => f.expr).join(' · ')}` : ''}\n\n**Erro frequente:** ${l.mistakes[0]}`;
 }
 
-export function respond(state: TutorState, msg: string, ctx: { attempts: Attempt[]; weakSkills: string[] }): { reply: TutorReply; state: TutorState } {
+export function respond(state: TutorState, msg: string, ctx: TutorContext): { reply: TutorReply; state: TutorState } {
   const s = { ...state };
   const m = msg.trim();
   const detected = detectSkill(m);
@@ -145,7 +146,7 @@ export function respond(state: TutorState, msg: string, ctx: { attempts: Attempt
 
   // Resposta a uma questão em contexto (letra)
   const letter = m.match(/^\s*(?:letra\s*)?([A-Ea-e])\s*[).]?\s*$/);
-  if (letter && q?.alternatives && s.mode !== 'desafio') {
+  if (letter && q?.alternatives ) {
     const alt = q.alternatives.find((a) => a.letter === letter[1].toUpperCase())!;
     if (alt.correct) return { reply: { text: `Isso! **${alt.letter}** está correta. ${alt.analysis}\n\nPara confirmar que você aprendeu (e não apenas lembrou), resolva uma questão gêmea.`, actions: [{ label: 'Fazer questão gêmea', to: `/questoes/${q.id}?gemea=1` }] }, state: s };
     return { reply: { text: alt.tutorPrompt ?? alt.analysis, diagnosis: alt.errorType ? ERROR_LABELS[alt.errorType].label : undefined, actions: [{ label: 'Dica', send: 'dica 1' }, { label: 'Explique direto', send: 'explique direto' }] }, state: s };
@@ -155,19 +156,21 @@ export function respond(state: TutorState, msg: string, ctx: { attempts: Attempt
   if (DIRECT.test(m) && (s.skill || q) && !(s.mode === 'socratico' && s.soc && !s.soc.done)) {
     s.directRequests++;
     if (q) return { reply: { text: `Claro, vamos direto.\n\n**Resolução:** ${q.explanation}\n\n**Método rápido:** ${q.fastMethod}`, actions: [{ label: 'Por analogia', send: 'analogia' }, { label: 'Questão semelhante', to: `/questoes/${q.id}?gemea=1` }] }, state: s };
-    return { reply: { text: explainSkill(s.skill!), actions: [{ label: 'Por analogia', send: 'analogia' }, { label: 'Demonstração', send: 'demonstração matemática' }] }, state: s };
+    return { reply: { text: explainSkill(s.skill!, ctx.levels?.[s.skill!]), actions: [{ label: 'Por analogia', send: 'analogia' }, { label: 'Demonstração', send: 'demonstração matemática' }] }, state: s };
   }
 
   switch (s.mode) {
-    case 'aprender': {
+    case 'explicar': {
       if (!s.skill) break;
       const l = LESSONS.find((x) => x.skillIds.includes(s.skill!));
-      return { reply: { text: explainSkill(s.skill) + (l?.checks[0] ? `\n\n**Pergunta rápida:** ${l.checks[0].q} (${l.checks[0].options.join(' / ')})` : ''), actions: [{ label: 'Por analogia', send: 'analogia' }, { label: 'Exemplo do cotidiano', send: 'exemplo do cotidiano' }, ...(l ? [{ label: 'Abrir microaula', to: `/aulas/${l.id}` }] : [])] }, state: s };
+      return { reply: { text: explainSkill(s.skill, ctx.levels?.[s.skill]) + (l?.checks[0] ? `\n\n**Pergunta rápida:** ${l.checks[0].q} (${l.checks[0].options.join(' / ')})` : ''), actions: [{ label: 'Por analogia', send: 'analogia' }, { label: 'Exemplo do cotidiano', send: 'exemplo do cotidiano' }, ...(l ? [{ label: 'Abrir microaula', to: `/aulas/${l.id}` }] : [])] }, state: s };
     }
     case 'socratico': {
       if (!s.skill) break;
       // Tutor socrático ADAPTATIVO: interpreta a resposta aberta, não repete etapas já demonstradas, detecta contradições.
       const qctx = s.context?.q && s.context.q.skillId === s.skill ? s.context.q : undefined;
+      // Não repete perguntas sobre o que já foi demonstrado: oferece aprofundamento.
+      if (ctx.demonstrated?.includes(s.skill) && !s.soc) return { reply: { text: `Você já demonstrou compreender **${skillById(s.skill)?.name}**, então não vou repetir as perguntas básicas.\n\n${CONCEPTS[s.skill]?.summary.avancado ?? explainSkill(s.skill, 'avancado')}`, actions: [{ label: 'Explicação ativa', to: `/explicar/${s.skill}` }, { label: 'Explique direto', send: 'explique direto' }] }, state: s };
       if (!s.soc || s.soc.skillId !== s.skill || s.soc.done) {
         const t = startSocratic(s.skill, qctx, readJustification(s.skill, s.context?.attempt?.justification ?? '').shown);
         s.soc = t.state;
@@ -193,49 +196,13 @@ export function respond(state: TutorState, msg: string, ctx: { attempts: Attempt
       const text = `**Análise da sua resolução (${skillById(sk)?.name}):**\n\n${found.length ? `✓ Você demonstrou: ${found.map((f) => f.label).join('; ')}.` : 'Não identifiquei as etapas-chave do raciocínio.'}\n\n${missing.length ? `→ Etapa provavelmente ausente ou equivocada: **${missing[0].label}**. ${kb.socratic[Math.min(kb.socratic.length - 1, kb.keyConcepts.indexOf(missing[0]))]}` : 'Seu raciocínio cobre as etapas principais. Confira apenas os cálculos.'}`;
       return { reply: { text, diagnosis: missing.length ? 'Etapa de raciocínio ausente' : undefined, actions: [{ label: 'Explique direto', send: 'explique direto' }] }, state: s };
     }
-    case 'desafio': {
-      const pool = QUESTIONS.filter((x) => x.type === 'objetiva').sort((a, b) => ['Fácil', 'Média', 'Difícil'].indexOf(a.difficulty) - ['Fácil', 'Média', 'Difícil'].indexOf(b.difficulty));
-      const byLevel = (lv: number) => pool.filter((x) => x.difficulty === ['Fácil', 'Média', 'Difícil'][Math.min(2, lv)]);
-      const ask = (lv: number) => { const opts = byLevel(lv).filter((x) => !ctx.attempts.some((a) => a.qid === x.id && a.correct)); const nq = (opts.length ? opts : byLevel(lv))[Math.floor(Math.random() * Math.max(1, (opts.length ? opts : byLevel(lv)).length))]; s.challenge = { qid: nq.id, level: lv }; return `**Nível ${['Fácil', 'Médio', 'Difícil'][Math.min(2, lv)]}** — ${nq.subject}\n\n${nq.context ? nq.context + '\n\n' : ''}${nq.statement}\n\n${nq.alternatives!.map((a) => `${a.letter}) ${a.text}`).join('\n')}`; };
-      if (letter && s.challenge) {
-        const cq = QUESTIONS.find((x) => x.id === s.challenge!.qid)!; const alt = cq.alternatives!.find((a) => a.letter === letter[1].toUpperCase())!;
-        if (alt.correct) { const lv = s.challenge.level + 1; return { reply: { text: `Correto! ${alt.analysis}\n\nSubindo de nível…\n\n${ask(lv)}` }, state: s }; }
-        const lv = Math.max(0, s.challenge.level - 1);
-        return { reply: { text: `Ainda não. ${alt.tutorPrompt ?? alt.analysis}\n\nResposta: **${cq.alternatives!.find((a) => a.correct)!.letter}**. ${cq.fastMethod}\n\nPróxima, um nível abaixo para consolidar:\n\n${ask(lv)}`, diagnosis: alt.errorType ? ERROR_LABELS[alt.errorType].label : undefined }, state: s };
-      }
-      return { reply: { text: ask(s.challenge?.level ?? 0) }, state: s };
-    }
     case 'revisao': {
       const list = ctx.weakSkills.slice(0, 4);
       if (!list.length) return { reply: { text: 'Não encontrei conteúdos em risco no seu histórico. Sugiro um simulado rápido para gerar novos dados.', actions: [{ label: 'Ir para simulados', to: '/simulados' }] }, state: s };
       return { reply: { text: `**Seus conteúdos prioritários:**\n\n${list.map((id, i) => { const l = LESSONS.find((x) => x.skillIds.includes(id)); return `${i + 1}. **${skillById(id)?.name}** — ${l ? l.visual.map((v) => `${v.label}: ${v.value}`).join('; ') : 'revise a explicação e refaça uma questão.'}`; }).join('\n')}\n\nPriorizados por: domínio em desenvolvimento, erros recentes e flashcards pendentes.`, actions: [{ label: 'Revisar flashcards', to: '/flashcards' }] }, state: s };
-    }
-    case 'olimpiada': {
-      const probs = QUESTIONS.filter((x) => x.exam === 'Olimpíada');
-      if (/problema|pr[oó]ximo|come[cç]ar/i.test(m)) { const p = probs[(s.step++) % probs.length]; s.context = { q: p }; return { reply: { text: `**Problema (${p.subject})** — ${p.statement}\n\nPense em uma estratégia antes de calcular. Quando quiser, peça "dica 1".`, actions: [{ label: 'Dica 1', send: 'dica 1' }, { label: 'Resolver no banco', to: `/questoes/${p.id}` }] }, state: s }; }
-      const num = m.match(/-?\d+([.,]\d+)?/);
-      if (num && s.context?.q.openAnswer) { const v = +num[0].replace(',', '.'); const oa = s.context.q.openAnswer; if (Math.abs(v - oa.value) <= (oa.tolerance ?? 1e-6)) return { reply: { text: `Valor correto! Agora, o que importa em olimpíada: sua justificativa cobre todas as etapas? Compare: ${s.context.q.explanation}`, actions: [{ label: 'Próximo problema', send: 'próximo problema' }] }, state: s }; const w = oa.wrongMap?.find((x) => Math.abs(x.value - v) < 1e-6); return { reply: { text: w ? w.tutorPrompt : 'Esse valor não confere. Revise a estratégia — quer uma dica?', actions: [{ label: 'Dica 1', send: 'dica 1' }] }, state: s }; }
-      break;
     }
   }
   if (q) return { reply: { text: 'Me diga sua resposta (letra) ou como pensou. Também posso dar uma dica.', actions: [{ label: 'Dica 1', send: 'dica 1' }] }, state: s };
   return { reply: { uncertain: true, text: 'Não tenho segurança para responder sobre isso com a base demonstrativa atual — e prefiro não inventar. Em produção, a pergunta seria encaminhada a um modelo de linguagem com verificação. Posso ajudar com: potência elétrica, velocidade média, energia, equilíbrio químico, hormônios, porcentagem e interpretação de texto (C-P-E).', actions: [{ label: 'Potência elétrica', send: 'potência elétrica' }, { label: 'Interpretação', send: 'interpretação de texto' }] }, state: s };
 }
 
-/** Aprender Ensinando: verifica conceitos fundamentais na explicação do estudante. */
-export const TEACH_TOPICS = [
-  { skill: 'fis-potencia', prompt: 'Explique por que um chuveiro de 220 V dissipa 1/4 da potência quando ligado em 110 V.' },
-  { skill: 'qui-equilibrio', prompt: 'Explique por que aumentar a pressão favorece a formação de amônia na síntese N₂ + 3H₂ ⇌ 2NH₃, e por que o catalisador não muda isso.' },
-  { skill: 'bio-hormonios', prompt: 'Explique como insulina e glucagon mantêm a glicemia estável.' },
-  { skill: 'mat-porcentagem', prompt: 'Explique por que um aumento de 10% seguido de desconto de 10% não devolve o preço original.' },
-  { skill: 'lin-interpretacao', prompt: 'Explique como usar o método C-P-E para escolher entre duas alternativas parecidas.' },
-];
-export function evaluateTeaching(skill: string, text: string) {
-  const kb = KNOWLEDGE[skill];
-  const found = kb.keyConcepts.filter((c) => c.term.test(text));
-  const missing = kb.keyConcepts.filter((c) => !c.term.test(text));
-  const words = text.split(/\s+/).filter(Boolean).length;
-  const questions = missing.map((mm) => kb.socratic[Math.min(kb.socratic.length - 1, kb.keyConcepts.indexOf(mm))]);
-  if (missing.length === 0) questions.push('E se o enunciado mudasse a condição (por exemplo, outra grandeza constante)? Sua explicação ainda valeria?');
-  return { found: found.map((f) => f.label), missing: missing.map((f) => f.label), coverage: found.length / kb.keyConcepts.length, words, questions };
-}

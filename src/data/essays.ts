@@ -1,10 +1,11 @@
-export interface EssayTheme { id: string; title: string; keywords: string[]; texts: { title: string; body: string }[] }
+export interface EssayTheme { id: string; title: string; keywords: string[]; /** Partes do recorte temático: todas precisam aparecer para não tangenciar. */ axes?: { label: string; terms: string[] }[]; texts: { title: string; body: string }[] }
 
 // Temas e textos motivadores elaborados para esta demonstração (sem dados reais inventados).
 export const ESSAY_THEMES: EssayTheme[] = [
   {
     id: 't1', title: 'Caminhos para combater a desinformação digital no Brasil',
     keywords: ['desinformação', 'fake news', 'notícias falsas', 'informação', 'digital', 'internet', 'redes sociais', 'checagem', 'educação midiática', 'plataformas'],
+    axes: [{ label: 'caminhos/combate', terms: ['combat', 'enfrent', 'soluç', 'solucion', 'medida', 'caminho', 'revert', 'mitig'] }, { label: 'desinformação', terms: ['desinforma', 'fake news', 'notícias falsas', 'conteúdos falsos'] }, { label: 'meio digital', terms: ['digita', 'internet', 'redes sociais', 'plataforma', 'online'] }, { label: 'Brasil', terms: ['brasil', 'nacional', 'país'] }],
     texts: [
       { title: 'Texto I', body: 'Conteúdos falsos ou enganosos circulam com rapidez em aplicativos de mensagens e redes sociais, muitas vezes impulsionados por algoritmos que privilegiam o engajamento.' },
       { title: 'Texto II', body: 'Educação midiática é o conjunto de habilidades para acessar, analisar, avaliar e produzir informação de maneira crítica e responsável.' },
@@ -14,6 +15,7 @@ export const ESSAY_THEMES: EssayTheme[] = [
   {
     id: 't2', title: 'Desafios para a permanência de jovens no ensino médio brasileiro',
     keywords: ['permanência', 'evasão', 'abandono', 'ensino médio', 'jovens', 'escola', 'educação', 'trabalho', 'renda', 'currículo'],
+    axes: [{ label: 'desafios', terms: ['desafio', 'obstáculo', 'dificuldade', 'entrave', 'problema', 'impasse'] }, { label: 'permanência', terms: ['permanência', 'evasão', 'abandon', 'permanec'] }, { label: 'jovens', terms: ['jove', 'adolescen', 'juventude', 'estudante'] }, { label: 'ensino médio', terms: ['ensino médio', 'escola'] }, { label: 'Brasil', terms: ['brasil', 'nacional', 'país'] }],
     texts: [
       { title: 'Texto I', body: 'Entre os motivos frequentemente relatados para o abandono escolar estão a necessidade de trabalhar, a falta de interesse pelo currículo e dificuldades de deslocamento.' },
       { title: 'Texto II', body: 'A Constituição Federal de 1988 estabelece a educação como direito de todos e dever do Estado e da família.' },
@@ -22,6 +24,7 @@ export const ESSAY_THEMES: EssayTheme[] = [
   {
     id: 't3', title: 'O acesso à saúde mental entre adolescentes brasileiros',
     keywords: ['saúde mental', 'adolescentes', 'ansiedade', 'depressão', 'psicológico', 'acolhimento', 'estigma', 'atendimento', 'escola', 'SUS'],
+    axes: [{ label: 'acesso', terms: ['acess', 'atendimento', 'acolhimento'] }, { label: 'saúde mental', terms: ['saúde mental', 'psicológic', 'psíquic'] }, { label: 'adolescentes', terms: ['adolescen', 'jove'] }, { label: 'Brasil', terms: ['brasil', 'nacional', 'país'] }],
     texts: [
       { title: 'Texto I', body: 'O estigma associado ao sofrimento psíquico pode dificultar que adolescentes procurem ajuda.' },
       { title: 'Texto II', body: 'A Rede de Atenção Psicossocial (RAPS) integra o Sistema Único de Saúde e organiza serviços de cuidado em saúde mental.' },
@@ -30,6 +33,7 @@ export const ESSAY_THEMES: EssayTheme[] = [
   {
     id: 't4', title: 'Impactos do desperdício de alimentos na sociedade brasileira',
     keywords: ['desperdício', 'alimentos', 'fome', 'insegurança alimentar', 'consumo', 'produção', 'doação', 'logística', 'meio ambiente'],
+    axes: [{ label: 'impactos', terms: ['impact', 'consequência', 'efeito', 'provoca', 'gera'] }, { label: 'desperdício', terms: ['desperd', 'perda'] }, { label: 'alimentos', terms: ['aliment', 'comida'] }, { label: 'Brasil', terms: ['brasil', 'nacional', 'país'] }],
     texts: [
       { title: 'Texto I', body: 'Perdas ocorrem em várias etapas: colheita, transporte, armazenamento, comercialização e consumo doméstico.' },
       { title: 'Texto II', body: 'A coexistência de desperdício e insegurança alimentar revela problemas de distribuição, e não apenas de produção.' },
@@ -38,6 +42,7 @@ export const ESSAY_THEMES: EssayTheme[] = [
   {
     id: 't5', title: 'A mobilidade urbana como direito nas cidades brasileiras',
     keywords: ['mobilidade', 'transporte', 'cidade', 'urbana', 'transporte público', 'acessibilidade', 'periferia', 'direito', 'trânsito'],
+    axes: [{ label: 'mobilidade', terms: ['mobilidade', 'transporte', 'deslocamento'] }, { label: 'direito', terms: ['direito', 'constituição', 'garant'] }, { label: 'cidades', terms: ['cidade', 'urban'] }, { label: 'Brasil', terms: ['brasil', 'nacional', 'país'] }],
     texts: [
       { title: 'Texto I', body: 'O transporte foi incluído entre os direitos sociais no artigo 6º da Constituição Federal por meio da Emenda Constitucional nº 90, de 2015.' },
       { title: 'Texto II', body: 'Longos deslocamentos diários afetam sobretudo moradores de periferias, com impactos sobre estudo, trabalho e lazer.' },

@@ -1,146 +1,142 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Attempt, CardRating, CardState, Essay, EssayVersion, Flashcard, GeneratedQuestion, InterventionLogEntry, MasteryCycle, Profile, Question, Situation, SkillReview, XPEvent } from '../types';
-import { PERSONAS } from './seed';
-import { schedule, scheduleSkill, setSrsConfig, DEFAULT_SRS, type SrsConfig } from '../engine/srs';
-import { skillMastery } from '../engine/mastery';
-import { xpForAttempt } from '../engine/gamification';
-import { DEFAULT_LIMITS, monthKey, type Plan, type UsageKind } from '../engine/billing';
-import { checkConsolidation, recordTwin } from '../engine/cycle';
-import { errorTypeForSituation } from '../engine/intervention';
+import type { Activity, Attempt, CardRating, CardState, CpeStepId, ErrorCategory, Essay, EssayPractice, EssayVersion, Explanation, Flashcard, GeneratedQuestion, Pending, Profile, Question, SessionPlan, SessionRecord, SkillReview } from '../types';
 import { QUESTIONS } from '../data/questions';
-import { CHALLENGES } from '../data/demo';
+import { DEFAULT_PARAMS, type Params } from '../engine/params';
+import { review as fsrsReview } from '../engine/fsrs';
+import { outcomeOfAttempt, outcomeOfExplanation, scheduleSkill } from '../engine/skillReview';
+import { studyPhase } from '../engine/strategy';
 
-export type Role = 'student' | 'admin';
-export interface ReviewItemT { id: string; title: string; kind: 'questao' | 'material'; status: 'pendente' | 'aprovado' | 'devolvido'; note?: string; qid?: string }
-
-interface State {
-  role: Role; profile: Profile | null; diagnosticDone: boolean;
-  attempts: Attempt[]; cardStates: Record<string, CardState>; customCards: Flashcard[];
-  essays: Essay[]; xpEvents: XPEvent[]; generated: GeneratedQuestion[];
-  cycles: MasteryCycle[]; skillReviews: Record<string, SkillReview>; interventionLog: InterventionLogEntry[];
-  teamId?: string; schoolId?: string; challengeProgress: Record<string, number>; joinedChallenges: string[];
-  plan: Plan; usage: { month: string; tutor: number; essay: number; gen: number }; limits: typeof DEFAULT_LIMITS; checkoutLog: { ts: number; plan: Plan }[];
-  reviewQueue: ReviewItemT[];
-  settings: { dark: boolean; rankingOptIn: boolean; publicProfile: boolean; portfolioPublic: boolean; timer: boolean; autonomy: 'mais_autonomia' | 'equilibrado' | 'mais_apoio'; confidencePrompt: 'adaptativo' | 'sempre' | 'nunca'; studyMode: 'adaptativo' | 'livre' };
-  srsConfig: SrsConfig; simHistory: { ts: number; pct: number; name: string; correct: number; total: number }[];
+/** Estado local do protótipo. Só guarda fatos (respostas, explicações, textos); domínio e indicadores são sempre recalculados. */
+export interface Settings { dark: boolean; askConfidence: boolean; showTimer: boolean }
+export interface State {
+  profile: Profile | null; demo: boolean;
+  attempts: Attempt[]; explanations: Explanation[]; essays: Essay[]; essayPractice: EssayPractice[];
+  skillReviews: Record<string, SkillReview>; cardStates: Record<string, CardState>; customCards: Flashcard[];
+  sessions: SessionRecord[]; pendings: Pending[]; activities: Activity[]; generated: GeneratedQuestion[];
+  lessonsSeen: Record<string, number>;
+  settings: Settings; params: Params; pseudoId: string; reports: { id: string; target: string; reason: string; ts: number }[];
   account?: { nickname: string; token: string; role: 'student' | 'admin'; syncedAt?: number };
-  reports: { id: string; target: string; reason: string; ts: number }[];
-  pseudoId: string;
-  toast?: { msg: string; ts: number };
+  /** Transitório: há uma questão independente aberta e ainda não respondida. */
+  openQuestion: string | null; toast?: { msg: string; ts: number };
+
   notify: (msg: string) => void;
-  loginPersona: (p: keyof typeof PERSONAS) => void;
-  loginRole: (r: Role) => void;
-  createProfile: (p: Profile) => void;
-  finishDiagnostic: () => void;
-  recordAttempt: (a: Omit<Attempt, 'id' | 'skillId' | 'subject'>, q: Question, opts?: { twinLevel?: number }) => { xp: XPEvent[]; attempt: Attempt };
-  reclassifyAttempt: (attemptId: string, s: Exclude<Situation, 'AMB'>) => void;
-  upsertCycle: (c: MasteryCycle) => void;
-  logIntervention: (e: InterventionLogEntry) => void;
-  rateCard: (id: string, r: CardRating, opts?: { free?: boolean; difficulty?: number }) => string;
-  addCard: (c: Flashcard) => void;
-  saveDraft: (themeId: string, text: string) => void;
-  saveVersion: (themeId: string, v: EssayVersion) => void;
-  addXP: (amount: number, reason: string, key: string) => boolean;
-  addGenerated: (g: GeneratedQuestion) => void;
-  setGeneratedStatus: (id: string, s: GeneratedQuestion['status']) => void;
-  joinTeam: (id: string) => void; setSchool: (id: string) => void;
-  joinChallenge: (id: string) => void; progressChallenge: (id: string, n?: number) => void;
-  canUse: (k: UsageKind) => boolean; consume: (k: UsageKind) => boolean;
-  subscribe: (p: Plan) => void; setLimit: (plan: Plan, k: UsageKind, v: number) => void;
-  setSetting: <K extends keyof State['settings']>(k: K, v: State['settings'][K]) => void;
-  addRetry: (attemptId: string, chosen: string, correct: boolean) => void;
-  updateAttempt: (attemptId: string, patch: Partial<Attempt>) => void;
-  setSrs: (c: Partial<SrsConfig>) => void;
-  addSim: (r: State['simHistory'][number]) => void;
-  setAccount: (a: State['account']) => void;
-  hydrate: (data: any) => void;
-  reviewDecision: (id: string, s: ReviewItemT['status'], note?: string) => void;
-  report: (target: string, reason: string) => void;
-  logout: () => void; deleteAll: () => void;
+  createProfile: (p: Profile, demo?: boolean) => void; updateProfile: (p: Partial<Profile>) => void;
+  setOpenQuestion: (id: string | null) => void;
+  recordAttempt: (a: Omit<Attempt, 'id' | 'skillId' | 'subject'>, q: Question) => Attempt;
+  classifyError: (attemptId: string, c: ErrorCategory | undefined) => void;
+  recordCpe: (attemptId: string, r: Partial<Record<CpeStepId, 'demonstrada' | 'dificuldade' | 'pulada'>>) => void;
+  markCorrected: (attemptId: string) => void;
+  recordExplanation: (x: Omit<Explanation, 'id'>) => Explanation; selfCheckExplanation: (id: string, c: NonNullable<Explanation['selfCheck']>) => void;
+  rateCard: (id: string, r: CardRating) => void; addCard: (c: Flashcard) => void;
+  saveDraft: (themeId: string, text: string) => void; saveVersion: (themeId: string, v: EssayVersion) => void; addEssayPractice: (p: Omit<EssayPractice, 'id' | 'ts'>) => void;
+  startSession: (p: SessionPlan) => string; advanceSession: (id: string, outcome: SessionRecord['log'][number]['outcome'], ref?: string) => void; gotoSessionStep: (id: string, idx: number) => void; abandonSession: (id: string) => void;
+  setPending: (p: SessionPlan, status: Pending['status'], days: number) => void; clearPending: (key: string) => void;
+  startActivity: (a: Pick<Activity, 'kind' | 'title' | 'qids' | 'limitSec'>) => string; answerActivity: (id: string, qid: string, ans: Activity['answers'][string]) => void; moveActivity: (id: string, idx: number) => void; pauseActivity: (id: string) => void; resumeActivity: (id: string) => void; finishActivity: (id: string) => void; deferQuestion: (id: string) => void; discardActivity: (id: string) => void;
+  addGenerated: (g: GeneratedQuestion) => void; seeLesson: (id: string) => void;
+  setSetting: <K extends keyof Settings>(k: K, v: Settings[K]) => void; setParam: <K extends keyof Params>(k: K, v: Params[K]) => void; resetParams: () => void;
+  report: (target: string, reason: string) => void; setAccount: (a: State['account']) => void; hydrate: (data: Partial<State>) => void; logout: () => void; deleteAll: () => void;
 }
 
 const DAY = 86400000;
-const newPseudo = () => 'u-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-
-/** Estado de um estudante recém-chegado: tudo zerado. */
+const uid = (p: string) => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 const empty = () => ({
-  role: 'student' as Role, profile: null, diagnosticDone: false, attempts: [], cardStates: {}, customCards: [], essays: [], xpEvents: [], generated: [],
-  cycles: [] as MasteryCycle[], skillReviews: {} as Record<string, SkillReview>, interventionLog: [] as InterventionLogEntry[],
-  teamId: undefined, schoolId: undefined, challengeProgress: {}, joinedChallenges: [], plan: 'free' as Plan, usage: { month: monthKey(), tutor: 0, essay: 0, gen: 0 }, limits: DEFAULT_LIMITS, checkoutLog: [],
-  reviewQueue: [
-    { id: 'r1', title: 'Questão gerada: potência de um forno elétrico', kind: 'questao' as const, status: 'pendente' as const },
-    { id: 'r2', title: 'Material: "Concentração e pH" (rascunho de IA)', kind: 'material' as const, status: 'pendente' as const },
-    { id: 'r3', title: 'Material: "Probabilidade: contando com cuidado" (rascunho de IA)', kind: 'material' as const, status: 'pendente' as const },
-  ],
-  reports: [], pseudoId: newPseudo(), simHistory: [] as State['simHistory'], account: undefined as State['account'],
+  profile: null as Profile | null, demo: false, attempts: [] as Attempt[], explanations: [] as Explanation[], essays: [] as Essay[], essayPractice: [] as EssayPractice[],
+  skillReviews: {} as Record<string, SkillReview>, cardStates: {} as Record<string, CardState>, customCards: [] as Flashcard[],
+  sessions: [] as SessionRecord[], pendings: [] as Pending[], activities: [] as Activity[], generated: [] as GeneratedQuestion[], lessonsSeen: {} as Record<string, number>,
+  pseudoId: uid('u'), reports: [] as State['reports'], account: undefined as State['account'], openQuestion: null as string | null,
 });
+export const STORE_KEY = 'nexo-v3';
 
-export const useStore = create<State>()(persist((set, get) => ({
-  ...empty(),
-  settings: { dark: false, rankingOptIn: true, publicProfile: false, portfolioPublic: false, timer: false, autonomy: 'equilibrado', confidencePrompt: 'adaptativo', studyMode: 'adaptativo' },
-  srsConfig: { ...DEFAULT_SRS },
-  notify: (msg) => set({ toast: { msg, ts: Date.now() } }),
-  loginPersona: (p) => set({ ...empty(), role: 'student', profile: PERSONAS[p].profile, schoolId: PERSONAS[p].profile.schoolId }),
-  loginRole: (r) => set({ role: r }),
-  createProfile: (p) => set({ ...empty(), profile: { ...p, persona: 'custom' }, schoolId: p.schoolId }),
-  finishDiagnostic: () => set({ diagnosticDone: true }),
-  recordAttempt: (a, q, opts) => {
-    const prev = get().attempts;
-    const attempt: Attempt = { ...a, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, skillId: q.skillId, subject: q.subject };
-    const before = skillMastery(prev, q.skillId).state;
-    const after = skillMastery([...prev, attempt], q.skillId).state;
-    const today = new Date(attempt.ts).toDateString();
-    const practiceToday = get().xpEvents.filter((e) => new Date(e.ts).toDateString() === today && /^[^:]+:\d+$/.test(e.key)).reduce((s, e) => s + e.amount, 0);
-    const xp = xpForAttempt(attempt, prev, before, after, practiceToday);
-    const attempts = [...prev, attempt];
-    // Revisão adaptativa da habilidade (não alterada por revisão livre).
-    const skillReviews = attempt.free ? get().skillReviews : { ...get().skillReviews, [q.skillId]: scheduleSkill(get().skillReviews[q.skillId], attempt).review };
-    // Ciclo de domínio: comprovação e consolidação.
-    let cycles = get().cycles;
-    if (attempt.cycleId && (attempt.isTwin || attempt.isNovel)) cycles = cycles.map((c) => (c.id === attempt.cycleId ? recordTwin(c, attempt, opts?.twinLevel ?? c.twinLevel) : c));
-    cycles = cycles.map((c) => (c.skillId === q.skillId ? checkConsolidation(c, attempts) : c));
-    set({ attempts, xpEvents: [...get().xpEvents, ...xp], skillReviews, cycles });
-    get().joinedChallenges.forEach((cid) => { const c = CHALLENGES.find((x) => x.id === cid); if (c && c.questionIds.includes(q.id) && attempt.correct && attempt.confidence !== 'chute') get().progressChallenge(cid); });
-    return { xp, attempt };
-  },
-  reclassifyAttempt: (id, s) => set({ attempts: get().attempts.map((a) => (a.id === id ? { ...a, situation: s, reclassified: true, errorType: errorTypeForSituation(s) ?? a.errorType, evidence: s === 'C' ? 'erro_interpretativo' : s === 'D' ? 'erro_conceitual' : s === 'E' ? 'erro_procedimental' : 'erro_desatencao' } : a)) }),
-  upsertCycle: (c) => { const cs = get().cycles; set({ cycles: cs.some((x) => x.id === c.id) ? cs.map((x) => (x.id === c.id ? c : x)) : [...cs, c] }); },
-  logIntervention: (e) => set({ interventionLog: [...get().interventionLog.slice(-499), e] }),
-  rateCard: (id, r, opts) => {
-    const { state, explanation } = schedule(get().cardStates[id], r, Date.now(), { free: opts?.free, difficulty: opts?.difficulty });
-    set({ cardStates: { ...get().cardStates, [id]: state } });
-    if (!opts?.free && get().joinedChallenges.includes('c4')) get().progressChallenge('c4');
-    if (!opts?.free) get().addXP(2, 'Revisão concluída', `rev-${id}-${new Date().toDateString()}`); // 1x por cartão por dia (antifraude)
-    return explanation;
-  },
-  addCard: (c) => { if (get().customCards.some((x) => x.front === c.front)) return; set({ customCards: [...get().customCards, c] }); },
-  saveDraft: (themeId, text) => { const es = [...get().essays]; const i = es.findIndex((e) => e.themeId === themeId); if (i >= 0) es[i] = { ...es[i], draft: text }; else es.push({ id: `e-${Date.now()}`, themeId, versions: [], draft: text }); set({ essays: es }); },
-  saveVersion: (themeId, v) => { const es = [...get().essays]; const i = es.findIndex((e) => e.themeId === themeId); if (i >= 0) es[i] = { ...es[i], versions: [...es[i].versions, v], draft: v.text }; else es.push({ id: `e-${Date.now()}`, themeId, versions: [v], draft: v.text }); set({ essays: es }); },
-  addXP: (amount, reason, key) => { if (get().xpEvents.some((e) => e.key === key)) return false; set({ xpEvents: [...get().xpEvents, { ts: Date.now(), amount, reason, key }] }); return true; },
-  addGenerated: (g) => set({ generated: [g, ...get().generated.filter((x) => x.q.id !== g.q.id)] }),
-  setGeneratedStatus: (id, s) => set({ generated: get().generated.map((g) => (g.q.id === id ? { ...g, status: s } : g)) }),
-  joinTeam: (id) => set({ teamId: id }), setSchool: (id) => set({ schoolId: id }),
-  joinChallenge: (id) => set({ joinedChallenges: [...new Set([...get().joinedChallenges, id])] }),
-  progressChallenge: (id, n = 1) => set({ challengeProgress: { ...get().challengeProgress, [id]: (get().challengeProgress[id] ?? 0) + n } }),
-  canUse: (k) => { const u = get().usage.month === monthKey() ? get().usage : { month: monthKey(), tutor: 0, essay: 0, gen: 0 }; return u[k] < get().limits[get().plan][k]; },
-  consume: (k) => { if (!get().canUse(k)) return false; const u = get().usage.month === monthKey() ? get().usage : { month: monthKey(), tutor: 0, essay: 0, gen: 0 }; set({ usage: { ...u, [k]: u[k] + 1 } }); return true; },
-  subscribe: (p) => set({ plan: p, checkoutLog: [...get().checkoutLog, { ts: Date.now(), plan: p }] }),
-  setLimit: (plan, k, v) => set({ limits: { ...get().limits, [plan]: { ...get().limits[plan], [k]: v } } }),
-  setSetting: (k, v) => set({ settings: { ...get().settings, [k]: v } }),
-  addRetry: (id, chosen, correct) => set({ attempts: get().attempts.map((a) => (a.id === id ? { ...a, retries: [...(a.retries ?? []), { chosen, correct, ts: Date.now() }] } : a)) }),
-  updateAttempt: (id, patch) => set({ attempts: get().attempts.map((a) => (a.id === id ? { ...a, ...patch } : a)) }),
-  setSrs: (c) => { const cfg = { ...get().srsConfig, ...c }; setSrsConfig(cfg); set({ srsConfig: cfg }); },
-  addSim: (r) => set({ simHistory: [...get().simHistory.filter((x) => x.ts !== r.ts), r] }),
-  setAccount: (a) => set({ account: a }),
-  hydrate: (data) => { if (!data || typeof data !== 'object') return; const { toast, account, ...rest } = data; set({ ...rest }); if (rest.srsConfig) setSrsConfig(rest.srsConfig); },
-  reviewDecision: (id, s, note) => set({ reviewQueue: get().reviewQueue.map((r) => (r.id === id ? { ...r, status: s, note } : r)) }),
-  report: (target, reason) => set({ reports: [...get().reports, { id: `rp${Date.now()}`, target, reason, ts: Date.now() }] }),
-  logout: () => set({ ...empty(), settings: get().settings }),
-  deleteAll: () => { localStorage.removeItem('nexo-v2'); localStorage.removeItem('nexo-sims'); set({ ...empty() }); },
-}), { name: 'nexo-v2', partialize: (s) => { const { toast, ...rest } = s; return rest as any; }, merge: (persisted: any, current) => ({ ...current, ...persisted, settings: { ...current.settings, ...(persisted?.settings ?? {}) } }), onRehydrateStorage: () => (st) => { if (st?.srsConfig) setSrsConfig(st.srsConfig); } }));
+export const useStore = create<State>()(persist((set, get) => {
+  const daysLeft = () => studyPhase(get().profile).daysLeft;
+  const patchActivity = (id: string, f: (a: Activity) => Activity) => set({ activities: get().activities.map((a) => (a.id === id ? f(a) : a)) });
+  const patchAttempt = (id: string, p: Partial<Attempt>) => set({ attempts: get().attempts.map((a) => (a.id === id ? { ...a, ...p } : a)) });
+  return {
+    ...empty(), settings: { dark: false, askConfidence: true, showTimer: false }, params: { ...DEFAULT_PARAMS },
+    notify: (msg) => set({ toast: { msg, ts: Date.now() } }),
+    createProfile: (profile, demo = false) => set({ ...empty(), profile, demo }),
+    updateProfile: (p) => { const cur = get().profile; if (cur) set({ profile: { ...cur, ...p } }); },
+    setOpenQuestion: (id) => set({ openQuestion: id }),
+    recordAttempt: (a, q) => {
+      const attempt: Attempt = { ...a, id: uid('a'), skillId: q.skillId, subject: q.subject };
+      const out = outcomeOfAttempt(attempt);
+      const skillReviews = out ? { ...get().skillReviews, [q.skillId]: scheduleSkill(get().skillReviews[q.skillId], q.skillId, out, attempt.ts, get().params, daysLeft()) } : get().skillReviews;
+      set({ attempts: [...get().attempts, attempt], skillReviews });
+      return attempt;
+    },
+    classifyError: (id, c) => patchAttempt(id, { selfCategory: c }),
+    recordCpe: (id, r) => patchAttempt(id, { cpe: { ...get().attempts.find((a) => a.id === id)?.cpe, ...r } }),
+    markCorrected: (id) => patchAttempt(id, { corrected: true }),
+    recordExplanation: (x) => {
+      const rec: Explanation = { ...x, id: uid('x') }; const out = outcomeOfExplanation(rec);
+      set({ explanations: [...get().explanations, rec], skillReviews: out ? { ...get().skillReviews, [x.skillId]: scheduleSkill(get().skillReviews[x.skillId], x.skillId, out, x.ts, get().params, daysLeft()) } : get().skillReviews });
+      return rec;
+    },
+    selfCheckExplanation: (id, c) => set({ explanations: get().explanations.map((e) => (e.id === id ? { ...e, selfCheck: c } : e)) }),
+    rateCard: (id, r) => set({ cardStates: { ...get().cardStates, [id]: fsrsReview(get().cardStates[id], r, Date.now(), get().params.retencaoAlvoFsrs) } }),
+    addCard: (c) => { if (!get().customCards.some((x) => x.id === c.id || x.front === c.front)) set({ customCards: [...get().customCards, c] }); },
+    saveDraft: (themeId, text) => { const es = get().essays; set({ essays: es.some((e) => e.themeId === themeId) ? es.map((e) => (e.themeId === themeId ? { ...e, draft: text } : e)) : [...es, { id: uid('e'), themeId, versions: [], draft: text }] }); },
+    saveVersion: (themeId, v) => { const es = get().essays; set({ essays: es.some((e) => e.themeId === themeId) ? es.map((e) => (e.themeId === themeId ? { ...e, versions: [...e.versions, v], draft: v.text } : e)) : [...es, { id: uid('e'), themeId, versions: [v], draft: v.text }] }); },
+    addEssayPractice: (p) => set({ essayPractice: [...get().essayPractice, { ...p, id: uid('p'), ts: Date.now() }] }),
 
-export function getQuestion(id: string): Question | undefined {
-  return QUESTIONS.find((q) => q.id === id) ?? useStore.getState().generated.find((g) => g.q.id === id)?.q;
+    startSession: (p) => {
+      const cur = get().sessions.find((s) => s.key === p.key && s.status === 'andamento'); if (cur) return cur.id;
+      const { priority: _p, ...plan } = p; const rec: SessionRecord = { ...plan, id: uid('s'), idx: 0, status: 'andamento', startedAt: Date.now(), log: [] };
+      set({ sessions: [...get().sessions, rec], pendings: get().pendings.filter((x) => x.key !== p.key) });
+      return rec.id;
+    },
+    advanceSession: (id, outcome, ref) => set({ sessions: get().sessions.map((s) => { if (s.id !== id) return s; const idx = s.idx + 1; const fin = idx >= s.steps.length; return { ...s, idx, log: [...s.log, { idx: s.idx, ts: Date.now(), outcome, ref }], status: fin ? 'concluida' : s.status, finishedAt: fin ? Date.now() : s.finishedAt }; }) }),
+    gotoSessionStep: (id, idx) => set({ sessions: get().sessions.map((s) => (s.id === id ? { ...s, idx: Math.max(0, Math.min(idx, s.steps.length - 1)) } : s)) }),
+    abandonSession: (id) => set({ sessions: get().sessions.map((s) => (s.id === id ? { ...s, status: 'abandonada', finishedAt: Date.now() } : s)) }),
+    setPending: (p, status, days) => set({ pendings: [...get().pendings.filter((x) => x.key !== p.key), { key: p.key, type: p.type, title: p.title, skillIds: p.skillIds, status, createdAt: Date.now(), until: Date.now() + days * DAY, reason: p.reason }] }),
+    clearPending: (key) => set({ pendings: get().pendings.filter((x) => x.key !== key) }),
+
+    startActivity: (a) => { const id = uid('t'); set({ activities: [...get().activities, { ...a, id, idx: 0, answers: {}, status: 'andamento', startedAt: Date.now() }] }); return id; },
+    answerActivity: (id, qid, ans) => patchActivity(id, (a) => ({ ...a, answers: { ...a.answers, [qid]: ans } })),
+    moveActivity: (id, idx) => patchActivity(id, (a) => ({ ...a, idx: Math.max(0, Math.min(idx, a.qids.length - 1)) })),
+    pauseActivity: (id) => patchActivity(id, (a) => ({ ...a, status: 'pausada' })),
+    resumeActivity: (id) => patchActivity(id, (a) => ({ ...a, status: 'andamento' })),
+    deferQuestion: (id) => patchActivity(id, (a) => ({ ...a, qids: [...a.qids.slice(0, a.idx), ...a.qids.slice(a.idx + 1), a.qids[a.idx]] })),
+    /** Só ao concluir as respostas viram evidência: antes disso não há correção nem efeito no perfil. */
+    finishActivity: (id) => {
+      const act = get().activities.find((a) => a.id === id); if (!act || act.status === 'concluida') return;
+      const ids: string[] = [];
+      act.qids.forEach((qid, i) => {
+        const ans = act.answers[qid]; const q = getQuestion(qid); if (!ans || !q) return;
+        const alt = q.alternatives?.find((x) => x.letter === ans.chosen); const correct = isCorrect(q, ans.chosen);
+        const at = get().recordAttempt({ qid, chosen: ans.chosen, correct, confidence: ans.confidence, ts: Date.now() + i, mode: act.kind === 'bateria' ? 'bateria' : act.kind === 'simulado' ? 'simulado' : 'diagnostico', timeSec: ans.timeSec, errorType: correct ? undefined : alt?.errorType }, q);
+        ids.push(at.id);
+      });
+      patchActivity(id, (a) => ({ ...a, status: 'concluida', finishedAt: Date.now(), attemptIds: ids }));
+    },
+    discardActivity: (id) => set({ activities: get().activities.filter((a) => a.id !== id) }),
+
+    addGenerated: (g) => set({ generated: [g, ...get().generated.filter((x) => x.q.id !== g.q.id)].slice(0, 200) }),
+    seeLesson: (id) => set({ lessonsSeen: { ...get().lessonsSeen, [id]: Date.now() } }),
+    setSetting: (k, v) => set({ settings: { ...get().settings, [k]: v } }),
+    setParam: (k, v) => set({ params: { ...get().params, [k]: v } }), resetParams: () => set({ params: { ...DEFAULT_PARAMS } }),
+    report: (target, reason) => set({ reports: [...get().reports, { id: uid('rp'), target, reason, ts: Date.now() }] }),
+    setAccount: (account) => set({ account }),
+    hydrate: (data) => { if (!data || typeof data !== 'object') return; const { toast: _t, account: _a, openQuestion: _o, ...rest } = data; set({ ...rest, params: { ...DEFAULT_PARAMS, ...rest.params } }); },
+    logout: () => set({ ...empty() }),
+    deleteAll: () => { try { localStorage.removeItem(STORE_KEY); ['nexo-v2', 'nexo-sims'].forEach((k) => localStorage.removeItem(k)); } catch { /* armazenamento indisponível */ } set({ ...empty() }); },
+  };
+}, {
+  name: STORE_KEY,
+  partialize: (s) => { const { toast: _t, openQuestion: _o, ...rest } = s; return rest as State; },
+  merge: (persisted, current) => { const p = (persisted ?? {}) as Partial<State>; return { ...current, ...p, settings: { ...current.settings, ...p.settings }, params: { ...DEFAULT_PARAMS, ...p.params } }; },
+}));
+
+export const isCorrect = (q: Question, chosen: string) => q.type === 'aberta' ? Math.abs(+chosen.replace(',', '.') - q.openAnswer!.value) <= (q.openAnswer!.tolerance ?? 1e-6) : !!q.alternatives?.find((a) => a.letter === chosen)?.correct;
+export function getQuestion(id: string): Question | undefined { return QUESTIONS.find((q) => q.id === id) ?? useStore.getState().generated.find((g) => g.q.id === id)?.q; }
+
+/** Regra obrigatória: a IA fica indisponível durante resolução independente. */
+export interface AiLock { locked: boolean; reason?: string; activity?: Activity }
+export function aiLock(s: Pick<State, 'activities' | 'openQuestion'>): AiLock {
+  const activity = s.activities.find((a) => a.status === 'andamento');
+  if (activity) return { locked: true, activity, reason: `Você está em ${activity.kind === 'simulado' ? 'um simulado' : activity.kind === 'bateria' ? 'uma bateria de exercícios' : 'uma avaliação diagnóstica'}. A IA volta na correção.` };
+  if (s.openQuestion) return { locked: true, reason: s.openQuestion.startsWith('x:') ? 'Há uma explicação ativa em andamento. A IA volta depois do envio.' : 'Há uma questão em resolução independente. A IA volta na correção.' };
+  return { locked: false };
 }
-export const DAY_MS = DAY;
+export const useAiLock = () => { const activities = useStore((s) => s.activities); const openQuestion = useStore((s) => s.openQuestion); return aiLock({ activities, openQuestion }); };
