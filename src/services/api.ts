@@ -85,6 +85,22 @@ export interface OfficialEnemQuestionDTO {
   alternatives: { letter: 'A' | 'B' | 'C' | 'D' | 'E'; text: string; assetUrl?: string | null }[];
   correctAlternative: 'A' | 'B' | 'C' | 'D' | 'E' | 'ANULADA';
   assets: string[];
+  hasImages: boolean;
   status: 'active' | 'annulled' | 'under_review';
   source: 'official_enem' | 'ai_generated_fallback';
+}
+
+export interface EnemCatalogPageDTO {
+  items: OfficialEnemQuestionDTO[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface EnemYearsSummaryDTO {
+  years: { year: number; count: number }[];
+  total: number;
+  withSkillCount?: number;
+  withTriCount?: number;
 }

@@ -5,7 +5,14 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { openDb } from '../../server/db';
 import { LocalAssetStorage } from '../../server/gateways/assets';
 import { EnemRepository } from '../../server/repositories/enem';
-import { ingestEnemBatch, parseInepItemsCsv, type RawEnemQuestion } from '../../scripts/ingest-enem';
+import {
+  discoverAvailableYears,
+  ingestAllYearsFromApi,
+  ingestEnemBatch,
+  parseInepItemsCsv,
+  parseYearsArg,
+  type RawEnemQuestion,
+} from '../../scripts/ingest-enem';
 
 describe('US2: Pipeline offline de ingestão ENEM + cruzamento INEP H1–H30/TRI + AssetStorage', () => {
   const dirs: string[] = [];
@@ -114,5 +121,134 @@ describe('US2: Pipeline offline de ingestão ENEM + cruzamento INEP H1–H30/TRI
     // Reexecução idempotente não duplica registros
     await ingestEnemBatch({ db, questions, inepMeta, assetStorage: storage });
     expect(repo.listQuestions({ includeAnnulled: true }).total).toBe(3);
+  });
+
+  it('reescreve imagens Markdown em contextMd, deduplica com files[], espelha alternativas e distingue Inglês/Espanhol', async () => {
+    const db = openDb(':memory:');
+    const tmp = mkdtempSync(join(tmpdir(), 'nexo-assets-md-'));
+    dirs.push(tmp);
+    const storage = new LocalAssetStorage(tmp);
+
+    let fetchCount = 0;
+    const fetchAsset = async (url: string) => {
+      fetchCount++;
+      return { buffer: Buffer.from(`img-bytes:${url}`), contentType: 'image/png' };
+    };
+
+    const questions: RawEnemQuestion[] = [
+      {
+        index: 91,
+        year: 2022,
+        discipline: 'ciencias-natureza',
+        context: 'Observe o esquema:\n\n![Esquema](https://enem.dev/2022/q91.png)\n\nAnalise o circuito.',
+        alternativesIntroduction: 'Qual figura representa o resultado?',
+        correctAlternative: 'B',
+        files: ['https://enem.dev/2022/q91.png', 'https://enem.dev/2022/q91-extra.png'],
+        alternatives: [
+          { letter: 'A', text: '', file: 'https://enem.dev/2022/q91-a.png' },
+          { letter: 'B', text: 'Opção correta', file: 'https://enem.dev/2022/q91-b.png', isCorrect: true },
+        ],
+      },
+      {
+        index: 1,
+        year: 2022,
+        discipline: 'linguagens',
+        language: 'ingles',
+        context: 'English text.',
+        alternativesIntroduction: 'Choose:',
+        correctAlternative: 'A',
+        alternatives: [{ letter: 'A', text: 'Yes', isCorrect: true }],
+      },
+      {
+        index: 1,
+        year: 2022,
+        discipline: 'linguagens',
+        language: 'espanhol',
+        context: 'Texto en español.',
+        alternativesIntroduction: 'Elige:',
+        correctAlternative: 'A',
+        alternatives: [{ letter: 'A', text: 'Sí', isCorrect: true }],
+      },
+    ];
+
+    const summary = await ingestEnemBatch({ db, questions, assetStorage: storage, fetchAsset });
+    expect(summary.imported).toBe(3);
+    // q91.png aparece em contextMd e files[], mas deve ser baixado apenas 1 vez (total 4 URLs distintas)
+    expect(fetchCount).toBe(4);
+    expect(summary.mirroredAssets).toBe(4);
+
+    const repo = new EnemRepository(db);
+    const q91 = repo.getById('enem-2022-CN-091')!;
+    expect(q91.contextMd).not.toContain('https://enem.dev');
+    expect(q91.contextMd).toMatch(/!\[Esquema\]\(\/api\/assets\/[a-f0-9]{64}\.png\)/);
+    expect(q91.assets).toHaveLength(2);
+    expect(q91.alternatives[0].assetUrl).toMatch(/^\/api\/assets\/[a-f0-9]{64}\.png$/);
+    expect(q91.hasImages).toBe(true);
+
+    // Inglês e Espanhol armazenados separadamente
+    expect(repo.getById('enem-2022-LC-001-ingles')).not.toBeNull();
+    expect(repo.getById('enem-2022-LC-001-espanhol')).not.toBeNull();
+  });
+
+  it('descobre todos os anos disponíveis e mantém resiliência quando um ano falha durante a ingestão', async () => {
+    const mockExamsFetch = (async () =>
+      new Response(JSON.stringify([{ year: 2023 }, { year: 2009 }, { year: 2021 }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })) as unknown as typeof fetch;
+
+    const discovered = await discoverAvailableYears(mockExamsFetch);
+    expect(discovered).toEqual([2009, 2021, 2023]);
+    expect(parseYearsArg('all', discovered)).toEqual([2009, 2021, 2023]);
+    expect(parseYearsArg('2020-2022', discovered)).toEqual([2020, 2021, 2022]);
+    expect(parseYearsArg('2019,2023', discovered)).toEqual([2019, 2023]);
+
+    const db = openDb(':memory:');
+    const tmp = mkdtempSync(join(tmpdir(), 'nexo-assets-multi-'));
+    dirs.push(tmp);
+    const storage = new LocalAssetStorage(tmp);
+
+    const apiFetch = (async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes('/exams/2021/')) {
+        return new Response('unavailable', { status: 500 });
+      }
+      const year = url.includes('/exams/2009/') ? 2009 : 2023;
+      return new Response(
+        JSON.stringify({
+          metadata: { hasMore: false },
+          questions: [
+            {
+              index: 10,
+              year,
+              discipline: 'matematica',
+              context: `Questão do ENEM ${year}`,
+              alternativesIntroduction: 'Marque:',
+              correctAlternative: 'A',
+              alternatives: [{ letter: 'A', text: '1', isCorrect: true }],
+            },
+          ],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }) as unknown as typeof fetch;
+
+    const result = await ingestAllYearsFromApi({
+      db,
+      years: [2009, 2021, 2023],
+      assetStorage: storage,
+      fetchFn: apiFetch,
+      throttleMs: 0,
+      baseDelayMs: 1,
+    });
+
+    expect(result.failedYears).toEqual([2021]);
+    expect(result.totals.imported).toBe(2);
+
+    const repo = new EnemRepository(db);
+    expect(repo.listYears().years).toEqual([
+      { year: 2023, count: 1 },
+      { year: 2009, count: 1 },
+    ]);
   });
 });

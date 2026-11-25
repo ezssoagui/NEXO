@@ -7,10 +7,12 @@ import { formatEnemSkillId, type EnemAreaCode } from '../src/data/enemSkills';
 
 /**
  * ADR-0004: Pipeline CLI offline idempotente de ingestão do acervo oficial do ENEM (2009+).
- * - Lê provas de dump JSON local (--source-dir) ou da API aberta enem.dev (com throttle 1 req/s).
+ * - Descobre automaticamente todos os anos disponíveis na API aberta enem.dev (`--years all`, padrão)
+ *   ou lê dumps JSON locais (`--source-dir`), com throttle >= 1,1s e retentativa com backoff.
  * - Cruza com ITENS_PROVA_{ANO}.csv dos Microdados do INEP para anexar CO_HABILIDADE (H01–H30),
  *   CO_ITEM e parâmetros TRI (NU_PARAM_A, NU_PARAM_B, NU_PARAM_C) + detecção de questões anuladas.
- * - Espelha imagens via AssetStorage (LocalAssetStorage no V1 -> R2/S3 em produção).
+ * - Espelha TODAS as imagens (files[], Markdown inline em context e alternatives[].file) via
+ *   AssetStorage (LocalAssetStorage no V1 -> R2/S3 em produção), sem duplicação.
  */
 export interface RawEnemQuestion {
   index: number;
@@ -36,6 +38,55 @@ export interface InepItemMetadata {
   triB: number | null;
   triC: number | null;
   annulled: boolean;
+}
+
+export interface IngestSummary {
+  imported: number;
+  enrichedWithInep: number;
+  annulled: number;
+  mirroredAssets: number;
+}
+
+export interface IngestYearReport extends IngestSummary {
+  year: number;
+  error?: string;
+}
+
+export const MARKDOWN_IMAGE_RE = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+
+export function extractMarkdownImageUrls(md: string): string[] {
+  const urls: string[] = [];
+  for (const m of md.matchAll(MARKDOWN_IMAGE_RE)) {
+    const url = m[2]?.trim();
+    if (url) urls.push(url);
+  }
+  return urls;
+}
+
+export async function rewriteMarkdownImages(
+  md: string,
+  mirror: (url: string) => Promise<string>,
+): Promise<{ text: string; mirroredUrls: string[] }> {
+  if (!md) return { text: '', mirroredUrls: [] };
+  const matches = [...md.matchAll(MARKDOWN_IMAGE_RE)];
+  if (!matches.length) return { text: md, mirroredUrls: [] };
+
+  let out = '';
+  let lastIndex = 0;
+  const mirroredUrls: string[] = [];
+
+  for (const m of matches) {
+    const start = m.index ?? 0;
+    const alt = m[1] ?? '';
+    const origUrl = m[2]?.trim() ?? '';
+    out += md.slice(lastIndex, start);
+    const nextUrl = origUrl ? await mirror(origUrl) : origUrl;
+    if (nextUrl) mirroredUrls.push(nextUrl);
+    out += `![${alt}](${nextUrl})`;
+    lastIndex = start + m[0].length;
+  }
+  out += md.slice(lastIndex);
+  return { text: out, mirroredUrls };
 }
 
 export function mapDisciplineToArea(discipline: string): EnemAreaCode {
@@ -110,13 +161,6 @@ export function parseInepItemsCsv(csvContent: string): Map<string, InepItemMetad
   return map;
 }
 
-export interface IngestSummary {
-  imported: number;
-  enrichedWithInep: number;
-  annulled: number;
-  mirroredAssets: number;
-}
-
 export async function ingestEnemBatch(opts: {
   db: DB;
   questions: RawEnemQuestion[];
@@ -128,14 +172,29 @@ export async function ingestEnemBatch(opts: {
   repo.seedOfficialSkills();
 
   const summary: IngestSummary = { imported: 0, enrichedWithInep: 0, annulled: 0, mirroredAssets: 0 };
+  const mirroredCache = new Map<string, string>();
 
   const mirror = async (url: string): Promise<string> => {
-    if (!opts.fetchAsset) return url;
-    const fetched = await opts.fetchAsset(url);
-    if (!fetched) return url;
-    const ext = url.split('?')[0].split('.').pop();
+    const clean = url.trim();
+    if (!clean) return clean;
+    if (clean.includes('broken-image.svg')) return clean;
+    if (clean.startsWith('/api/assets/')) return clean;
+    const cached = mirroredCache.get(clean);
+    if (cached) return cached;
+    if (!opts.fetchAsset) {
+      mirroredCache.set(clean, clean);
+      return clean;
+    }
+    const fetched = await opts.fetchAsset(clean);
+    if (!fetched) {
+      mirroredCache.set(clean, clean);
+      return clean;
+    }
+    const extCandidate = clean.split('?')[0].split('.').pop();
+    const ext = extCandidate && /^[a-z0-9]{2,5}$/i.test(extCandidate) ? extCandidate : undefined;
     const stored = await opts.assetStorage.put(fetched.buffer, fetched.contentType, ext);
     summary.mirroredAssets++;
+    mirroredCache.set(clean, stored.publicUrl);
     return stored.publicUrl;
   };
 
@@ -155,9 +214,16 @@ export async function ingestEnemBatch(opts: {
     if (meta) summary.enrichedWithInep++;
     if (isAnnulled) summary.annulled++;
 
-    const mirroredAssets: string[] = [];
+    const rewrittenContext = await rewriteMarkdownImages(String(raw.context ?? ''), mirror);
+
+    const assetSet = new Set<string>();
     for (const f of raw.files ?? []) {
-      mirroredAssets.push(await mirror(f));
+      if (f.includes('broken-image.svg')) continue;
+      const mirrored = await mirror(f);
+      if (mirrored && !mirrored.includes('broken-image.svg')) assetSet.add(mirrored);
+    }
+    for (const u of rewrittenContext.mirroredUrls) {
+      if (u && !u.includes('broken-image.svg')) assetSet.add(u);
     }
 
     const alternatives = [];
@@ -183,11 +249,11 @@ export async function ingestEnemBatch(opts: {
       triA: meta?.triA ?? null,
       triB: meta?.triB ?? null,
       triC: meta?.triC ?? null,
-      contextMd: String(raw.context ?? ''),
+      contextMd: rewrittenContext.text,
       alternativesIntro: String(raw.alternativesIntroduction ?? ''),
       alternatives,
       correctAlternative: correctAlt,
-      assets: mirroredAssets,
+      assets: [...assetSet],
       status: isAnnulled ? 'annulled' : 'active',
       source: 'official_enem',
     };
@@ -199,7 +265,154 @@ export async function ingestEnemBatch(opts: {
   return summary;
 }
 
-// Execução direta via CLI (`npm run ingest:enem -- --source-dir ... --inep-dir ...`)
+export function parseYearsArg(yearsArg: string | undefined, availableYears: number[]): number[] {
+  const cleaned = (yearsArg ?? 'all').trim().toLowerCase();
+  if (!cleaned || cleaned === 'all') {
+    return [...new Set(availableYears.filter((y) => Number.isInteger(y) && y >= 2009))].sort((a, b) => a - b);
+  }
+  if (cleaned.includes(',')) {
+    return [...new Set(cleaned.split(',').map((s) => Number(s.trim())).filter((y) => Number.isInteger(y) && y >= 2009))].sort(
+      (a, b) => a - b,
+    );
+  }
+  if (cleaned.includes('-')) {
+    const [s, e] = cleaned.split('-').map((x) => Number(x.trim()));
+    if (!Number.isInteger(s) || s < 2009) return [];
+    const end = Number.isInteger(e) && e >= s ? e : s;
+    const out: number[] = [];
+    for (let y = s; y <= end; y++) out.push(y);
+    return out;
+  }
+  const single = Number(cleaned);
+  return Number.isInteger(single) && single >= 2009 ? [single] : [];
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export async function fetchJsonWithRetry(
+  url: string,
+  opts: { fetchFn?: typeof fetch; maxRetries?: number; baseDelayMs?: number } = {},
+): Promise<{ ok: boolean; status: number; data?: any; error?: string }> {
+  const fetchFn = opts.fetchFn ?? fetch;
+  const maxRetries = opts.maxRetries ?? 3;
+  const baseDelayMs = opts.baseDelayMs ?? 1200;
+
+  let lastStatus = 0;
+  let lastError = 'network_error';
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetchFn(url);
+      lastStatus = res.status;
+      if (res.ok) {
+        return { ok: true, status: res.status, data: await res.json() };
+      }
+      if (res.status === 429 || res.status >= 500) {
+        lastError = `HTTP ${res.status}`;
+        if (attempt < maxRetries) {
+          await sleep(baseDelayMs * Math.pow(2, attempt));
+          continue;
+        }
+      }
+      return { ok: false, status: res.status, error: `HTTP ${res.status}` };
+    } catch (e) {
+      lastError = (e as Error).message || 'network_error';
+      if (attempt < maxRetries) {
+        await sleep(baseDelayMs * Math.pow(2, attempt));
+        continue;
+      }
+    }
+  }
+
+  return { ok: false, status: lastStatus, error: lastError };
+}
+
+export async function discoverAvailableYears(
+  fetchFn: typeof fetch = fetch,
+  fallbackEndYear = new Date().getFullYear(),
+): Promise<number[]> {
+  const res = await fetchJsonWithRetry('https://api.enem.dev/v1/exams', { fetchFn, maxRetries: 2, baseDelayMs: 500 });
+  if (res.ok && Array.isArray(res.data)) {
+    const years = res.data
+      .map((item: any) => Number(item?.year))
+      .filter((y: number) => Number.isInteger(y) && y >= 2009);
+    if (years.length > 0) {
+      return [...new Set(years)].sort((a, b) => a - b);
+    }
+  }
+  const fallback: number[] = [];
+  for (let y = 2009; y <= Math.max(2009, fallbackEndYear); y++) fallback.push(y);
+  return fallback;
+}
+
+export async function ingestAllYearsFromApi(opts: {
+  db: DB;
+  years: number[];
+  inepMeta?: Map<string, InepItemMetadata>;
+  assetStorage: AssetStorage;
+  fetchFn?: typeof fetch;
+  fetchAsset?: (url: string) => Promise<{ buffer: Buffer; contentType: string } | null>;
+  throttleMs?: number;
+  baseDelayMs?: number;
+  onYearComplete?: (report: IngestYearReport) => void;
+}): Promise<{ reports: IngestYearReport[]; totals: IngestSummary; failedYears: number[] }> {
+  const fetchFn = opts.fetchFn ?? fetch;
+  const throttleMs = opts.throttleMs ?? 1100;
+  const baseDelayMs = opts.baseDelayMs ?? 1200;
+
+  const reports: IngestYearReport[] = [];
+  const failedYears: number[] = [];
+  const totals: IngestSummary = { imported: 0, enrichedWithInep: 0, annulled: 0, mirroredAssets: 0 };
+
+  for (const year of opts.years) {
+    const yearQuestions: RawEnemQuestion[] = [];
+    let offset = 0;
+    let yearError: string | undefined;
+
+    while (true) {
+      const res = await fetchJsonWithRetry(
+        `https://api.enem.dev/v1/exams/${year}/questions?limit=50&offset=${offset}`,
+        { fetchFn, maxRetries: 3, baseDelayMs },
+      );
+      if (!res.ok) {
+        yearError = res.error ?? `HTTP ${res.status}`;
+        break;
+      }
+      const list = Array.isArray(res.data?.questions) ? (res.data.questions as RawEnemQuestion[]) : [];
+      yearQuestions.push(...list);
+      if (!res.data?.metadata?.hasMore || list.length === 0) break;
+      offset += 50;
+      if (throttleMs > 0) await sleep(throttleMs);
+    }
+
+    let summary: IngestSummary = { imported: 0, enrichedWithInep: 0, annulled: 0, mirroredAssets: 0 };
+    if (yearQuestions.length > 0) {
+      summary = await ingestEnemBatch({
+        db: opts.db,
+        questions: yearQuestions,
+        inepMeta: opts.inepMeta,
+        assetStorage: opts.assetStorage,
+        fetchAsset: opts.fetchAsset,
+      });
+    }
+
+    const report: IngestYearReport = { year, ...summary, ...(yearError ? { error: yearError } : {}) };
+    reports.push(report);
+    if (yearError) failedYears.push(year);
+
+    totals.imported += summary.imported;
+    totals.enrichedWithInep += summary.enrichedWithInep;
+    totals.annulled += summary.annulled;
+    totals.mirroredAssets += summary.mirroredAssets;
+
+    opts.onYearComplete?.(report);
+    if (throttleMs > 0) await sleep(throttleMs);
+  }
+
+  return { reports, totals, failedYears };
+}
+
+// Execução direta via CLI (`npm run ingest:enem` importa todos os anos disponíveis por padrão)
 async function runCli() {
   const args = process.argv.slice(2);
   const argVal = (flag: string) => {
@@ -209,7 +422,7 @@ async function runCli() {
   const sourceDir = argVal('--source-dir');
   const inepDir = argVal('--inep-dir');
   const assetsDir = argVal('--assets-dir') || process.env.NEXO_ASSETS_DIR || 'server/data/assets';
-  const yearsRange = argVal('--years') || '2023-2023';
+  const yearsArg = argVal('--years');
 
   const db = openDb();
   const storage = new LocalAssetStorage(assetsDir);
@@ -223,9 +436,7 @@ async function runCli() {
     }
   };
 
-  const questions: RawEnemQuestion[] = [];
   const inepMeta = new Map<string, InepItemMetadata>();
-
   if (inepDir && existsSync(inepDir)) {
     for (const f of readdirSync(inepDir).filter((x) => x.toLowerCase().endsWith('.csv'))) {
       const parsed = parseInepItemsCsv(readFileSync(join(inepDir, f), 'utf-8'));
@@ -234,29 +445,36 @@ async function runCli() {
   }
 
   if (sourceDir && existsSync(sourceDir)) {
+    const questions: RawEnemQuestion[] = [];
     for (const f of readdirSync(sourceDir).filter((x) => x.endsWith('.json'))) {
       const data = JSON.parse(readFileSync(join(sourceDir, f), 'utf-8'));
       const list = Array.isArray(data) ? data : data.questions ?? [];
       questions.push(...list);
     }
-  } else {
-    const [startY, endY] = yearsRange.split('-').map(Number);
-    for (let y = startY; y <= (endY || startY); y++) {
-      let offset = 0;
-      while (true) {
-        const res = await fetch(`https://api.enem.dev/v1/exams/${y}/questions?limit=50&offset=${offset}`);
-        if (!res.ok) break;
-        const json = (await res.json()) as any;
-        questions.push(...(json.questions ?? []));
-        if (!json.metadata?.hasMore) break;
-        offset += 50;
-        await new Promise((r) => setTimeout(r, 1100)); // respeita rate limit 1 req/s da enem.dev
-      }
-    }
+    const summary = await ingestEnemBatch({ db, questions, inepMeta, assetStorage: storage, fetchAsset });
+    console.log('[ingest:enem] concluído (offline):', JSON.stringify(summary));
+    return;
   }
 
-  const summary = await ingestEnemBatch({ db, questions, inepMeta, assetStorage: storage, fetchAsset });
-  console.log('[ingest:enem] concluído:', JSON.stringify(summary));
+  const availableYears = !yearsArg || yearsArg.trim().toLowerCase() === 'all' ? await discoverAvailableYears() : [];
+  const years = parseYearsArg(yearsArg, availableYears);
+  console.log(`[ingest:enem] iniciando ingestão para ${years.length} ano(s): ${years.join(', ')}`);
+
+  const result = await ingestAllYearsFromApi({
+    db,
+    years,
+    inepMeta,
+    assetStorage: storage,
+    fetchAsset,
+    onYearComplete: (r) => {
+      const status = r.error ? `FALHA (${r.error})` : 'OK';
+      console.log(
+        `[ingest:enem] ${r.year}: ${status} · importadas=${r.imported} · anuladas=${r.annulled} · imagens=${r.mirroredAssets}`,
+      );
+    },
+  });
+
+  console.log('[ingest:enem] resumo final:', JSON.stringify({ totals: result.totals, failedYears: result.failedYears }));
 }
 
 if (process.argv[1]?.endsWith('ingest-enem.ts')) {

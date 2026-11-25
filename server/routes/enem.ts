@@ -16,18 +16,28 @@ export function createEnemRoutes(db: DB) {
       return { status: 200, body: { skills: enem.listSkills(area) } };
     },
 
+    listYears: (): RouteResult => {
+      return { status: 200, body: enem.listYears() };
+    },
+
     listQuestions: (user: AuthUserV1, query: URLSearchParams): RouteResult => {
+      const pageParam = query.get('page');
+      const offsetParam = query.get('offset');
+      const limitParam = query.get('limit');
       const res = enem.listQuestions({
         area: (query.get('area') || undefined) as EnemAreaCode | undefined,
         discipline: query.get('discipline') || undefined,
         skillId: query.get('skillId') || undefined,
         year: query.get('year') ? Number(query.get('year')) : undefined,
+        language: (query.get('language') || undefined) as 'ingles' | 'espanhol' | undefined,
+        search: query.get('search') || undefined,
         difficultyBand: (query.get('difficultyBand') || undefined) as 'facil' | 'media' | 'dificil' | undefined,
         status: (query.get('status') || undefined) as 'unanswered' | 'wrong' | 'fragile' | undefined,
         includeAnnulled: query.get('includeAnnulled') === 'true',
         userId: user.id,
-        limit: query.get('limit') ? Number(query.get('limit')) : 20,
-        offset: query.get('offset') ? Number(query.get('offset')) : 0,
+        page: pageParam !== null ? Number(pageParam) : undefined,
+        limit: limitParam !== null ? Number(limitParam) : 25,
+        offset: offsetParam !== null ? Number(offsetParam) : undefined,
       });
       return { status: 200, body: res };
     },

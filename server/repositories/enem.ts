@@ -30,6 +30,7 @@ export interface OfficialEnemQuestionRow {
   alternatives: EnemAlternative[];
   correctAlternative: 'A' | 'B' | 'C' | 'D' | 'E' | 'ANULADA';
   assets: string[];
+  hasImages?: boolean;
   status: 'active' | 'annulled' | 'under_review';
   source: 'official_enem' | 'ai_generated_fallback';
 }
@@ -39,13 +40,33 @@ export interface QuestionFilter {
   discipline?: string;
   skillId?: string;
   year?: number;
+  language?: 'ingles' | 'espanhol';
+  search?: string;
   difficultyBand?: 'facil' | 'media' | 'dificil';
   status?: 'unanswered' | 'wrong' | 'fragile';
   includeAnnulled?: boolean;
   userId?: string;
+  page?: number;
   limit?: number;
   offset?: number;
 }
+
+export interface EnemCatalogPage {
+  items: OfficialEnemQuestionRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface EnemYearsSummary {
+  years: { year: number; count: number }[];
+  total: number;
+  withSkillCount: number;
+  withTriCount: number;
+}
+
+const MARKDOWN_IMG_URL_RE = /!\[[^\]]*\]\(([^)\s]+)[^)]*\)/g;
 
 export class EnemRepository {
   constructor(private db: DB) {}
@@ -126,7 +147,29 @@ export class EnemRepository {
     return r ? this.mapQuestion(r) : null;
   }
 
-  listQuestions(filter: QuestionFilter = {}): { items: OfficialEnemQuestionRow[]; total: number } {
+  listYears(): EnemYearsSummary {
+    const rows = this.db.raw
+      .prepare("SELECT year, COUNT(*) AS count FROM enem_questions WHERE status = 'active' GROUP BY year ORDER BY year DESC")
+      .all() as { year: number; count: number }[];
+    const meta = this.db.raw
+      .prepare(
+        `SELECT
+           SUM(CASE WHEN skill_id IS NOT NULL THEN 1 ELSE 0 END) AS with_skill,
+           SUM(CASE WHEN tri_b IS NOT NULL THEN 1 ELSE 0 END) AS with_tri
+         FROM enem_questions
+         WHERE status = 'active'`,
+      )
+      .get() as { with_skill: number | null; with_tri: number | null };
+    const total = rows.reduce((acc, r) => acc + Number(r.count), 0);
+    return {
+      years: rows.map((r) => ({ year: Number(r.year), count: Number(r.count) })),
+      total,
+      withSkillCount: Number(meta?.with_skill ?? 0),
+      withTriCount: Number(meta?.with_tri ?? 0),
+    };
+  }
+
+  listQuestions(filter: QuestionFilter = {}): EnemCatalogPage {
     const where: string[] = [];
     const params: any[] = [];
 
@@ -149,6 +192,15 @@ export class EnemRepository {
       where.push('q.year = ?');
       params.push(filter.year);
     }
+    if (filter.language) {
+      where.push('q.language = ?');
+      params.push(filter.language);
+    }
+    if (filter.search && filter.search.trim()) {
+      const like = `%${filter.search.trim()}%`;
+      where.push('(q.context_md LIKE ? OR q.alternatives_intro LIKE ?)');
+      params.push(like, like);
+    }
     if (filter.difficultyBand === 'facil') {
       where.push('q.tri_b IS NOT NULL AND q.tri_b < -0.5');
     } else if (filter.difficultyBand === 'media') {
@@ -170,14 +222,26 @@ export class EnemRepository {
 
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const total = (this.db.raw.prepare(`SELECT COUNT(*) AS n FROM enem_questions q ${whereSql}`).get(...params) as any).n as number;
-    const limit = Math.max(1, Math.min(100, filter.limit ?? 20));
-    const offset = Math.max(0, filter.offset ?? 0);
+    const rawLimit = filter.limit !== undefined && Number.isFinite(filter.limit) ? Math.floor(filter.limit) : 25;
+    const pageSize = Math.max(1, Math.min(100, rawLimit));
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+    let page: number;
+    let offset: number;
+    if (filter.page !== undefined) {
+      const requested = Number.isFinite(filter.page) ? Math.floor(filter.page) : 1;
+      page = Math.max(1, Math.min(totalPages, requested));
+      offset = (page - 1) * pageSize;
+    } else {
+      offset = Math.max(0, Number.isFinite(filter.offset) ? Math.floor(filter.offset!) : 0);
+      page = Math.min(totalPages, Math.floor(offset / pageSize) + 1);
+    }
 
     const rows = this.db.raw
       .prepare(`SELECT q.* FROM enem_questions q ${whereSql} ORDER BY q.year DESC, q.question_index ASC LIMIT ? OFFSET ?`)
-      .all(...params, limit, offset) as any[];
+      .all(...params, pageSize, offset) as any[];
 
-    return { items: rows.map((r) => this.mapQuestion(r)), total };
+    return { items: rows.map((r) => this.mapQuestion(r)), total, page, pageSize, totalPages };
   }
 
   /**
@@ -208,6 +272,19 @@ export class EnemRepository {
   }
 
   private mapQuestion(r: any): OfficialEnemQuestionRow {
+    const alternatives: EnemAlternative[] = JSON.parse(r.alternatives_json || '[]');
+    const assets: string[] = JSON.parse(r.assets_json || '[]').filter(
+      (u: string) => typeof u === 'string' && !u.includes('broken-image.svg'),
+    );
+    const contextMd = String(r.context_md ?? '');
+    const hasInlineRealImage = [...contextMd.matchAll(MARKDOWN_IMG_URL_RE)].some(
+      (m) => m[1] && !m[1].includes('broken-image.svg'),
+    );
+    const hasImages =
+      assets.length > 0 ||
+      alternatives.some((a) => Boolean(a.assetUrl && !a.assetUrl.includes('broken-image.svg'))) ||
+      hasInlineRealImage;
+
     return {
       id: r.id,
       year: r.year,
@@ -221,11 +298,12 @@ export class EnemRepository {
       triA: r.tri_a ?? null,
       triB: r.tri_b ?? null,
       triC: r.tri_c ?? null,
-      contextMd: r.context_md,
+      contextMd,
       alternativesIntro: r.alternatives_intro,
-      alternatives: JSON.parse(r.alternatives_json || '[]'),
+      alternatives,
       correctAlternative: r.correct_alternative,
-      assets: JSON.parse(r.assets_json || '[]'),
+      assets,
+      hasImages,
       status: r.status,
       source: r.source,
     };

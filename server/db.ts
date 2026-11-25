@@ -167,6 +167,7 @@ export function openDb(path = process.env.NEXO_DB_PATH || 'server/data/nexo.db')
     );
     CREATE INDEX IF NOT EXISTS idx_enem_q_filter ON enem_questions(area, discipline, skill_id, year, status);
     CREATE INDEX IF NOT EXISTS idx_enem_q_skill_tri ON enem_questions(skill_id, status, tri_b);
+    CREATE INDEX IF NOT EXISTS idx_enem_q_catalog_order ON enem_questions(status, year DESC, question_index ASC);
 
     -- 5. Aprendizagem, Redações, Flashcards, Simulados, Gamificação Individual e Operação
     CREATE TABLE IF NOT EXISTS attempts (

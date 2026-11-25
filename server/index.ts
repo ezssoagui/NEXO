@@ -88,6 +88,7 @@ export function createAppHandler(ctx: AppContext) {
         const gate = requirePaidStudent(user);
         if (path === '/api/learning/state') return send(gate ?? getState(ctx.db, user));
         if (path === '/api/enem/skills') return send(gate ?? enemRoutes.listSkills(url.searchParams));
+        if (path === '/api/enem/years') return send(gate ?? enemRoutes.listYears());
         if (path === '/api/enem/questions') return send(gate ?? enemRoutes.listQuestions(user!, url.searchParams));
         if (path.startsWith('/api/enem/questions/')) {
           const id = decodeURIComponent(path.slice('/api/enem/questions/'.length));
