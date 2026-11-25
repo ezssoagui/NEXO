@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "tsx server/index.ts",
+    "ingest:enem": "tsx scripts/ingest-enem.ts",
     "test": "vitest run"
   },
   "dependencies": {

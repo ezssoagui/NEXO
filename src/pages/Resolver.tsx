@@ -1,63 +1,167 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Info, AlertTriangle } from 'lucide-react';
-import { getQuestion, useStore } from '../store/useStore';
-import { QUESTIONS } from '../data/questions';
-import QuestionPlayer from '../components/QuestionPlayer';
-import { Empty, Tabs, Badge } from '../components/ui';
-import { chooseLevel, isNone, selectTwin, TWIN_LEVEL_LABEL, type TwinLevel, type TwinPick } from '../engine/twins';
-import { resume, startCycle } from '../engine/cycle';
-import { classifyResponse } from '../engine/intervention';
-import type { Question } from '../types';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, CheckCircle2, XCircle, Flag, ShieldCheck } from 'lucide-react';
+import { Badge, Card, Empty, cx } from '../components/ui';
+import { apiRequest, type OfficialEnemQuestionDTO } from '../services/api';
+import { OFFICIAL_ENEM_SKILL_BY_ID } from '../data/enemSkills';
 
 export default function Resolver() {
-  const { id = '' } = useParams(); const [sp, setSp] = useSearchParams(); const nav = useNavigate();
-  const { attempts, addGenerated, cycles, upsertCycle } = useStore();
-  const base = getQuestion(id);
-  const [mode, setMode] = useState<'tutoria' | 'pratica'>('tutoria');
-  const [twin, setTwin] = useState<(TwinPick & { cycleId: string; origin: Question }) | null>(null);
-  const [noTwin, setNoTwin] = useState<string | null>(null);
-  const wantTwin = sp.get('gemea') === '1';
+  const { id = '' } = useParams();
+  const nav = useNavigate();
+  const [question, setQuestion] = useState<OfficialEnemQuestionDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<string | null>(null);
+  const [confidence, setConfidence] = useState<'certeza' | 'duvida' | 'chute'>('certeza');
+  const [submitted, setSubmitted] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportSent, setReportSent] = useState(false);
 
-  /** Comprovação: escolhe questão inédita do mesmo conceito no nível indicado, dentro do ciclo de domínio. */
-  const makeTwin = (origin: Question, level?: TwinLevel) => {
-    setNoTwin(null);
-    const st = useStore.getState();
-    let cycle = st.cycles.filter((c) => c.skillId === origin.skillId && c.status !== 'concluido').sort((a, b) => b.updatedAt - a.updatedAt)[0];
-    if (!cycle) {
-      const last = [...st.attempts].reverse().find((a) => a.skillId === origin.skillId);
-      const h = last ? classifyResponse(origin, { correct: last.correct, confidence: last.confidence, hintsUsed: last.hintsUsed, justification: last.justification, chosen: last.chosen }, []) : classifyResponse(origin, { correct: false, confidence: 'nao_consegui', hintsUsed: 0, chosen: '—' }, []);
-      cycle = { ...startCycle(origin.id, origin.skillId, h), stage: 'comprovacao' };
-      upsertCycle(cycle);
-    } else if (cycle.status !== 'ativo') { cycle = resume(cycle); upsertCycle(cycle); }
-    const lv = level ?? chooseLevel(cycle.situation, cycle.twinAttempts);
-    const pick = selectTwin(origin, lv, st.attempts);
-    if (isNone(pick)) { setTwin(null); setNoTwin(pick.reason); return; }
-    if (pick.kind === 'gerada') addGenerated({ q: pick.q, validation: [{ check: 'Validação automática', ok: true, detail: 'Aprovada no validador do gerador (sem revisão humana).' }], status: 'aprovada', request: `Gêmea de ${origin.id}`, ts: Date.now() });
-    setTwin({ ...pick, cycleId: cycle.id, origin });
-  };
-  useEffect(() => { setTwin(null); setNoTwin(null); if (wantTwin && base) makeTwin(base); /* eslint-disable-next-line */ }, [id, wantTwin]);
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    setChosen(null);
+    setSubmitted(false);
+    setReportSent(false);
+    apiRequest<{ question: OfficialEnemQuestionDTO }>(`/api/enem/questions/${encodeURIComponent(id)}`).then((res) => {
+      if (!res.ok) {
+        setError(res.message || 'Questão não encontrada.');
+        setQuestion(null);
+      } else {
+        setQuestion(res.data.question);
+      }
+      setLoading(false);
+    });
+  }, [id]);
 
-  const idx = QUESTIONS.findIndex((q) => q.id === id);
-  const next = idx >= 0 ? QUESTIONS[(idx + 1) % QUESTIONS.length] : QUESTIONS[0];
-  if (!base) return <Empty title="Questão não encontrada" action={<Link className="btn-primary" to="/questoes">Voltar ao banco</Link>} />;
-  const shown = twin?.q ?? base;
+  async function sendReport() {
+    if (!question || reportReason.trim().length < 5) return;
+    const res = await apiRequest(`/api/enem/questions/${encodeURIComponent(question.id)}/report`, {
+      method: 'POST',
+      body: JSON.stringify({ reason: reportReason }),
+    });
+    if (res.ok) {
+      setReportSent(true);
+      setReportOpen(false);
+      setReportReason('');
+    }
+  }
+
+  if (loading) return <Card className="mx-auto max-w-3xl py-10 text-center text-sm text-slate-500">Carregando questão oficial do ENEM…</Card>;
+  if (error || !question) {
+    return <Empty title={error || 'Questão não encontrada'} action={<Link className="btn-primary" to="/questoes">Voltar ao banco ENEM</Link>} />;
+  }
+
+  const isCorrect = submitted && chosen === question.correctAlternative;
+  const skill = question.skillId ? OFFICIAL_ENEM_SKILL_BY_ID.get(question.skillId) : null;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <button className="btn-ghost btn-sm" onClick={() => nav('/questoes')}><ArrowLeft size={14} /> Banco</button>
-        <div className="ml-auto"><Tabs tabs={[{ id: 'tutoria', label: 'Modo tutoria' }, { id: 'pratica', label: 'Modo prática' }]} value={mode} onChange={setMode} /></div>
+    <div className="mx-auto max-w-3xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button className="btn-ghost btn-sm" onClick={() => nav('/questoes')}><ArrowLeft size={14} /> Banco ENEM</button>
+        <button className="btn-ghost btn-sm text-slate-500" onClick={() => setReportOpen((v) => !v)}><Flag size={14} /> Reportar erro na questão</button>
       </div>
-      <p className="muted -mt-3 mb-4 flex items-start gap-2 text-xs"><Info size={14} className="mt-0.5 shrink-0" />{mode === 'tutoria' ? 'Tutoria: depois de responder, a NEXO escolhe a intervenção adequada — às vezes nenhuma. Acertou com segurança? Siga em frente.' : 'Prática: correção completa logo após responder.'}</p>
-      {noTwin && <div className="mb-4 flex gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"><AlertTriangle size={16} className="mt-0.5 shrink-0" /><span>{noTwin} <button className="underline" onClick={() => { setNoTwin(null); setSp({}); }}>Voltar à questão</button></span></div>}
-      {twin && <div className="mb-3 rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-100"><Badge tone="sky">Comprovação · {TWIN_LEVEL_LABEL[twin.level]}</Badge> <Badge tone={twin.reviewed ? 'mint' : 'violet'}>{twin.reviewed ? 'Questão revisada' : 'Gerada e validada automaticamente'}</Badge><p className="mt-1">{twin.note} Mesmo conceito de {twin.origin.id}, em outra situação — para verificar transferência, não memorização.</p></div>}
-      <QuestionPlayer key={shown.id} q={shown} mode={mode} isTwin={!!twin} cycleId={twin?.cycleId} twinLevel={twin?.level}
-        onTwin={(lv) => makeTwin(twin?.origin ?? base, lv)} />
-      <div className="mt-6 flex justify-between">
-        <Link className="btn-ghost" to="/questoes">Ver banco</Link>
-        <Link className="btn-dark" to={`/questoes/${next.id}`}>Próxima questão <ArrowRight size={16} /></Link>
-      </div>
+
+      {reportOpen && (
+        <Card className="space-y-2 border-amber-300">
+          <label className="label text-xs" htmlFor="rep">Descreva o problema de formatação ou imagem:</label>
+          <textarea id="rep" className="input text-sm" rows={2} value={reportReason} onChange={(e) => setReportReason(e.target.value)} />
+          <div className="flex justify-end gap-2">
+            <button className="btn-ghost btn-sm" onClick={() => setReportOpen(false)}>Cancelar</button>
+            <button className="btn-primary btn-sm" onClick={sendReport}>Enviar reporte</button>
+          </div>
+        </Card>
+      )}
+      {reportSent && <div className="rounded-xl bg-mint-50 p-3 text-xs text-mint-800 dark:bg-mint-500/10 dark:text-mint-200">Reporte enviado para a fila operacional do Admin. Obrigado!</div>}
+
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge tone="navy">ENEM {question.year} · Questão {question.questionIndex}</Badge>
+          <Badge>{question.area}</Badge>
+          {question.language && <Badge tone="sky">{question.language}</Badge>}
+          {question.skillId && <Badge tone="violet">{question.skillId}</Badge>}
+          {question.triB !== null && <Badge tone="slate">TRI b = {question.triB.toFixed(2)}</Badge>}
+        </div>
+
+        {skill && <p className="muted text-xs"><strong>Habilidade oficial:</strong> {skill.description}</p>}
+
+        {question.contextMd && (
+          <div className="whitespace-pre-line text-sm leading-relaxed text-slate-800 dark:text-slate-100">{question.contextMd}</div>
+        )}
+
+        {question.assets.length > 0 && (
+          <div className="space-y-2">
+            {question.assets.map((src) => (
+              <img key={src} src={src} alt="Imagem oficial da questão ENEM" className="max-h-96 rounded-lg border border-slate-200 object-contain dark:border-navy-700" />
+            ))}
+          </div>
+        )}
+
+        {question.alternativesIntro && <p className="text-sm font-semibold text-navy-900 dark:text-white">{question.alternativesIntro}</p>}
+
+        <div className="space-y-2">
+          {question.alternatives.map((alt) => {
+            const selected = chosen === alt.letter;
+            const correct = submitted && alt.letter === question.correctAlternative;
+            const wrongSelected = submitted && selected && !correct;
+            return (
+              <button
+                key={alt.letter}
+                disabled={submitted}
+                onClick={() => setChosen(alt.letter)}
+                className={cx(
+                  'flex w-full items-start gap-3 rounded-xl border p-3 text-left text-sm transition',
+                  correct
+                    ? 'border-mint-500 bg-mint-50 dark:bg-mint-500/15'
+                    : wrongSelected
+                      ? 'border-red-400 bg-red-50 dark:bg-red-500/15'
+                      : selected
+                        ? 'border-navy-700 bg-navy-50 dark:border-mint-400 dark:bg-navy-800'
+                        : 'border-slate-200 hover:border-slate-300 dark:border-navy-700',
+                )}
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold dark:bg-navy-800">{alt.letter}</span>
+                <div className="flex-1 space-y-1">
+                  {alt.text && <span>{alt.text}</span>}
+                  {alt.assetUrl && <img src={alt.assetUrl} alt={`Alternativa ${alt.letter}`} className="max-h-40 rounded border object-contain" />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {!submitted ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3 dark:border-navy-800">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="muted">Confiança:</span>
+              {(['certeza', 'duvida', 'chute'] as const).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setConfidence(c)}
+                  className={cx('rounded-lg px-2.5 py-1 font-medium capitalize', confidence === c ? 'bg-navy-800 text-white dark:bg-mint-500 dark:text-navy-950' : 'bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-slate-300')}
+                >
+                  {c === 'duvida' ? 'Dúvida' : c === 'chute' ? 'Chute' : 'Certeza'}
+                </button>
+              ))}
+            </div>
+            <button className="btn-primary" disabled={!chosen} onClick={() => setSubmitted(true)}>
+              Responder
+            </button>
+          </div>
+        ) : (
+          <div className={cx('rounded-xl p-4 text-sm', isCorrect ? 'bg-mint-50 text-mint-900 dark:bg-mint-500/15 dark:text-mint-100' : 'bg-red-50 text-red-900 dark:bg-red-500/15 dark:text-red-100')}>
+            <div className="flex items-center gap-2 font-semibold">
+              {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+              {isCorrect ? 'Acertou!' : `Gabarito oficial: alternativa ${question.correctAlternative}`}
+            </div>
+            <p className="mt-1 flex items-center gap-1 text-xs opacity-80">
+              <ShieldCheck size={14} /> Fonte oficial ENEM {question.year} · Confiança registrada: {confidence}
+            </p>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Route as RouteIcon, ListChecks, Bot, BookOpen, PenLine, Layers, Timer, Trophy, LineChart, Library, User, Menu, X, Moon, Sun, Shield, Sparkles, LogOut } from 'lucide-react';
+import { Home, Route as RouteIcon, ListChecks, Bot, PenLine, Layers, Timer, LineChart, User, Menu, X, Moon, Sun, Shield, Sparkles, LogOut } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Logo, cx, Toast } from './ui';
 import { levelInfo, totalXP } from '../engine/gamification';
@@ -9,16 +9,13 @@ import AIStatusBadge from './AIStatusBadge';
 export const NAV = [
   { to: '/inicio', label: 'Início', icon: Home },
   { to: '/trilha', label: 'Minha trilha', icon: RouteIcon },
-  { to: '/questoes', label: 'Questões', icon: ListChecks },
+  { to: '/questoes', label: 'Questões ENEM', icon: ListChecks },
   { to: '/tutor', label: 'IA Tutora', icon: Bot },
-  { to: '/aulas', label: 'Aulas e materiais', icon: BookOpen },
   { to: '/redacao', label: 'Redação', icon: PenLine },
   { to: '/flashcards', label: 'Flashcards', icon: Layers },
   { to: '/simulados', label: 'Simulados', icon: Timer },
-  { to: '/arena', label: 'Arena', icon: Trophy },
   { to: '/desempenho', label: 'Meu desempenho', icon: LineChart },
-  { to: '/biblioteca', label: 'Biblioteca', icon: Library },
-  { to: '/perfil', label: 'Perfil', icon: User },
+  { to: '/perfil', label: 'Perfil e LGPD', icon: User },
 ];
 const MOBILE = ['/inicio', '/questoes', '/tutor', '/flashcards'];
 
@@ -68,9 +65,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-slate-200 bg-white/85 px-4 py-3 backdrop-blur dark:border-navy-800 dark:bg-navy-950/85 sm:px-6">
           <button className="btn-ghost btn-sm lg:hidden" onClick={() => setOpen(true)} aria-label="Abrir menu"><Menu size={18} /></button>
           <div className="lg:hidden"><Logo size={26} /></div>
-          <span className="chip hidden border border-slate-300 bg-slate-50 text-slate-700 dark:border-navy-600 dark:bg-navy-900 dark:text-slate-300 md:inline-flex">Protótipo · escolas e rankings fictícios</span><AIStatusBadge />
+          <span className="chip hidden border border-slate-300 bg-slate-50 text-slate-700 dark:border-navy-600 dark:bg-navy-900 dark:text-slate-300 md:inline-flex">NEXO V1 · 100% ENEM</span><AIStatusBadge />
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <NavLink to="/arena" className="hidden items-center gap-2 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold dark:bg-navy-800 sm:flex" title={`${lv.toNext} XP para o próximo nível`}>
+            <NavLink to="/desempenho" className="hidden items-center gap-2 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold dark:bg-navy-800 sm:flex" title={`${lv.toNext} XP para o próximo nível`}>
               <span className="text-navy-800 dark:text-mint-300">Nível {lv.level}</span>
               <span className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-300 dark:bg-navy-700"><span className="block h-full bg-mint-500" style={{ width: `${lv.progress * 100}%` }} /></span>
               <span className="muted">{xp} XP</span>

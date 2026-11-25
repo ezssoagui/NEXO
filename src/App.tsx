@@ -13,20 +13,14 @@ const Trilha = lazy(() => import('./pages/Trilha'));
 const Questoes = lazy(() => import('./pages/Questoes'));
 const Resolver = lazy(() => import('./pages/Resolver'));
 const Tutor = lazy(() => import('./pages/Tutor'));
-const Aulas = lazy(() => import('./pages/Aulas'));
-const Aula = lazy(() => import('./pages/Aula'));
 const Redacao = lazy(() => import('./pages/Redacao'));
 const Flashcards = lazy(() => import('./pages/Flashcards'));
 const Simulados = lazy(() => import('./pages/Simulados'));
-const Arena = lazy(() => import('./pages/Arena'));
 const Desempenho = lazy(() => import('./pages/Desempenho'));
-const Biblioteca = lazy(() => import('./pages/Biblioteca'));
 const Perfil = lazy(() => import('./pages/Perfil'));
 const Planos = lazy(() => import('./pages/Planos'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Sessao = lazy(() => import('./pages/Sessao'));
-const Ensinar = lazy(() => import('./pages/Ensinar'));
-const Portfolio = lazy(() => import('./pages/Portfolio'));
 
 export default function App() {
   const profile = useStore((s) => s.profile);
@@ -54,20 +48,14 @@ export default function App() {
           <Route path="/questoes" element={<Questoes />} />
           <Route path="/questoes/:id" element={<Resolver />} />
           <Route path="/tutor" element={<Tutor />} />
-          <Route path="/aulas" element={<Aulas />} />
-          <Route path="/aulas/:id" element={<Aula />} />
           <Route path="/redacao" element={<Redacao />} />
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/simulados" element={<Simulados />} />
-          <Route path="/arena" element={<Arena />} />
           <Route path="/desempenho" element={<Desempenho />} />
-          <Route path="/biblioteca" element={<Biblioteca />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/planos" element={<Planos />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/sessao" element={<Sessao />} />
-          <Route path="/ensinar" element={<Ensinar />} />
-          <Route path="/portfolio" element={<Portfolio />} />
           <Route path="*" element={<Navigate to="/inicio" replace />} />
         </Routes>
       </Suspense>

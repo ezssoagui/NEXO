@@ -25,3 +25,7 @@ dist-ssr
 
 .env
 server/data/
+
+# Spec Kit (ferramenta local; apenas specs/ e ADRs são versionados)
+.specify/
+.agents/
