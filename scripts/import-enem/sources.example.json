@@ -1,0 +1,12 @@
+{
+  "_comment": "Copie para sources.json e preencha SOMENTE com URLs oficiais conferidas em https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos e https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem. O padrão abaixo de microdados deve ser confirmado antes do uso (arquivos grandes: verificar espaço em disco).",
+  "sources": [
+    {
+      "kind": "microdata",
+      "year": 2023,
+      "filename": "microdados_enem_2023.zip",
+      "url": "https://download.inep.gov.br/microdados/microdados_enem_2023.zip",
+      "verification_status": "url_pattern_pending_confirmation"
+    }
+  ]
+}

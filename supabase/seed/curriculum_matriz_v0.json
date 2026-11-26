@@ -1,0 +1,5350 @@
+{
+ "version": "matriz-v0-draft",
+ "status": "draft",
+ "generated_by": "scripts/curriculum/build_matriz_v0.py",
+ "source": {
+  "code": "INEP_MATRIZ_ENEM",
+  "title": "Matriz de Referência ENEM (Inep)",
+  "kind": "official",
+  "url": "https://download.inep.gov.br/download/enem/matriz_referencia.pdf",
+  "sha256": "6b56d523ccb85f74f7ed33e0cd679f3dd178ed6f13a5b0948bcfdfe8964ce6a1",
+  "rights_status": "official_public_pending_review"
+ },
+ "notes": "Rascunho mecânico da matriz oficial. Relevância desconhecida; habilidades internas a refinar e validar pelos sócios (3.10/A.2).",
+ "official": {
+  "LC": {
+   "competencies": [
+    {
+     "number": 1,
+     "description": "Aplicar as tecnologias da comunicação e da informação na escola, no trabalho e em outros contextos relevantes para sua vida"
+    },
+    {
+     "number": 2,
+     "description": "Conhecer e usar língua(s) estrangeira(s) moderna(s) como instrumento de acesso a informações e a outras culturas e grupos sociais"
+    },
+    {
+     "number": 3,
+     "description": "Compreender e usar a linguagem corporal como relevante para a própria vida, integradora social e formadora da identidade"
+    },
+    {
+     "number": 4,
+     "description": "Compreender a arte como saber cultural e estético gerador de significação e integrador da organização do mundo e da própria identidade"
+    },
+    {
+     "number": 5,
+     "description": "Analisar, interpretar e aplicar recursos expressivos das linguagens, relacionando textos com seus contextos, mediante a natureza, função, organização, estrutura das manifestações, de acordo com as condições de produção e recepção"
+    },
+    {
+     "number": 6,
+     "description": "Compreender e usar os sistemas simbólicos das diferentes linguagens como meios de organização cognitiva da realidade pela constituição de significados, expressão, comunicação e informação"
+    },
+    {
+     "number": 7,
+     "description": "Confrontar opiniões e pontos de vista sobre as diferentes linguagens e suas manifestações específicas"
+    },
+    {
+     "number": 8,
+     "description": "Compreender e usar a língua portuguesa como língua materna, geradora de significação e integradora da organização do mundo e da própria identidade"
+    },
+    {
+     "number": 9,
+     "description": "Entender os princípios, a natureza, a função e o impacto das tecnologias da comunicação e da informação na sua vida pessoal e social, no desenvolvimento do conhecimento, associando-o aos conhecimentos científicos, às linguagens que lhes dão suporte, às demais tecnologias, aos processos de produção e aos problemas que se propõem solucionar"
+    }
+   ],
+   "skills": [
+    {
+     "number": 1,
+     "competency": 1,
+     "description": "Identificar as diferentes linguagens e seus recursos expressivos como elementos de caracterização dos sistemas de comunicação"
+    },
+    {
+     "number": 2,
+     "competency": 1,
+     "description": "Recorrer aos conhecimentos sobre as linguagens dos sistemas de comunicação e informação para resolver problemas sociais"
+    },
+    {
+     "number": 3,
+     "competency": 1,
+     "description": "Relacionar informações geradas nos sistemas de comunicação e informação, considerando a função social desses sistemas"
+    },
+    {
+     "number": 4,
+     "competency": 1,
+     "description": "Reconhecer posições críticas aos usos sociais que são feitos das linguagens e dos sistemas de comunicação e informação"
+    },
+    {
+     "number": 5,
+     "competency": 2,
+     "description": "Associar vocábulos e expressões de um texto em LEM ao seu tema"
+    },
+    {
+     "number": 6,
+     "competency": 2,
+     "description": "Utilizar os conhecimentos da LEM e de seus mecanismos como meio de ampliar as possibilidades de acesso a informações, tecnologias e culturas"
+    },
+    {
+     "number": 7,
+     "competency": 2,
+     "description": "Relacionar um texto em LEM, as estruturas linguísticas, sua função e seu uso social"
+    },
+    {
+     "number": 8,
+     "competency": 2,
+     "description": "Reconhecer a importância da produção cultural em LEM como representação da diversidade cultural e linguística"
+    },
+    {
+     "number": 9,
+     "competency": 3,
+     "description": "Reconhecer as manifestações corporais de movimento como originárias de necessidades cotidianas de um grupo social"
+    },
+    {
+     "number": 10,
+     "competency": 3,
+     "description": "Reconhecer a necessidade de transformação de hábitos corporais em função das necessidades cinestésicas"
+    },
+    {
+     "number": 11,
+     "competency": 3,
+     "description": "Reconhecer a linguagem corporal como meio de interação social, considerando os limites de desempenho e as alternativas de adaptação para diferentes indivíduos"
+    },
+    {
+     "number": 12,
+     "competency": 4,
+     "description": "Reconhecer diferentes funções da arte, do trabalho da produção dos artistas em seus meios culturais"
+    },
+    {
+     "number": 13,
+     "competency": 4,
+     "description": "Analisar as diversas produções artísticas como meio de explicar diferentes culturas, padrões de beleza e preconceitos"
+    },
+    {
+     "number": 14,
+     "competency": 4,
+     "description": "Reconhecer o valor da diversidade artística e das inter-relações de elementos que se apresentam nas manifestações de vários grupos sociais e étnicos"
+    },
+    {
+     "number": 15,
+     "competency": 5,
+     "description": "Estabelecer relações entre o texto literário e o momento de sua produção, situando aspectos do contexto histórico, social e político"
+    },
+    {
+     "number": 16,
+     "competency": 5,
+     "description": "Relacionar informações sobre concepções artísticas e procedimentos de construção do texto literário"
+    },
+    {
+     "number": 17,
+     "competency": 5,
+     "description": "Reconhecer a presença de valores sociais e humanos atualizáveis e permanentes no patrimônio literário nacional"
+    },
+    {
+     "number": 18,
+     "competency": 6,
+     "description": "Identificar os elementos que concorrem para a progressão temática e para a organização e estruturação de textos de diferentes gêneros e tipos"
+    },
+    {
+     "number": 19,
+     "competency": 6,
+     "description": "Analisar a função da linguagem predominante nos textos em situações específicas de interlocução"
+    },
+    {
+     "number": 20,
+     "competency": 6,
+     "description": "Reconhecer a importância do patrimônio linguístico para a preservação da memória e da identidade nacional"
+    },
+    {
+     "number": 21,
+     "competency": 7,
+     "description": "Reconhecer em textos de diferentes gêneros, recursos verbais e não-verbais utilizados com a finalidade de criar e mudar comportamentos e hábitos"
+    },
+    {
+     "number": 22,
+     "competency": 7,
+     "description": "Relacionar, em diferentes textos, opiniões, temas, assuntos e recursos linguísticos"
+    },
+    {
+     "number": 23,
+     "competency": 7,
+     "description": "Inferir em um texto quais são os objetivos de seu produtor e quem é seu público alvo, pela análise dos procedimentos argumentativos utilizados"
+    },
+    {
+     "number": 24,
+     "competency": 7,
+     "description": "Reconhecer no texto estratégias argumentativas empregadas para o convencimento do público, tais como a intimidação, sedução, comoção, chantagem, entre outras"
+    },
+    {
+     "number": 25,
+     "competency": 8,
+     "description": "Identificar, em textos de diferentes gêneros, as marcas linguísticas que singularizam as variedades linguísticas sociais, regionais e de registro"
+    },
+    {
+     "number": 26,
+     "competency": 8,
+     "description": "Relacionar as variedades linguísticas a situações específicas de uso social"
+    },
+    {
+     "number": 27,
+     "competency": 8,
+     "description": "Reconhecer os usos da norma padrão da língua portuguesa nas diferentes situações de comunicação"
+    },
+    {
+     "number": 28,
+     "competency": 9,
+     "description": "Reconhecer a função e o impacto social das diferentes tecnologias da comunicação e informação"
+    },
+    {
+     "number": 29,
+     "competency": 9,
+     "description": "Identificar pela análise de suas linguagens, as tecnologias da comunicação e informação"
+    },
+    {
+     "number": 30,
+     "competency": 9,
+     "description": "Relacionar as tecnologias de comunicação e informação ao desenvolvimento das sociedades e ao conhecimento que elas produzem"
+    }
+   ]
+  },
+  "MT": {
+   "competencies": [
+    {
+     "number": 1,
+     "description": "Construir significados para os números naturais, inteiros, racionais e reais"
+    },
+    {
+     "number": 2,
+     "description": "Utilizar o conhecimento geométrico para realizar a leitura e a representação da realidade e agir sobre ela"
+    },
+    {
+     "number": 3,
+     "description": "Construir noções de grandezas e medidas para a compreensão da realidade e a solução de problemas do cotidiano"
+    },
+    {
+     "number": 4,
+     "description": "Construir noções de variação de grandezas para a compreensão da realidade e a solução de problemas do cotidiano"
+    },
+    {
+     "number": 5,
+     "description": "Modelar e resolver problemas que envolvem variáveis socioeconômicas ou técnico-científicas, usando representações algébricas"
+    },
+    {
+     "number": 6,
+     "description": "Interpretar informações de natureza científica e social obtidas da leitura de gráficos e tabelas, realizando previsão de tendência, extrapolação, interpolação e interpretação"
+    },
+    {
+     "number": 7,
+     "description": "Compreender o caráter aleatório e não-determinístico dos fenômenos naturais e sociais e utilizar instrumentos adequados para medidas, determinação de amostras e cálculos de probabilidade para interpretar informações de variáveis apresentadas em uma distribuição estatística"
+    }
+   ],
+   "skills": [
+    {
+     "number": 1,
+     "competency": 1,
+     "description": "Reconhecer, no contexto social, diferentes significados e representações dos números e operações - naturais, inteiros, racionais ou reais"
+    },
+    {
+     "number": 2,
+     "competency": 1,
+     "description": "Identificar padrões numéricos ou princípios de contagem"
+    },
+    {
+     "number": 3,
+     "competency": 1,
+     "description": "Resolver situação-problema envolvendo conhecimentos numéricos"
+    },
+    {
+     "number": 4,
+     "competency": 1,
+     "description": "Avaliar a razoabilidade de um resultado numérico na construção de argumentos sobre afirmações quantitativas"
+    },
+    {
+     "number": 5,
+     "competency": 1,
+     "description": "Avaliar propostas de intervenção na realidade utilizando conhecimentos numéricos"
+    },
+    {
+     "number": 6,
+     "competency": 2,
+     "description": "Interpretar a localização e a movimentação de pessoas/objetos no espaço tridimensional e sua representação no espaço bidimensional"
+    },
+    {
+     "number": 7,
+     "competency": 2,
+     "description": "Identificar características de figuras planas ou espaciais"
+    },
+    {
+     "number": 8,
+     "competency": 2,
+     "description": "Resolver situação-problema que envolva conhecimentos geométricos de espaço e forma"
+    },
+    {
+     "number": 9,
+     "competency": 2,
+     "description": "Utilizar conhecimentos geométricos de espaço e forma na seleção de argumentos propostos como solução de problemas do cotidiano"
+    },
+    {
+     "number": 10,
+     "competency": 3,
+     "description": "Identificar relações entre grandezas e unidades de medida"
+    },
+    {
+     "number": 11,
+     "competency": 3,
+     "description": "Utilizar a noção de escalas na leitura de representação de situação do cotidiano"
+    },
+    {
+     "number": 12,
+     "competency": 3,
+     "description": "Resolver situação-problema que envolva medidas de grandezas"
+    },
+    {
+     "number": 13,
+     "competency": 3,
+     "description": "Avaliar o resultado de uma medição na construção de um argumento consistente"
+    },
+    {
+     "number": 14,
+     "competency": 3,
+     "description": "Avaliar proposta de intervenção na realidade utilizando conhecimentos geométricos relacionados a grandezas e medidas"
+    },
+    {
+     "number": 15,
+     "competency": 4,
+     "description": "Identificar a relação de dependência entre grandezas"
+    },
+    {
+     "number": 16,
+     "competency": 4,
+     "description": "Resolver situação-problema envolvendo a variação de grandezas, direta ou inversamente proporcionais"
+    },
+    {
+     "number": 17,
+     "competency": 4,
+     "description": "Analisar informações envolvendo a variação de grandezas como recurso para a construção de argumentação"
+    },
+    {
+     "number": 18,
+     "competency": 4,
+     "description": "Avaliar propostas de intervenção na realidade envolvendo variação de grandezas"
+    },
+    {
+     "number": 19,
+     "competency": 5,
+     "description": "Identificar representações algébricas que expressem a relação entre grandezas"
+    },
+    {
+     "number": 20,
+     "competency": 5,
+     "description": "Interpretar gráfico cartesiano que represente relações entre grandezas"
+    },
+    {
+     "number": 21,
+     "competency": 5,
+     "description": "Resolver situação-problema cuja modelagem envolva conhecimentos algébricos"
+    },
+    {
+     "number": 22,
+     "competency": 5,
+     "description": "Utilizar conhecimentos algébricos/geométricos como recurso para a construção de argumentação"
+    },
+    {
+     "number": 23,
+     "competency": 5,
+     "description": "Avaliar propostas de intervenção na realidade utilizando conhecimentos algébricos"
+    },
+    {
+     "number": 24,
+     "competency": 6,
+     "description": "Utilizar informações expressas em gráficos ou tabelas para fazer inferências"
+    },
+    {
+     "number": 25,
+     "competency": 6,
+     "description": "Resolver problema com dados apresentados em tabelas ou gráficos"
+    },
+    {
+     "number": 26,
+     "competency": 6,
+     "description": "Analisar informações expressas em gráficos ou tabelas como recurso para a construção de argumentos"
+    },
+    {
+     "number": 27,
+     "competency": 7,
+     "description": "Calcular medidas de tendência central ou de dispersão de um conjunto de dados expressos em uma tabela de frequências de dados agrupados (não em classes) ou em gráficos"
+    },
+    {
+     "number": 28,
+     "competency": 7,
+     "description": "Resolver situação-problema que envolva conhecimentos de estatística e probabilidade"
+    },
+    {
+     "number": 29,
+     "competency": 7,
+     "description": "Utilizar conhecimentos de estatística e probabilidade como recurso para a construção de argumentação"
+    },
+    {
+     "number": 30,
+     "competency": 7,
+     "description": "Avaliar propostas de intervenção na realidade utilizando conhecimentos de estatística e probabilidade"
+    }
+   ]
+  },
+  "CN": {
+   "competencies": [
+    {
+     "number": 1,
+     "description": "Compreender as ciências naturais e as tecnologias a elas associadas como construções humanas, percebendo seus papéis nos processos de produção e no desenvolvimento econômico e social da humanidade"
+    },
+    {
+     "number": 2,
+     "description": "Identificar a presença e aplicar as tecnologias associadas às ciências naturais em diferentes contextos"
+    },
+    {
+     "number": 3,
+     "description": "Associar intervenções que resultam em degradação ou conservação ambiental a processos produtivos e sociais e a instrumentos ou ações científico-tecnológicos"
+    },
+    {
+     "number": 4,
+     "description": "Compreender interações entre organismos e ambiente, em particular aquelas relacionadas à saúde humana, relacionando conhecimentos científicos, aspectos culturais e características individuais"
+    },
+    {
+     "number": 5,
+     "description": "Entender métodos e procedimentos próprios das ciências naturais e aplicá-los em diferentes contextos"
+    },
+    {
+     "number": 6,
+     "description": "Apropriar-se de conhecimentos da física para, em situações problema, interpretar, avaliar ou planejar intervenções científico- tecnológicas"
+    },
+    {
+     "number": 7,
+     "description": "Apropriar-se de conhecimentos da química para, em situações problema, interpretar, avaliar ou planejar intervenções científico- tecnológicas"
+    },
+    {
+     "number": 8,
+     "description": "Apropriar-se de conhecimentos da biologia para, em situações problema, interpretar, avaliar ou planejar intervenções científico- tecnológicas"
+    }
+   ],
+   "skills": [
+    {
+     "number": 1,
+     "competency": 1,
+     "description": "Reconhecer características ou propriedades de fenômenos ondulatórios ou oscilatórios, relacionando-os a seus usos em diferentes contextos"
+    },
+    {
+     "number": 2,
+     "competency": 1,
+     "description": "Associar a solução de problemas de comunicação, transporte, saúde ou outro, com o correspondente desenvolvimento científico e tecnológico"
+    },
+    {
+     "number": 3,
+     "competency": 1,
+     "description": "Confrontar interpretações científicas com interpretações baseadas no senso comum, ao longo do tempo ou em diferentes culturas"
+    },
+    {
+     "number": 4,
+     "competency": 1,
+     "description": "Avaliar propostas de intervenção no ambiente, considerando a qualidade da vida humana ou medidas de conservação, recuperação ou utilização sustentável da biodiversidade"
+    },
+    {
+     "number": 5,
+     "competency": 2,
+     "description": "Dimensionar circuitos ou dispositivos elétricos de uso cotidiano"
+    },
+    {
+     "number": 6,
+     "competency": 2,
+     "description": "Relacionar informações para compreender manuais de instalação ou utilização de aparelhos, ou sistemas tecnológicos de uso comum"
+    },
+    {
+     "number": 7,
+     "competency": 2,
+     "description": "Selecionar testes de controle, parâmetros ou critérios para a comparação de materiais e produtos, tendo em vista a defesa do consumidor, a saúde do trabalhador ou a qualidade de vida"
+    },
+    {
+     "number": 8,
+     "competency": 3,
+     "description": "Identificar etapas em processos de obtenção, transformação, utilização ou reciclagem de recursos naturais, energéticos ou matérias-primas, considerando processos biológicos, químicos ou físicos neles envolvidos"
+    },
+    {
+     "number": 9,
+     "competency": 3,
+     "description": "Compreender a importância dos ciclos biogeoquímicos ou do fluxo energia para a vida, ou da ação de agentes ou fenômenos que podem causar alterações nesses processos"
+    },
+    {
+     "number": 10,
+     "competency": 3,
+     "description": "Analisar perturbações ambientais, identificando fontes, transporte e(ou) destino dos poluentes ou prevendo efeitos em sistemas naturais, produtivos ou sociais"
+    },
+    {
+     "number": 11,
+     "competency": 3,
+     "description": "Reconhecer benefícios, limitações e aspectos éticos da biotecnologia, considerando estruturas e processos biológicos envolvidos em produtos biotecnológicos"
+    },
+    {
+     "number": 12,
+     "competency": 3,
+     "description": "Avaliar impactos em ambientes naturais decorrentes de atividades sociais ou econômicas, considerando interesses contraditórios"
+    },
+    {
+     "number": 13,
+     "competency": 4,
+     "description": "Reconhecer mecanismos de transmissão da vida, prevendo ou explicando a manifestação de características dos seres vivos"
+    },
+    {
+     "number": 14,
+     "competency": 4,
+     "description": "Identificar padrões em fenômenos e processos vitais dos organismos, como manutenção do equilíbrio interno, defesa, relações com o ambiente, sexualidade, entre outros"
+    },
+    {
+     "number": 15,
+     "competency": 4,
+     "description": "Interpretar modelos e experimentos para explicar fenômenos ou processos biológicos em qualquer nível de organização dos sistemas biológicos"
+    },
+    {
+     "number": 16,
+     "competency": 4,
+     "description": "Compreender o papel da evolução na produção de padrões, processos biológicos ou na organização taxonômica dos seres vivos"
+    },
+    {
+     "number": 17,
+     "competency": 5,
+     "description": "Relacionar informações apresentadas em diferentes formas de linguagem e representação usadas nas ciências físicas, químicas ou biológicas, como texto discursivo, gráficos, tabelas, relações matemáticas ou linguagem simbólica"
+    },
+    {
+     "number": 18,
+     "competency": 5,
+     "description": "Relacionar propriedades físicas, químicas ou biológicas de produtos, sistemas ou procedimentos tecnológicos às finalidades a que se destinam"
+    },
+    {
+     "number": 19,
+     "competency": 5,
+     "description": "Avaliar métodos, processos ou procedimentos das ciências naturais que contribuam para diagnosticar ou solucionar problemas de ordem social, econômica ou ambiental"
+    },
+    {
+     "number": 20,
+     "competency": 6,
+     "description": "Caracterizar causas ou efeitos dos movimentos de partículas, substâncias, objetos ou corpos celestes"
+    },
+    {
+     "number": 21,
+     "competency": 6,
+     "description": "Utilizar leis físicas e (ou) químicas para interpretar processos naturais ou tecnológicos inseridos no contexto da termodinâmica e(ou) do eletromagnetismo"
+    },
+    {
+     "number": 22,
+     "competency": 6,
+     "description": "Compreender fenômenos decorrentes da interação entre a radiação e a matéria em suas manifestações em processos naturais ou tecnológicos, ou em suas implicações biológicas, sociais, econômicas ou ambientais"
+    },
+    {
+     "number": 23,
+     "competency": 6,
+     "description": "Avaliar possibilidades de geração, uso ou transformação de energia em ambientes específicos, considerando implicações éticas, ambientais, sociais e/ou econômicas"
+    },
+    {
+     "number": 24,
+     "competency": 7,
+     "description": "Utilizar códigos e nomenclatura da química para caracterizar materiais, substâncias ou transformações químicas"
+    },
+    {
+     "number": 25,
+     "competency": 7,
+     "description": "Caracterizar materiais ou substâncias, identificando etapas, rendimentos ou implicações biológicas, sociais, econômicas ou ambientais de sua obtenção ou produção"
+    },
+    {
+     "number": 26,
+     "competency": 7,
+     "description": "Avaliar implicações sociais, ambientais e/ou econômicas na produção ou no consumo de recursos energéticos ou minerais, identificando transformações químicas ou de energia envolvidas nesses processos"
+    },
+    {
+     "number": 27,
+     "competency": 7,
+     "description": "Avaliar propostas de intervenção no meio ambiente aplicando conhecimentos químicos, observando riscos ou benefícios"
+    },
+    {
+     "number": 28,
+     "competency": 8,
+     "description": "Associar características adaptativas dos organismos com seu modo de vida ou com seus limites de distribuição em diferentes ambientes, em especial em ambientes brasileiros"
+    },
+    {
+     "number": 29,
+     "competency": 8,
+     "description": "Interpretar experimentos ou técnicas que utilizam seres vivos, analisando implicações para o ambiente, a saúde, a produção de alimentos, matérias primas ou produtos industriais"
+    },
+    {
+     "number": 30,
+     "competency": 8,
+     "description": "Avaliar propostas de alcance individual ou coletivo, identificando aquelas que visam à preservação e a implementação da saúde individual, coletiva ou do ambiente"
+    }
+   ]
+  },
+  "CH": {
+   "competencies": [
+    {
+     "number": 1,
+     "description": "Compreender os elementos culturais que constituem as identidades"
+    },
+    {
+     "number": 2,
+     "description": "Compreender as transformações dos espaços geográficos como produto das relações socioeconômicas e culturais de poder"
+    },
+    {
+     "number": 3,
+     "description": "Compreender a produção e o papel histórico das instituições sociais, políticas e econômicas, associando-as aos diferentes grupos, conflitos e movimentos sociais"
+    },
+    {
+     "number": 4,
+     "description": "Entender as transformações técnicas e tecnológicas e seu impacto nos processos de produção, no desenvolvimento do conhecimento e na vida social"
+    },
+    {
+     "number": 5,
+     "description": "Utilizar os conhecimentos históricos para compreender e valorizar os fundamentos da cidadania e da democracia, favorecendo uma atuação consciente do indivíduo na sociedade"
+    },
+    {
+     "number": 6,
+     "description": "Compreender a sociedade e a natureza, reconhecendo suas interações no espaço em diferentes contextos históricos e geográficos"
+    }
+   ],
+   "skills": [
+    {
+     "number": 1,
+     "competency": 1,
+     "description": "Interpretar historicamente e/ou geograficamente fontes documentais acerca de aspectos da cultura"
+    },
+    {
+     "number": 2,
+     "competency": 1,
+     "description": "Analisar a produção da memória pelas sociedades humanas"
+    },
+    {
+     "number": 3,
+     "competency": 1,
+     "description": "Associar as manifestações culturais do presente aos seus processos históricos"
+    },
+    {
+     "number": 4,
+     "competency": 1,
+     "description": "Comparar pontos de vista expressos em diferentes fontes sobre determinado aspecto da cultura"
+    },
+    {
+     "number": 5,
+     "competency": 1,
+     "description": "Identificar as manifestações ou representações da diversidade do patrimônio cultural e artístico em diferentes sociedades"
+    },
+    {
+     "number": 6,
+     "competency": 2,
+     "description": "Interpretar diferentes representações gráficas e cartográficas dos espaços geográficos"
+    },
+    {
+     "number": 7,
+     "competency": 2,
+     "description": "Identificar os significados histórico-geográficos das relações de poder entre as nações"
+    },
+    {
+     "number": 8,
+     "competency": 2,
+     "description": "Analisar a ação dos estados nacionais no que se refere à dinâmica dos fluxos populacionais e no enfrentamento de problemas de ordem econômico-social"
+    },
+    {
+     "number": 9,
+     "competency": 2,
+     "description": "Comparar o significado histórico-geográfico das organizações políticas e socioeconômicas em escala local, regional ou mundial"
+    },
+    {
+     "number": 10,
+     "competency": 2,
+     "description": "Reconhecer a dinâmica da organização dos movimentos sociais e a importância da participação da coletividade na transformação da realidade histórico-geográfica"
+    },
+    {
+     "number": 11,
+     "competency": 3,
+     "description": "Identificar registros de práticas de grupos sociais no tempo e no espaço"
+    },
+    {
+     "number": 12,
+     "competency": 3,
+     "description": "Analisar o papel da justiça como instituição na organização das sociedades"
+    },
+    {
+     "number": 13,
+     "competency": 3,
+     "description": "Analisar a atuação dos movimentos sociais que contribuíram para mudanças ou rupturas em processos de disputa pelo poder"
+    },
+    {
+     "number": 14,
+     "competency": 3,
+     "description": "Comparar diferentes pontos de vista, presentes em textos analíticos e interpretativos, sobre situação ou fatos de natureza histórico-geográfica acerca das instituições sociais, políticas e econômicas"
+    },
+    {
+     "number": 15,
+     "competency": 3,
+     "description": "Avaliar criticamente conflitos culturais, sociais, políticos, econômicos ou ambientais ao longo da história"
+    },
+    {
+     "number": 16,
+     "competency": 4,
+     "description": "Identificar registros sobre o papel das técnicas e tecnologias na organização do trabalho e/ou da vida social"
+    },
+    {
+     "number": 17,
+     "competency": 4,
+     "description": "Analisar fatores que explicam o impacto das novas tecnologias no processo de territorialização da produção"
+    },
+    {
+     "number": 18,
+     "competency": 4,
+     "description": "Analisar diferentes processos de produção ou circulação de riquezas e suas implicações sócio-espaciais"
+    },
+    {
+     "number": 19,
+     "competency": 4,
+     "description": "Reconhecer as transformações técnicas e tecnológicas que determinam as várias formas de uso e apropriação dos espaços rural e urbano"
+    },
+    {
+     "number": 20,
+     "competency": 4,
+     "description": "Selecionar argumentos favoráveis ou contrários às modificações impostas pelas novas tecnologias à vida social e ao mundo do trabalho"
+    },
+    {
+     "number": 21,
+     "competency": 5,
+     "description": "Identificar o papel dos meios de comunicação na construção da vida social"
+    },
+    {
+     "number": 22,
+     "competency": 5,
+     "description": "Analisar as lutas sociais e conquistas obtidas no que se refere às mudanças nas legislações ou nas políticas públicas"
+    },
+    {
+     "number": 23,
+     "competency": 5,
+     "description": "Analisar a importância dos valores éticos na estruturação política das sociedades"
+    },
+    {
+     "number": 24,
+     "competency": 5,
+     "description": "Relacionar cidadania e democracia na organização das sociedades"
+    },
+    {
+     "number": 25,
+     "competency": 5,
+     "description": "Identificar estratégias que promovam formas de inclusão social"
+    },
+    {
+     "number": 26,
+     "competency": 6,
+     "description": "Identificar em fontes diversas o processo de ocupação dos meios físicos e as relações da vida humana com a paisagem"
+    },
+    {
+     "number": 27,
+     "competency": 6,
+     "description": "Analisar de maneira crítica as interações da sociedade com o meio físico, levando em consideração aspectos históricos e(ou) geográficos"
+    },
+    {
+     "number": 28,
+     "competency": 6,
+     "description": "Relacionar o uso das tecnologias com os impactos sócio-ambientais em diferentes contextos histórico-geográficos"
+    },
+    {
+     "number": 29,
+     "competency": 6,
+     "description": "Reconhecer a função dos recursos naturais na produção do espaço geográfico, relacionando-os com as mudanças provocadas pelas ações humanas"
+    },
+    {
+     "number": 30,
+     "competency": 6,
+     "description": "Avaliar as relações entre preservação e degradação da vida no planeta nas diferentes escalas"
+    }
+   ]
+  }
+ },
+ "areas": [
+  {
+   "code": "LC",
+   "subjects": [
+    {
+     "code": "LC.LP",
+     "name": "Língua Portuguesa",
+     "topics": [
+      {
+       "code": "LC.LP.T01",
+       "name": "Estudo do texto",
+       "subtopics": [
+        {
+         "code": "LC.LP.T01.S01",
+         "name": "As sequências discursivas e os gêneros textuais no sistema de comunicação e informação - modos de organização da composição textual",
+         "skills": [
+          {
+           "code": "LC.LP.T01.S01.K1",
+           "name": "As sequências discursivas e os gêneros textuais no sistema de comunicação e informação - modos de organização da composição textual"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T01.S02",
+         "name": "Atividades de produção escrita e de leitura de textos gerados nas diferentes esferas sociais - públicas e privadas",
+         "skills": [
+          {
+           "code": "LC.LP.T01.S02.K1",
+           "name": "Atividades de produção escrita e de leitura de textos gerados nas diferentes esferas sociais - públicas e privadas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "LC.LP.T02",
+       "name": "Estudo dos aspectos linguísticos em diferentes textos",
+       "subtopics": [
+        {
+         "code": "LC.LP.T02.S01",
+         "name": "Recursos expressivos da língua, procedimentos de construção e recepção de textos - organização da macroestrutura semântica e a articulação entre idéias e proposições (relações lógico- semânticas)",
+         "skills": [
+          {
+           "code": "LC.LP.T02.S01.K1",
+           "name": "Recursos expressivos da língua, procedimentos de construção e recepção de textos - organização da macroestrutura semântica e a articulação entre idéias e proposições (relações lógico- semânticas)"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "LC.LP.T03",
+       "name": "Estudo do texto argumentativo, seus gêneros e recursos linguísticos",
+       "subtopics": [
+        {
+         "code": "LC.LP.T03.S01",
+         "name": "Argumentação: tipo, gêneros e usos em língua portuguesa - formas de apresentação de diferentes pontos de vista",
+         "skills": [
+          {
+           "code": "LC.LP.T03.S01.K1",
+           "name": "Argumentação: tipo, gêneros e usos em língua portuguesa - formas de apresentação de diferentes pontos de vista"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T03.S02",
+         "name": "Organização e progressão textual",
+         "skills": [
+          {
+           "code": "LC.LP.T03.S02.K1",
+           "name": "Organização e progressão textual"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T03.S03",
+         "name": "Papéis sociais e comunicativos dos interlocutores, relação entre usos e propósitos comunicativos, função sociocomunicativa do gênero, aspectos da dimensão espaçotemporal em que se produz o texto",
+         "skills": [
+          {
+           "code": "LC.LP.T03.S03.K1",
+           "name": "Papéis sociais e comunicativos dos interlocutores, relação entre usos e propósitos comunicativos, função sociocomunicativa do gênero, aspectos da dimensão espaçotemporal em que se produz o texto"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "LC.LP.T04",
+       "name": "Estudo dos aspectos linguísticos da língua portuguesa",
+       "subtopics": [
+        {
+         "code": "LC.LP.T04.S01",
+         "name": "Usos da língua: norma culta e variação linguística - uso dos recursos linguísticos em relação ao contexto em que o texto é constituído: elementos de referência pessoal, temporal, espacial, registro li",
+         "skills": [
+          {
+           "code": "LC.LP.T04.S01.K1",
+           "name": "Usos da língua: norma culta e variação linguística - uso dos recursos linguísticos em relação ao contexto em que o texto é constituído: elementos de referência pessoal, temporal, espacial, registro li"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T04.S02",
+         "name": "Uso dos recursos linguísticos em processo de coesão textual: elementos de articulação das sequências dos textos ou à construção da micro estrutura do texto",
+         "skills": [
+          {
+           "code": "LC.LP.T04.S02.K1",
+           "name": "Uso dos recursos linguísticos em processo de coesão textual: elementos de articulação das sequências dos textos ou à construção da micro estrutura do texto"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "LC.LP.T05",
+       "name": "Estudo dos gêneros digitais",
+       "subtopics": [
+        {
+         "code": "LC.LP.T05.S01",
+         "name": "Tecnologia da comunicação e informação: impacto e função social - o texto literário típico da cultura de massa: o suporte textual em gêneros digitais",
+         "skills": [
+          {
+           "code": "LC.LP.T05.S01.K1",
+           "name": "Tecnologia da comunicação e informação: impacto e função social - o texto literário típico da cultura de massa: o suporte textual em gêneros digitais"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T05.S02",
+         "name": "A caracterização dos interlocutores na comunicação tecnológica",
+         "skills": [
+          {
+           "code": "LC.LP.T05.S02.K1",
+           "name": "A caracterização dos interlocutores na comunicação tecnológica"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T05.S03",
+         "name": "Os recursos linguísticos e os gêneros digitais",
+         "skills": [
+          {
+           "code": "LC.LP.T05.S03.K1",
+           "name": "Os recursos linguísticos e os gêneros digitais"
+          }
+         ]
+        },
+        {
+         "code": "LC.LP.T05.S04",
+         "name": "A função social das novas tecnologias",
+         "skills": [
+          {
+           "code": "LC.LP.T05.S04.K1",
+           "name": "A função social das novas tecnologias"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "LC.LIT",
+     "name": "Literatura",
+     "topics": [
+      {
+       "code": "LC.LIT.T01",
+       "name": "Estudo do texto literário",
+       "subtopics": [
+        {
+         "code": "LC.LIT.T01.S01",
+         "name": "Relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos - produção literária e processo social",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S01.K1",
+           "name": "Relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos - produção literária e processo social"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S02",
+         "name": "Processos de formação literária e de formação nacional",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S02.K1",
+           "name": "Processos de formação literária e de formação nacional"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S03",
+         "name": "Produção de textos literários, sua recepção e a constituição do patrimônio literário nacional",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S03.K1",
+           "name": "Produção de textos literários, sua recepção e a constituição do patrimônio literário nacional"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S04",
+         "name": "Relações entre a dialética cosmopolitismo/localismo e a produção literária nacional",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S04.K1",
+           "name": "Relações entre a dialética cosmopolitismo/localismo e a produção literária nacional"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S05",
+         "name": "Elementos de continuidade e ruptura entre os diversos momentos da literatura brasileira",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S05.K1",
+           "name": "Elementos de continuidade e ruptura entre os diversos momentos da literatura brasileira"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S06",
+         "name": "Associações entre concepções artísticas e procedimentos de construção do texto literário em seus gêneros (épico/narrativo, lírico e dramático) e formas diversas",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S06.K1",
+           "name": "Associações entre concepções artísticas e procedimentos de construção do texto literário em seus gêneros (épico/narrativo, lírico e dramático) e formas diversas"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S07",
+         "name": "Articulações entre os recursos expressivos e estruturais do texto literário e o processo social relacionado ao momento de sua produção",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S07.K1",
+           "name": "Articulações entre os recursos expressivos e estruturais do texto literário e o processo social relacionado ao momento de sua produção"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S08",
+         "name": "Representação literária: natureza, função, organização e estrutura do texto literário",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S08.K1",
+           "name": "Representação literária: natureza, função, organização e estrutura do texto literário"
+          }
+         ]
+        },
+        {
+         "code": "LC.LIT.T01.S09",
+         "name": "Relações entre literatura, outras artes e outros saberes",
+         "skills": [
+          {
+           "code": "LC.LIT.T01.S09.K1",
+           "name": "Relações entre literatura, outras artes e outros saberes"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "LC.AR",
+     "name": "Artes",
+     "topics": [
+      {
+       "code": "LC.AR.T01",
+       "name": "Produção e recepção de textos artísticos",
+       "subtopics": [
+        {
+         "code": "LC.AR.T01.S01",
+         "name": "Interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania - Artes Visuais: estrutura morfológica, sintática, o contexto da obra artística, o contexto da comu",
+         "skills": [
+          {
+           "code": "LC.AR.T01.S01.K1",
+           "name": "Interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania - Artes Visuais: estrutura morfológica, sintática, o contexto da obra artística, o contexto da comu"
+          }
+         ]
+        },
+        {
+         "code": "LC.AR.T01.S02",
+         "name": "Inclusão, diversidade e multiculturalidade: a valorização da pluralidade expressada nas produções estéticas e artísticas das minorias sociais e dos portadores de necessidades especiais educacionais",
+         "skills": [
+          {
+           "code": "LC.AR.T01.S02.K1",
+           "name": "Inclusão, diversidade e multiculturalidade: a valorização da pluralidade expressada nas produções estéticas e artísticas das minorias sociais e dos portadores de necessidades especiais educacionais"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "LC.EF",
+     "name": "Educação Física",
+     "topics": [
+      {
+       "code": "LC.EF.T01",
+       "name": "Estudo das práticas corporais",
+       "subtopics": [
+        {
+         "code": "LC.EF.T01.S01",
+         "name": "A linguagem corporal como integradora social e formadora de identidade - performance corporal e identidades juvenis",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S01.K1",
+           "name": "A linguagem corporal como integradora social e formadora de identidade - performance corporal e identidades juvenis"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S02",
+         "name": "Possibilidades de vivência crítica e emancipada do lazer",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S02.K1",
+           "name": "Possibilidades de vivência crítica e emancipada do lazer"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S03",
+         "name": "Mitos e verdades sobre os corpos masculino e feminino na sociedade atual",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S03.K1",
+           "name": "Mitos e verdades sobre os corpos masculino e feminino na sociedade atual"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S04",
+         "name": "Exercício físico e saúde",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S04.K1",
+           "name": "Exercício físico e saúde"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S05",
+         "name": "O corpo e a expressão artística e cultural",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S05.K1",
+           "name": "O corpo e a expressão artística e cultural"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S06",
+         "name": "O corpo no mundo dos símbolos e como produção da cultura",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S06.K1",
+           "name": "O corpo no mundo dos símbolos e como produção da cultura"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S07",
+         "name": "Práticas corporais e autonomia",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S07.K1",
+           "name": "Práticas corporais e autonomia"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S08",
+         "name": "Condicionamentos e esforços físicos",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S08.K1",
+           "name": "Condicionamentos e esforços físicos"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S09",
+         "name": "O esporte",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S09.K1",
+           "name": "O esporte"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S10",
+         "name": "A dança",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S10.K1",
+           "name": "A dança"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S11",
+         "name": "As lutas",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S11.K1",
+           "name": "As lutas"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S12",
+         "name": "Os jogos",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S12.K1",
+           "name": "Os jogos"
+          }
+         ]
+        },
+        {
+         "code": "LC.EF.T01.S13",
+         "name": "As brincadeiras",
+         "skills": [
+          {
+           "code": "LC.EF.T01.S13.K1",
+           "name": "As brincadeiras"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "LC.LEM",
+     "name": "Língua Estrangeira Moderna",
+     "topics": [
+      {
+       "code": "LC.LEM.T01",
+       "name": "Leitura e compreensão em língua estrangeira (Competência de área 2)",
+       "subtopics": [
+        {
+         "code": "LC.LEM.T01.S01",
+         "name": "Vocabulário e expressões associados ao tema do texto",
+         "skills": [
+          {
+           "code": "LC.LEM.T01.S01.K1",
+           "name": "Vocabulário e expressões associados ao tema do texto"
+          }
+         ]
+        },
+        {
+         "code": "LC.LEM.T01.S02",
+         "name": "Uso da língua estrangeira para acesso a informações e culturas",
+         "skills": [
+          {
+           "code": "LC.LEM.T01.S02.K1",
+           "name": "Uso da língua estrangeira para acesso a informações e culturas"
+          }
+         ]
+        },
+        {
+         "code": "LC.LEM.T01.S03",
+         "name": "Estruturas linguísticas, função e uso social do texto",
+         "skills": [
+          {
+           "code": "LC.LEM.T01.S03.K1",
+           "name": "Estruturas linguísticas, função e uso social do texto"
+          }
+         ]
+        },
+        {
+         "code": "LC.LEM.T01.S04",
+         "name": "Produção cultural em língua estrangeira e diversidade",
+         "skills": [
+          {
+           "code": "LC.LEM.T01.S04.K1",
+           "name": "Produção cultural em língua estrangeira e diversidade"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "MT",
+   "subjects": [
+    {
+     "code": "MT.MAT",
+     "name": "Matemática",
+     "topics": [
+      {
+       "code": "MT.MAT.T01",
+       "name": "Conhecimentos numéricos",
+       "subtopics": [
+        {
+         "code": "MT.MAT.T01.S01",
+         "name": "Operações em conjuntos numéricos (naturais, inteiros, racionais e reais)",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S01.K1",
+           "name": "Operações em conjuntos numéricos (naturais, inteiros, racionais e reais)"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S02",
+         "name": "Desigualdades",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S02.K1",
+           "name": "Desigualdades"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S03",
+         "name": "Divisibilidade",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S03.K1",
+           "name": "Divisibilidade"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S04",
+         "name": "Fatoração",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S04.K1",
+           "name": "Fatoração"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S05",
+         "name": "Razões e proporções",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S05.K1",
+           "name": "Razões e proporções"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S06",
+         "name": "Porcentagem e juros",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S06.K1",
+           "name": "Porcentagem e juros"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S07",
+         "name": "Relações de dependência entre grandezas",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S07.K1",
+           "name": "Relações de dependência entre grandezas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S08",
+         "name": "Sequências e progressões",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S08.K1",
+           "name": "Sequências e progressões"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T01.S09",
+         "name": "Princípios de contagem",
+         "skills": [
+          {
+           "code": "MT.MAT.T01.S09.K1",
+           "name": "Princípios de contagem"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "MT.MAT.T02",
+       "name": "Conhecimentos geométricos",
+       "subtopics": [
+        {
+         "code": "MT.MAT.T02.S01",
+         "name": "Características das figuras geométricas planas e espaciais",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S01.K1",
+           "name": "Características das figuras geométricas planas e espaciais"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S02",
+         "name": "Grandezas",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S02.K1",
+           "name": "Grandezas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S03",
+         "name": "Unidades de medida e escalas",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S03.K1",
+           "name": "Unidades de medida e escalas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S04",
+         "name": "Comprimentos",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S04.K1",
+           "name": "Comprimentos"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S05",
+         "name": "Áreas e volumes",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S05.K1",
+           "name": "Áreas e volumes"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S06",
+         "name": "Ângulos",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S06.K1",
+           "name": "Ângulos"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S07",
+         "name": "Posições de retas",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S07.K1",
+           "name": "Posições de retas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S08",
+         "name": "Simetrias de figuras planas ou espaciais",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S08.K1",
+           "name": "Simetrias de figuras planas ou espaciais"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S09",
+         "name": "Congruência e semelhança de triângulos",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S09.K1",
+           "name": "Congruência e semelhança de triângulos"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S10",
+         "name": "Teorema de Tales",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S10.K1",
+           "name": "Teorema de Tales"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S11",
+         "name": "Relações métricas nos triângulos",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S11.K1",
+           "name": "Relações métricas nos triângulos"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S12",
+         "name": "Circunferências",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S12.K1",
+           "name": "Circunferências"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T02.S13",
+         "name": "Trigonometria do ângulo agudo",
+         "skills": [
+          {
+           "code": "MT.MAT.T02.S13.K1",
+           "name": "Trigonometria do ângulo agudo"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "MT.MAT.T03",
+       "name": "Conhecimentos de estatística e probabilidade",
+       "subtopics": [
+        {
+         "code": "MT.MAT.T03.S01",
+         "name": "Representação e análise de dados",
+         "skills": [
+          {
+           "code": "MT.MAT.T03.S01.K1",
+           "name": "Representação e análise de dados"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T03.S02",
+         "name": "Medidas de tendência central (médias, moda e mediana)",
+         "skills": [
+          {
+           "code": "MT.MAT.T03.S02.K1",
+           "name": "Medidas de tendência central (médias, moda e mediana)"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T03.S03",
+         "name": "Desvios e variância",
+         "skills": [
+          {
+           "code": "MT.MAT.T03.S03.K1",
+           "name": "Desvios e variância"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T03.S04",
+         "name": "Noções de probabilidade",
+         "skills": [
+          {
+           "code": "MT.MAT.T03.S04.K1",
+           "name": "Noções de probabilidade"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "MT.MAT.T04",
+       "name": "Conhecimentos algébricos",
+       "subtopics": [
+        {
+         "code": "MT.MAT.T04.S01",
+         "name": "Gráficos e funções",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S01.K1",
+           "name": "Gráficos e funções"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S02",
+         "name": "Funções algébricas do 1.º e do 2.º graus",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S02.K1",
+           "name": "Funções algébricas do 1.º e do 2.º graus"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S03",
+         "name": "Polinomiais",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S03.K1",
+           "name": "Polinomiais"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S04",
+         "name": "Racionais",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S04.K1",
+           "name": "Racionais"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S05",
+         "name": "Exponenciais e logarítmicas",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S05.K1",
+           "name": "Exponenciais e logarítmicas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S06",
+         "name": "Equações e inequações",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S06.K1",
+           "name": "Equações e inequações"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T04.S07",
+         "name": "Relações no ciclo trigonométrico e funções trigonométricas",
+         "skills": [
+          {
+           "code": "MT.MAT.T04.S07.K1",
+           "name": "Relações no ciclo trigonométrico e funções trigonométricas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "MT.MAT.T05",
+       "name": "Conhecimentos algébricos/geométricos",
+       "subtopics": [
+        {
+         "code": "MT.MAT.T05.S01",
+         "name": "Plano cartesiano",
+         "skills": [
+          {
+           "code": "MT.MAT.T05.S01.K1",
+           "name": "Plano cartesiano"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T05.S02",
+         "name": "Retas",
+         "skills": [
+          {
+           "code": "MT.MAT.T05.S02.K1",
+           "name": "Retas"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T05.S03",
+         "name": "Circunferências",
+         "skills": [
+          {
+           "code": "MT.MAT.T05.S03.K1",
+           "name": "Circunferências"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T05.S04",
+         "name": "Paralelismo e perpendicularidade",
+         "skills": [
+          {
+           "code": "MT.MAT.T05.S04.K1",
+           "name": "Paralelismo e perpendicularidade"
+          }
+         ]
+        },
+        {
+         "code": "MT.MAT.T05.S05",
+         "name": "Sistemas de equações",
+         "skills": [
+          {
+           "code": "MT.MAT.T05.S05.K1",
+           "name": "Sistemas de equações"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "CN",
+   "subjects": [
+    {
+     "code": "CN.FIS",
+     "name": "Física",
+     "topics": [
+      {
+       "code": "CN.FIS.T01",
+       "name": "Conhecimentos básicos e fundamentais",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T01.S01",
+         "name": "Noções de ordem de grandeza",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S01.K1",
+           "name": "Noções de ordem de grandeza"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S02",
+         "name": "Notação Científica",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S02.K1",
+           "name": "Notação Científica"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S03",
+         "name": "Sistema Internacional de Unidades",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S03.K1",
+           "name": "Sistema Internacional de Unidades"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S04",
+         "name": "Metodologia de investigação: a procura de regularidades e de sinais na interpretação física do mundo",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S04.K1",
+           "name": "Metodologia de investigação: a procura de regularidades e de sinais na interpretação física do mundo"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S05",
+         "name": "Observações e mensurações: representação de grandezas físicas como grandezas mensuráveis",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S05.K1",
+           "name": "Observações e mensurações: representação de grandezas físicas como grandezas mensuráveis"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S06",
+         "name": "Ferramentas básicas: gráficos e vetores",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S06.K1",
+           "name": "Ferramentas básicas: gráficos e vetores"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S07",
+         "name": "Conceituação de grandezas vetoriais e escalares",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S07.K1",
+           "name": "Conceituação de grandezas vetoriais e escalares"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T01.S08",
+         "name": "Operações básicas com vetores",
+         "skills": [
+          {
+           "code": "CN.FIS.T01.S08.K1",
+           "name": "Operações básicas com vetores"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T02",
+       "name": "O movimento, o equilíbrio e a descoberta de leis físicas",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T02.S01",
+         "name": "Grandezas fundamentais da mecânica: tempo, espaço, velocidade e aceleração",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S01.K1",
+           "name": "Grandezas fundamentais da mecânica: tempo, espaço, velocidade e aceleração"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S02",
+         "name": "Relação histórica entre força e movimento",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S02.K1",
+           "name": "Relação histórica entre força e movimento"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S03",
+         "name": "Descrições do movimento e sua interpretação: quantificação do movimento e sua descrição matemática e gráfica",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S03.K1",
+           "name": "Descrições do movimento e sua interpretação: quantificação do movimento e sua descrição matemática e gráfica"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S04",
+         "name": "Casos especiais de movimentos e suas regularidades observáveis",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S04.K1",
+           "name": "Casos especiais de movimentos e suas regularidades observáveis"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S05",
+         "name": "Conceito de inércia",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S05.K1",
+           "name": "Conceito de inércia"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S06",
+         "name": "Noção de sistemas de referência inerciais e não inerciais",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S06.K1",
+           "name": "Noção de sistemas de referência inerciais e não inerciais"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S07",
+         "name": "Noção dinâmica de massa e quantidade de movimento (momento linear)",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S07.K1",
+           "name": "Noção dinâmica de massa e quantidade de movimento (momento linear)"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S08",
+         "name": "Força e variação da quantidade de movimento",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S08.K1",
+           "name": "Força e variação da quantidade de movimento"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S09",
+         "name": "Leis de Newton",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S09.K1",
+           "name": "Leis de Newton"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S10",
+         "name": "Centro de massa e a idéia de ponto material",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S10.K1",
+           "name": "Centro de massa e a idéia de ponto material"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S11",
+         "name": "Conceito de forças externas e internas",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S11.K1",
+           "name": "Conceito de forças externas e internas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S12",
+         "name": "Lei da conservação da quantidade de movimento (momento linear) e teorema do impulso",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S12.K1",
+           "name": "Lei da conservação da quantidade de movimento (momento linear) e teorema do impulso"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S13",
+         "name": "Momento de uma força (torque)",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S13.K1",
+           "name": "Momento de uma força (torque)"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S14",
+         "name": "Condições de equilíbrio estático de ponto material e de corpos rígidos",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S14.K1",
+           "name": "Condições de equilíbrio estático de ponto material e de corpos rígidos"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S15",
+         "name": "Força de atrito, força peso, força normal de contato e tração",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S15.K1",
+           "name": "Força de atrito, força peso, força normal de contato e tração"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S16",
+         "name": "Diagramas de forças",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S16.K1",
+           "name": "Diagramas de forças"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S17",
+         "name": "Identificação das forças que atuam nos movimentos circulares",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S17.K1",
+           "name": "Identificação das forças que atuam nos movimentos circulares"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S18",
+         "name": "Noção de força centrípeta e sua quantificação",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S18.K1",
+           "name": "Noção de força centrípeta e sua quantificação"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S19",
+         "name": "A hidrostática: aspectos históricos e variáveis relevantes",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S19.K1",
+           "name": "A hidrostática: aspectos históricos e variáveis relevantes"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S20",
+         "name": "Empuxo",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S20.K1",
+           "name": "Empuxo"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T02.S21",
+         "name": "Princípios de Pascal, Arquimedes e Stevin: condições de flutuação, relação entre diferença de nível e pressão hidrostática",
+         "skills": [
+          {
+           "code": "CN.FIS.T02.S21.K1",
+           "name": "Princípios de Pascal, Arquimedes e Stevin: condições de flutuação, relação entre diferença de nível e pressão hidrostática"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T03",
+       "name": "Energia, trabalho e potência",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T03.S01",
+         "name": "Conceituação de trabalho, energia e potência",
+         "skills": [
+          {
+           "code": "CN.FIS.T03.S01.K1",
+           "name": "Conceituação de trabalho, energia e potência"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T03.S02",
+         "name": "Conceito de energia potencial e de energia cinética",
+         "skills": [
+          {
+           "code": "CN.FIS.T03.S02.K1",
+           "name": "Conceito de energia potencial e de energia cinética"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T03.S03",
+         "name": "Conservação de energia mecânica e dissipação de energia",
+         "skills": [
+          {
+           "code": "CN.FIS.T03.S03.K1",
+           "name": "Conservação de energia mecânica e dissipação de energia"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T03.S04",
+         "name": "Trabalho da força gravitacional e energia potencial gravitacional",
+         "skills": [
+          {
+           "code": "CN.FIS.T03.S04.K1",
+           "name": "Trabalho da força gravitacional e energia potencial gravitacional"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T03.S05",
+         "name": "Forças conservativas e dissipativas",
+         "skills": [
+          {
+           "code": "CN.FIS.T03.S05.K1",
+           "name": "Forças conservativas e dissipativas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T04",
+       "name": "A Mecânica e o funcionamento do Universo",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T04.S01",
+         "name": "Força peso",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S01.K1",
+           "name": "Força peso"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S02",
+         "name": "Aceleração gravitacional",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S02.K1",
+           "name": "Aceleração gravitacional"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S03",
+         "name": "Lei da Gravitação Universal",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S03.K1",
+           "name": "Lei da Gravitação Universal"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S04",
+         "name": "Leis de Kepler",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S04.K1",
+           "name": "Leis de Kepler"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S05",
+         "name": "Movimentos de corpos celestes",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S05.K1",
+           "name": "Movimentos de corpos celestes"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S06",
+         "name": "Influência na Terra: marés e variações climáticas",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S06.K1",
+           "name": "Influência na Terra: marés e variações climáticas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T04.S07",
+         "name": "Concepções históricas sobre a origem do universo e sua evolução",
+         "skills": [
+          {
+           "code": "CN.FIS.T04.S07.K1",
+           "name": "Concepções históricas sobre a origem do universo e sua evolução"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T05",
+       "name": "Fenômenos Elétricos e Magnéticos",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T05.S01",
+         "name": "Carga elétrica e corrente elétrica",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S01.K1",
+           "name": "Carga elétrica e corrente elétrica"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S02",
+         "name": "Lei de Coulomb",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S02.K1",
+           "name": "Lei de Coulomb"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S03",
+         "name": "Campo elétrico e potencial elétrico",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S03.K1",
+           "name": "Campo elétrico e potencial elétrico"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S04",
+         "name": "Linhas de campo",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S04.K1",
+           "name": "Linhas de campo"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S05",
+         "name": "Superfícies equipotenciais",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S05.K1",
+           "name": "Superfícies equipotenciais"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S06",
+         "name": "Poder das pontas",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S06.K1",
+           "name": "Poder das pontas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S07",
+         "name": "Blindagem",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S07.K1",
+           "name": "Blindagem"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S08",
+         "name": "Capacitores",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S08.K1",
+           "name": "Capacitores"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S09",
+         "name": "Efeito Joule",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S09.K1",
+           "name": "Efeito Joule"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S10",
+         "name": "Lei de Ohm",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S10.K1",
+           "name": "Lei de Ohm"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S11",
+         "name": "Resistência elétrica e resistividade",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S11.K1",
+           "name": "Resistência elétrica e resistividade"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S12",
+         "name": "Relações entre grandezas elétricas: tensão, corrente, potência e energia",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S12.K1",
+           "name": "Relações entre grandezas elétricas: tensão, corrente, potência e energia"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S13",
+         "name": "Circuitos elétricos simples",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S13.K1",
+           "name": "Circuitos elétricos simples"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S14",
+         "name": "Correntes contínua e alternada",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S14.K1",
+           "name": "Correntes contínua e alternada"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S15",
+         "name": "Medidores elétricos",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S15.K1",
+           "name": "Medidores elétricos"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S16",
+         "name": "Representação gráfica de circuitos",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S16.K1",
+           "name": "Representação gráfica de circuitos"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S17",
+         "name": "Símbolos convencionais",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S17.K1",
+           "name": "Símbolos convencionais"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S18",
+         "name": "Potência e consumo de energia em dispositivos elétricos",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S18.K1",
+           "name": "Potência e consumo de energia em dispositivos elétricos"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S19",
+         "name": "Campo magnético",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S19.K1",
+           "name": "Campo magnético"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S20",
+         "name": "Imãs permanentes",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S20.K1",
+           "name": "Imãs permanentes"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S21",
+         "name": "Linhas de campo magnético",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S21.K1",
+           "name": "Linhas de campo magnético"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T05.S22",
+         "name": "Campo magnético terrestre",
+         "skills": [
+          {
+           "code": "CN.FIS.T05.S22.K1",
+           "name": "Campo magnético terrestre"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T06",
+       "name": "Oscilações, ondas, óptica e radiação",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T06.S01",
+         "name": "Feixes e frentes de ondas",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S01.K1",
+           "name": "Feixes e frentes de ondas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S02",
+         "name": "Reflexão e refração",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S02.K1",
+           "name": "Reflexão e refração"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S03",
+         "name": "Óptica geométrica: lentes e espelhos",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S03.K1",
+           "name": "Óptica geométrica: lentes e espelhos"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S04",
+         "name": "Formação de imagens",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S04.K1",
+           "name": "Formação de imagens"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S05",
+         "name": "Instrumentos ópticos simples",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S05.K1",
+           "name": "Instrumentos ópticos simples"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S06",
+         "name": "Fenômenos ondulatórios",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S06.K1",
+           "name": "Fenômenos ondulatórios"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S07",
+         "name": "Pulsos e ondas",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S07.K1",
+           "name": "Pulsos e ondas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S08",
+         "name": "Período, frequência, ciclo",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S08.K1",
+           "name": "Período, frequência, ciclo"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S09",
+         "name": "Propagação: relação entre velocidade, frequência e comprimento de onda",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S09.K1",
+           "name": "Propagação: relação entre velocidade, frequência e comprimento de onda"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T06.S10",
+         "name": "Ondas em diferentes meios de propagação",
+         "skills": [
+          {
+           "code": "CN.FIS.T06.S10.K1",
+           "name": "Ondas em diferentes meios de propagação"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.FIS.T07",
+       "name": "O calor e os fenômenos térmicos",
+       "subtopics": [
+        {
+         "code": "CN.FIS.T07.S01",
+         "name": "Conceitos de calor e de temperatura",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S01.K1",
+           "name": "Conceitos de calor e de temperatura"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S02",
+         "name": "Escalas termométricas",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S02.K1",
+           "name": "Escalas termométricas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S03",
+         "name": "Transferência de calor e equilíbrio térmico",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S03.K1",
+           "name": "Transferência de calor e equilíbrio térmico"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S04",
+         "name": "Capacidade calorífica e calor específico",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S04.K1",
+           "name": "Capacidade calorífica e calor específico"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S05",
+         "name": "Condução do calor",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S05.K1",
+           "name": "Condução do calor"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S06",
+         "name": "Dilatação térmica",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S06.K1",
+           "name": "Dilatação térmica"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S07",
+         "name": "Mudanças de estado físico e calor latente de transformação",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S07.K1",
+           "name": "Mudanças de estado físico e calor latente de transformação"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S08",
+         "name": "Comportamento de Gases ideais",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S08.K1",
+           "name": "Comportamento de Gases ideais"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S09",
+         "name": "Máquinas térmicas",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S09.K1",
+           "name": "Máquinas térmicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S10",
+         "name": "Ciclo de Carnot",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S10.K1",
+           "name": "Ciclo de Carnot"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S11",
+         "name": "Leis da Termodinâmica",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S11.K1",
+           "name": "Leis da Termodinâmica"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S12",
+         "name": "Aplicações e fenômenos térmicos de uso cotidiano",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S12.K1",
+           "name": "Aplicações e fenômenos térmicos de uso cotidiano"
+          }
+         ]
+        },
+        {
+         "code": "CN.FIS.T07.S13",
+         "name": "Compreensão de fenômenos climáticos relacionados ao ciclo da água",
+         "skills": [
+          {
+           "code": "CN.FIS.T07.S13.K1",
+           "name": "Compreensão de fenômenos climáticos relacionados ao ciclo da água"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CN.QUI",
+     "name": "Química",
+     "topics": [
+      {
+       "code": "CN.QUI.T01",
+       "name": "Transformações Químicas",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T01.S01",
+         "name": "Evidências de transformações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S01.K1",
+           "name": "Evidências de transformações químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S02",
+         "name": "Interpretando transformações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S02.K1",
+           "name": "Interpretando transformações químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S03",
+         "name": "Sistemas Gasosos: Lei dos gases",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S03.K1",
+           "name": "Sistemas Gasosos: Lei dos gases"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S04",
+         "name": "Equação geral dos gases ideais, Princípio de Avogadro, conceito de molécula",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S04.K1",
+           "name": "Equação geral dos gases ideais, Princípio de Avogadro, conceito de molécula"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S05",
+         "name": "Massa molar, volume molar dos gases",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S05.K1",
+           "name": "Massa molar, volume molar dos gases"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S06",
+         "name": "Teoria cinética dos gases",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S06.K1",
+           "name": "Teoria cinética dos gases"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S07",
+         "name": "Misturas gasosas",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S07.K1",
+           "name": "Misturas gasosas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S08",
+         "name": "Modelo corpuscular da matéria",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S08.K1",
+           "name": "Modelo corpuscular da matéria"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S09",
+         "name": "Modelo atômico de Dalton",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S09.K1",
+           "name": "Modelo atômico de Dalton"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S10",
+         "name": "Natureza elétrica da matéria: Modelo Atômico de Thomson, Rutherford, Rutherford-Bohr",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S10.K1",
+           "name": "Natureza elétrica da matéria: Modelo Atômico de Thomson, Rutherford, Rutherford-Bohr"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S11",
+         "name": "Átomos e sua estrutura",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S11.K1",
+           "name": "Átomos e sua estrutura"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S12",
+         "name": "Número atômico, número de massa, isótopos, massa atômica",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S12.K1",
+           "name": "Número atômico, número de massa, isótopos, massa atômica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S13",
+         "name": "Elementos químicos e Tabela Periódica",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S13.K1",
+           "name": "Elementos químicos e Tabela Periódica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T01.S14",
+         "name": "Reações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T01.S14.K1",
+           "name": "Reações químicas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T02",
+       "name": "Representação das transformações químicas",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T02.S01",
+         "name": "Fórmulas químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S01.K1",
+           "name": "Fórmulas químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S02",
+         "name": "Balanceamento de equações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S02.K1",
+           "name": "Balanceamento de equações químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S03",
+         "name": "Aspectos quantitativos das transformações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S03.K1",
+           "name": "Aspectos quantitativos das transformações químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S04",
+         "name": "Leis ponderais das reações químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S04.K1",
+           "name": "Leis ponderais das reações químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S05",
+         "name": "Determinação de fórmulas químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S05.K1",
+           "name": "Determinação de fórmulas químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S06",
+         "name": "Grandezas Químicas: massa, volume, mol, massa molar, constante de Avogadro",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S06.K1",
+           "name": "Grandezas Químicas: massa, volume, mol, massa molar, constante de Avogadro"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T02.S07",
+         "name": "Cálculos estequiométricos",
+         "skills": [
+          {
+           "code": "CN.QUI.T02.S07.K1",
+           "name": "Cálculos estequiométricos"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T03",
+       "name": "Materiais, suas propriedades e usos",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T03.S01",
+         "name": "Propriedades de materiais",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S01.K1",
+           "name": "Propriedades de materiais"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S02",
+         "name": "Estados físicos de materiais",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S02.K1",
+           "name": "Estados físicos de materiais"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S03",
+         "name": "Mudanças de estado",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S03.K1",
+           "name": "Mudanças de estado"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S04",
+         "name": "Misturas: tipos e métodos de separação",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S04.K1",
+           "name": "Misturas: tipos e métodos de separação"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S05",
+         "name": "Substâncias químicas: classificação e características gerais",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S05.K1",
+           "name": "Substâncias químicas: classificação e características gerais"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S06",
+         "name": "Metais e Ligas metálicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S06.K1",
+           "name": "Metais e Ligas metálicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S07",
+         "name": "Ferro, cobre e alumínio",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S07.K1",
+           "name": "Ferro, cobre e alumínio"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S08",
+         "name": "Ligações metálicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S08.K1",
+           "name": "Ligações metálicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S09",
+         "name": "Substâncias iônicas: características e propriedades",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S09.K1",
+           "name": "Substâncias iônicas: características e propriedades"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S10",
+         "name": "Substâncias iônicas do grupo: cloreto, carbonato, nitrato e sulfato",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S10.K1",
+           "name": "Substâncias iônicas do grupo: cloreto, carbonato, nitrato e sulfato"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S11",
+         "name": "Ligação iônica",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S11.K1",
+           "name": "Ligação iônica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S12",
+         "name": "Substâncias moleculares: características e propriedades",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S12.K1",
+           "name": "Substâncias moleculares: características e propriedades"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S13",
+         "name": "Substâncias moleculares: H2, O2, N2, Cl2, NH3, H2O, HCl, CH4",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S13.K1",
+           "name": "Substâncias moleculares: H2, O2, N2, Cl2, NH3, H2O, HCl, CH4"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S14",
+         "name": "Ligação Covalente",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S14.K1",
+           "name": "Ligação Covalente"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S15",
+         "name": "Polaridade de moléculas",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S15.K1",
+           "name": "Polaridade de moléculas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S16",
+         "name": "Forças intermoleculares",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S16.K1",
+           "name": "Forças intermoleculares"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T03.S17",
+         "name": "Relação entre estruturas, propriedade e aplicação das substâncias",
+         "skills": [
+          {
+           "code": "CN.QUI.T03.S17.K1",
+           "name": "Relação entre estruturas, propriedade e aplicação das substâncias"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T04",
+       "name": "Água",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T04.S01",
+         "name": "Ocorrência e importância na vida animal e vegetal",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S01.K1",
+           "name": "Ocorrência e importância na vida animal e vegetal"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S02",
+         "name": "Ligação, estrutura e propriedades",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S02.K1",
+           "name": "Ligação, estrutura e propriedades"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S03",
+         "name": "Sistemas em Solução Aquosa: Soluções verdadeiras, soluções coloidais e suspensões",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S03.K1",
+           "name": "Sistemas em Solução Aquosa: Soluções verdadeiras, soluções coloidais e suspensões"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S04",
+         "name": "Solubilidade",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S04.K1",
+           "name": "Solubilidade"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S05",
+         "name": "Concentração das soluções",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S05.K1",
+           "name": "Concentração das soluções"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S06",
+         "name": "Aspectos qualitativos das propriedades coligativas das soluções",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S06.K1",
+           "name": "Aspectos qualitativos das propriedades coligativas das soluções"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S07",
+         "name": "Ácidos, Bases, Sais e Óxidos: definição, classificação, propriedades, formulação e nomenclatura",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S07.K1",
+           "name": "Ácidos, Bases, Sais e Óxidos: definição, classificação, propriedades, formulação e nomenclatura"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S08",
+         "name": "Conceitos de ácidos e base",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S08.K1",
+           "name": "Conceitos de ácidos e base"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T04.S09",
+         "name": "Principais propriedades dos ácidos e bases: indicadores, condutibilidade elétrica, reação com metais, reação de neutralização",
+         "skills": [
+          {
+           "code": "CN.QUI.T04.S09.K1",
+           "name": "Principais propriedades dos ácidos e bases: indicadores, condutibilidade elétrica, reação com metais, reação de neutralização"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T05",
+       "name": "Transformações Químicas e Energia",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T05.S01",
+         "name": "Transformações químicas e energia calorífica",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S01.K1",
+           "name": "Transformações químicas e energia calorífica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S02",
+         "name": "Calor de reação",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S02.K1",
+           "name": "Calor de reação"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S03",
+         "name": "Entalpia",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S03.K1",
+           "name": "Entalpia"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S04",
+         "name": "Equações termoquímicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S04.K1",
+           "name": "Equações termoquímicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S05",
+         "name": "Lei de Hess",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S05.K1",
+           "name": "Lei de Hess"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S06",
+         "name": "Transformações químicas e energia elétrica",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S06.K1",
+           "name": "Transformações químicas e energia elétrica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S07",
+         "name": "Reação de oxirredução",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S07.K1",
+           "name": "Reação de oxirredução"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S08",
+         "name": "Potenciais padrão de redução",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S08.K1",
+           "name": "Potenciais padrão de redução"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S09",
+         "name": "Pilha",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S09.K1",
+           "name": "Pilha"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S10",
+         "name": "Eletrólise",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S10.K1",
+           "name": "Eletrólise"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S11",
+         "name": "Leis de Faraday",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S11.K1",
+           "name": "Leis de Faraday"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S12",
+         "name": "Transformações nucleares",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S12.K1",
+           "name": "Transformações nucleares"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S13",
+         "name": "Conceitos fundamentais da radioatividade",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S13.K1",
+           "name": "Conceitos fundamentais da radioatividade"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S14",
+         "name": "Reações de fissão e fusão nuclear",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S14.K1",
+           "name": "Reações de fissão e fusão nuclear"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T05.S15",
+         "name": "Desintegração radioativa e radioisótopos",
+         "skills": [
+          {
+           "code": "CN.QUI.T05.S15.K1",
+           "name": "Desintegração radioativa e radioisótopos"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T06",
+       "name": "Dinâmica das Transformações Químicas",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T06.S01",
+         "name": "Transformações Químicas e velocidade",
+         "skills": [
+          {
+           "code": "CN.QUI.T06.S01.K1",
+           "name": "Transformações Químicas e velocidade"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T06.S02",
+         "name": "Velocidade de reação",
+         "skills": [
+          {
+           "code": "CN.QUI.T06.S02.K1",
+           "name": "Velocidade de reação"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T06.S03",
+         "name": "Energia de ativação",
+         "skills": [
+          {
+           "code": "CN.QUI.T06.S03.K1",
+           "name": "Energia de ativação"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T06.S04",
+         "name": "Fatores que alteram a velocidade de reação: concentração, pressão, temperatura e catalisador",
+         "skills": [
+          {
+           "code": "CN.QUI.T06.S04.K1",
+           "name": "Fatores que alteram a velocidade de reação: concentração, pressão, temperatura e catalisador"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T07",
+       "name": "Transformação Química e Equilíbrio",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T07.S01",
+         "name": "Caracterização do sistema em equilíbrio",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S01.K1",
+           "name": "Caracterização do sistema em equilíbrio"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T07.S02",
+         "name": "Constante de equilíbrio",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S02.K1",
+           "name": "Constante de equilíbrio"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T07.S03",
+         "name": "Produto iônico da água, equilíbrio ácido-base e pH",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S03.K1",
+           "name": "Produto iônico da água, equilíbrio ácido-base e pH"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T07.S04",
+         "name": "Solubilidade dos sais e hidrólise",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S04.K1",
+           "name": "Solubilidade dos sais e hidrólise"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T07.S05",
+         "name": "Fatores que alteram o sistema em equilíbrio",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S05.K1",
+           "name": "Fatores que alteram o sistema em equilíbrio"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T07.S06",
+         "name": "Aplicação da velocidade e do equilíbrio químico no cotidiano",
+         "skills": [
+          {
+           "code": "CN.QUI.T07.S06.K1",
+           "name": "Aplicação da velocidade e do equilíbrio químico no cotidiano"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T08",
+       "name": "Compostos de Carbono",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T08.S01",
+         "name": "Características gerais dos compostos orgânicos",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S01.K1",
+           "name": "Características gerais dos compostos orgânicos"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S02",
+         "name": "Principais funções orgânicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S02.K1",
+           "name": "Principais funções orgânicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S03",
+         "name": "Estrutura e propriedades de Hidrocarbonetos",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S03.K1",
+           "name": "Estrutura e propriedades de Hidrocarbonetos"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S04",
+         "name": "Estrutura e propriedades de compostos orgânicos oxigenados",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S04.K1",
+           "name": "Estrutura e propriedades de compostos orgânicos oxigenados"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S05",
+         "name": "Fermentação",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S05.K1",
+           "name": "Fermentação"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S06",
+         "name": "Estrutura e propriedades de compostos orgânicos nitrogenados",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S06.K1",
+           "name": "Estrutura e propriedades de compostos orgânicos nitrogenados"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S07",
+         "name": "Macromoléculas naturais e sintéticas",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S07.K1",
+           "name": "Macromoléculas naturais e sintéticas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S08",
+         "name": "Noções básicas sobre polímeros",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S08.K1",
+           "name": "Noções básicas sobre polímeros"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S09",
+         "name": "Amido, glicogênio e celulose",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S09.K1",
+           "name": "Amido, glicogênio e celulose"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S10",
+         "name": "Borracha natural e sintética",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S10.K1",
+           "name": "Borracha natural e sintética"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S11",
+         "name": "Polietileno, poliestireno, PVC, Teflon, náilon",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S11.K1",
+           "name": "Polietileno, poliestireno, PVC, Teflon, náilon"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S12",
+         "name": "Óleos e gorduras, sabões e detergentes sintéticos",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S12.K1",
+           "name": "Óleos e gorduras, sabões e detergentes sintéticos"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T08.S13",
+         "name": "Proteínas e enzimas",
+         "skills": [
+          {
+           "code": "CN.QUI.T08.S13.K1",
+           "name": "Proteínas e enzimas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T09",
+       "name": "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T09.S01",
+         "name": "Química no cotidiano",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S01.K1",
+           "name": "Química no cotidiano"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S02",
+         "name": "Química na agricultura e na saúde",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S02.K1",
+           "name": "Química na agricultura e na saúde"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S03",
+         "name": "Química nos alimentos",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S03.K1",
+           "name": "Química nos alimentos"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S04",
+         "name": "Química e ambiente",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S04.K1",
+           "name": "Química e ambiente"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S05",
+         "name": "Aspectos científico-tecnológicos, socioeconômicos e ambientais associados à obtenção ou produção de substâncias químicas",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S05.K1",
+           "name": "Aspectos científico-tecnológicos, socioeconômicos e ambientais associados à obtenção ou produção de substâncias químicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S06",
+         "name": "Indústria Química: obtenção e utilização do cloro, hidróxido de sódio, ácido sulfúrico, amônia e ácido nítrico",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S06.K1",
+           "name": "Indústria Química: obtenção e utilização do cloro, hidróxido de sódio, ácido sulfúrico, amônia e ácido nítrico"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S07",
+         "name": "Mineração e Metalurgia",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S07.K1",
+           "name": "Mineração e Metalurgia"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S08",
+         "name": "Poluição e tratamento de água",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S08.K1",
+           "name": "Poluição e tratamento de água"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S09",
+         "name": "Poluição atmosférica",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S09.K1",
+           "name": "Poluição atmosférica"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T09.S10",
+         "name": "Contaminação e proteção do ambiente",
+         "skills": [
+          {
+           "code": "CN.QUI.T09.S10.K1",
+           "name": "Contaminação e proteção do ambiente"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.QUI.T10",
+       "name": "Energias Químicas no Cotidiano",
+       "subtopics": [
+        {
+         "code": "CN.QUI.T10.S01",
+         "name": "Petróleo, gás natural e carvão",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S01.K1",
+           "name": "Petróleo, gás natural e carvão"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S02",
+         "name": "Madeira e hulha",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S02.K1",
+           "name": "Madeira e hulha"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S03",
+         "name": "Biomassa",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S03.K1",
+           "name": "Biomassa"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S04",
+         "name": "Biocombustíveis",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S04.K1",
+           "name": "Biocombustíveis"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S05",
+         "name": "Impactos ambientais de combustíveis fosseis",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S05.K1",
+           "name": "Impactos ambientais de combustíveis fosseis"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S06",
+         "name": "Energia nuclear",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S06.K1",
+           "name": "Energia nuclear"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S07",
+         "name": "Lixo atômico",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S07.K1",
+           "name": "Lixo atômico"
+          }
+         ]
+        },
+        {
+         "code": "CN.QUI.T10.S08",
+         "name": "Vantagens e desvantagens do uso de energia nuclear",
+         "skills": [
+          {
+           "code": "CN.QUI.T10.S08.K1",
+           "name": "Vantagens e desvantagens do uso de energia nuclear"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CN.BIO",
+     "name": "Biologia",
+     "topics": [
+      {
+       "code": "CN.BIO.T01",
+       "name": "Moléculas, células e tecidos",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T01.S01",
+         "name": "Estrutura e fisiologia celular: membrana, citoplasma e núcleo",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S01.K1",
+           "name": "Estrutura e fisiologia celular: membrana, citoplasma e núcleo"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S02",
+         "name": "Divisão celular",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S02.K1",
+           "name": "Divisão celular"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S03",
+         "name": "Aspectos bioquímicos das estruturas celulares",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S03.K1",
+           "name": "Aspectos bioquímicos das estruturas celulares"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S04",
+         "name": "Aspectos gerais do metabolismo celular",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S04.K1",
+           "name": "Aspectos gerais do metabolismo celular"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S05",
+         "name": "Metabolismo energético: fotossíntese e respiração",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S05.K1",
+           "name": "Metabolismo energético: fotossíntese e respiração"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S06",
+         "name": "Codificação da informação genética",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S06.K1",
+           "name": "Codificação da informação genética"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S07",
+         "name": "Síntese protéica",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S07.K1",
+           "name": "Síntese protéica"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S08",
+         "name": "Diferenciação celular",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S08.K1",
+           "name": "Diferenciação celular"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S09",
+         "name": "Principais tecidos animais e vegetais",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S09.K1",
+           "name": "Principais tecidos animais e vegetais"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S10",
+         "name": "Origem e evolução das células",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S10.K1",
+           "name": "Origem e evolução das células"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S11",
+         "name": "Noções sobre células-tronco, clonagem e tecnologia do DNA recombinante",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S11.K1",
+           "name": "Noções sobre células-tronco, clonagem e tecnologia do DNA recombinante"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S12",
+         "name": "Aplicações de biotecnologia na produção de alimentos, fármacos e componentes biológicos",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S12.K1",
+           "name": "Aplicações de biotecnologia na produção de alimentos, fármacos e componentes biológicos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S13",
+         "name": "Aplicações de tecnologias relacionadas ao DNA a investigações científicas, determinação da paternidade, investigação criminal e identificação de indivíduos",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S13.K1",
+           "name": "Aplicações de tecnologias relacionadas ao DNA a investigações científicas, determinação da paternidade, investigação criminal e identificação de indivíduos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S14",
+         "name": "Aspectos éticos relacionados ao desenvolvimento biotecnológico",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S14.K1",
+           "name": "Aspectos éticos relacionados ao desenvolvimento biotecnológico"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T01.S15",
+         "name": "Biotecnologia e sustentabilidade",
+         "skills": [
+          {
+           "code": "CN.BIO.T01.S15.K1",
+           "name": "Biotecnologia e sustentabilidade"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.BIO.T02",
+       "name": "Hereditariedade e diversidade da vida",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T02.S01",
+         "name": "Princípios básicos que regem a transmissão de características hereditárias",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S01.K1",
+           "name": "Princípios básicos que regem a transmissão de características hereditárias"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S02",
+         "name": "Concepções pré-mendelianas sobre a hereditariedade",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S02.K1",
+           "name": "Concepções pré-mendelianas sobre a hereditariedade"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S03",
+         "name": "Aspectos genéticos do funcionamento do corpo humano",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S03.K1",
+           "name": "Aspectos genéticos do funcionamento do corpo humano"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S04",
+         "name": "Antígenos e anticorpos",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S04.K1",
+           "name": "Antígenos e anticorpos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S05",
+         "name": "Grupos sanguíneos, transplantes e doenças auto-imunes",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S05.K1",
+           "name": "Grupos sanguíneos, transplantes e doenças auto-imunes"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S06",
+         "name": "Neoplasias e a influência de fatores ambientais",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S06.K1",
+           "name": "Neoplasias e a influência de fatores ambientais"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S07",
+         "name": "Mutações gênicas e cromossômicas",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S07.K1",
+           "name": "Mutações gênicas e cromossômicas"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S08",
+         "name": "Aconselhamento genético",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S08.K1",
+           "name": "Aconselhamento genético"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S09",
+         "name": "Fundamentos genéticos da evolução",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S09.K1",
+           "name": "Fundamentos genéticos da evolução"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T02.S10",
+         "name": "Aspectos genéticos da formação e manutenção da diversidade biológica",
+         "skills": [
+          {
+           "code": "CN.BIO.T02.S10.K1",
+           "name": "Aspectos genéticos da formação e manutenção da diversidade biológica"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.BIO.T03",
+       "name": "Identidade dos seres vivos",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T03.S01",
+         "name": "Níveis de organização dos seres vivos",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S01.K1",
+           "name": "Níveis de organização dos seres vivos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S02",
+         "name": "Vírus, procariontes e eucariontes",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S02.K1",
+           "name": "Vírus, procariontes e eucariontes"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S03",
+         "name": "Autótrofos e heterótrofos",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S03.K1",
+           "name": "Autótrofos e heterótrofos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S04",
+         "name": "Seres unicelulares e pluricelulares",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S04.K1",
+           "name": "Seres unicelulares e pluricelulares"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S05",
+         "name": "Sistemática e as grandes linhas da evolução dos seres vivos",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S05.K1",
+           "name": "Sistemática e as grandes linhas da evolução dos seres vivos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S06",
+         "name": "Tipos de ciclo de vida",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S06.K1",
+           "name": "Tipos de ciclo de vida"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S07",
+         "name": "Evolução e padrões anatômicos e fisiológicos observados nos seres vivos",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S07.K1",
+           "name": "Evolução e padrões anatômicos e fisiológicos observados nos seres vivos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S08",
+         "name": "Funções vitais dos seres vivos e sua relação com a adaptação desses organismos a diferentes ambientes",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S08.K1",
+           "name": "Funções vitais dos seres vivos e sua relação com a adaptação desses organismos a diferentes ambientes"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S09",
+         "name": "Embriologia, anatomia e fisiologia humana",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S09.K1",
+           "name": "Embriologia, anatomia e fisiologia humana"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S10",
+         "name": "Evolução humana",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S10.K1",
+           "name": "Evolução humana"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T03.S11",
+         "name": "Biotecnologia e sistemática",
+         "skills": [
+          {
+           "code": "CN.BIO.T03.S11.K1",
+           "name": "Biotecnologia e sistemática"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.BIO.T04",
+       "name": "Ecologia e ciências ambientais",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T04.S01",
+         "name": "Ecossistemas",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S01.K1",
+           "name": "Ecossistemas"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S02",
+         "name": "Fatores bióticos e abióticos",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S02.K1",
+           "name": "Fatores bióticos e abióticos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S03",
+         "name": "Habitat e nicho ecológico",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S03.K1",
+           "name": "Habitat e nicho ecológico"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S04",
+         "name": "A comunidade biológica: teia alimentar, sucessão e comunidade clímax",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S04.K1",
+           "name": "A comunidade biológica: teia alimentar, sucessão e comunidade clímax"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S05",
+         "name": "Dinâmica de populações",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S05.K1",
+           "name": "Dinâmica de populações"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S06",
+         "name": "Interações entre os seres vivos",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S06.K1",
+           "name": "Interações entre os seres vivos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S07",
+         "name": "Ciclos biogeoquímicos",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S07.K1",
+           "name": "Ciclos biogeoquímicos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S08",
+         "name": "Fluxo de energia no ecossistema",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S08.K1",
+           "name": "Fluxo de energia no ecossistema"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S09",
+         "name": "Biogeografia",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S09.K1",
+           "name": "Biogeografia"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S10",
+         "name": "Biomas brasileiros",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S10.K1",
+           "name": "Biomas brasileiros"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S11",
+         "name": "Exploração e uso de recursos naturais",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S11.K1",
+           "name": "Exploração e uso de recursos naturais"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S12",
+         "name": "Problemas ambientais: mudanças climáticas, efeito estufa",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S12.K1",
+           "name": "Problemas ambientais: mudanças climáticas, efeito estufa"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S13",
+         "name": "Desmatamento",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S13.K1",
+           "name": "Desmatamento"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S14",
+         "name": "Erosão",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S14.K1",
+           "name": "Erosão"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S15",
+         "name": "Poluição da água, do solo e do ar",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S15.K1",
+           "name": "Poluição da água, do solo e do ar"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S16",
+         "name": "Conservação e recuperação de ecossistemas",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S16.K1",
+           "name": "Conservação e recuperação de ecossistemas"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S17",
+         "name": "Conservação da biodiversidade",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S17.K1",
+           "name": "Conservação da biodiversidade"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S18",
+         "name": "Tecnologias ambientais",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S18.K1",
+           "name": "Tecnologias ambientais"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S19",
+         "name": "Noções de saneamento básico",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S19.K1",
+           "name": "Noções de saneamento básico"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S20",
+         "name": "Noções de legislação ambiental: água, florestas, unidades de conservação",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S20.K1",
+           "name": "Noções de legislação ambiental: água, florestas, unidades de conservação"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T04.S21",
+         "name": "Biodiversidade",
+         "skills": [
+          {
+           "code": "CN.BIO.T04.S21.K1",
+           "name": "Biodiversidade"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.BIO.T05",
+       "name": "Origem e evolução da vida",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T05.S01",
+         "name": "A biologia como ciência: história, métodos, técnicas e experimentação",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S01.K1",
+           "name": "A biologia como ciência: história, métodos, técnicas e experimentação"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S02",
+         "name": "Hipóteses sobre a origem do Universo, da Terra e dos seres vivos",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S02.K1",
+           "name": "Hipóteses sobre a origem do Universo, da Terra e dos seres vivos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S03",
+         "name": "Teorias de evolução",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S03.K1",
+           "name": "Teorias de evolução"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S04",
+         "name": "Explicações pré-darwinistas para a modificação das espécies",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S04.K1",
+           "name": "Explicações pré-darwinistas para a modificação das espécies"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S05",
+         "name": "A teoria evolutiva de Charles Darwin",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S05.K1",
+           "name": "A teoria evolutiva de Charles Darwin"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S06",
+         "name": "Teoria sintética da evolução",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S06.K1",
+           "name": "Teoria sintética da evolução"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T05.S07",
+         "name": "Seleção artificial e seu impacto sobre ambientes naturais e sobre populações humanas",
+         "skills": [
+          {
+           "code": "CN.BIO.T05.S07.K1",
+           "name": "Seleção artificial e seu impacto sobre ambientes naturais e sobre populações humanas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CN.BIO.T06",
+       "name": "Qualidade de vida das populações humanas",
+       "subtopics": [
+        {
+         "code": "CN.BIO.T06.S01",
+         "name": "Aspectos biológicos da pobreza e do desenvolvimento humano",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S01.K1",
+           "name": "Aspectos biológicos da pobreza e do desenvolvimento humano"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S02",
+         "name": "Indicadores sociais, ambientais e econômicos",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S02.K1",
+           "name": "Indicadores sociais, ambientais e econômicos"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S03",
+         "name": "Índice de desenvolvimento humano",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S03.K1",
+           "name": "Índice de desenvolvimento humano"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S04",
+         "name": "Principais doenças que afetam a população brasileira: caracterização, prevenção e profilaxia",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S04.K1",
+           "name": "Principais doenças que afetam a população brasileira: caracterização, prevenção e profilaxia"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S05",
+         "name": "Noções de primeiros socorros",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S05.K1",
+           "name": "Noções de primeiros socorros"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S06",
+         "name": "Doenças sexualmente transmissíveis",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S06.K1",
+           "name": "Doenças sexualmente transmissíveis"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S07",
+         "name": "Aspectos sociais da biologia: uso indevido de drogas",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S07.K1",
+           "name": "Aspectos sociais da biologia: uso indevido de drogas"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S08",
+         "name": "Gravidez na adolescência",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S08.K1",
+           "name": "Gravidez na adolescência"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S09",
+         "name": "Obesidade",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S09.K1",
+           "name": "Obesidade"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S10",
+         "name": "Violência e segurança pública",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S10.K1",
+           "name": "Violência e segurança pública"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S11",
+         "name": "Exercícios físicos e vida saudável",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S11.K1",
+           "name": "Exercícios físicos e vida saudável"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S12",
+         "name": "Aspectos biológicos do desenvolvimento sustentável",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S12.K1",
+           "name": "Aspectos biológicos do desenvolvimento sustentável"
+          }
+         ]
+        },
+        {
+         "code": "CN.BIO.T06.S13",
+         "name": "Legislação e cidadania",
+         "skills": [
+          {
+           "code": "CN.BIO.T06.S13.K1",
+           "name": "Legislação e cidadania"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "CH",
+   "subjects": [
+    {
+     "code": "CH.E01",
+     "name": "Diversidade cultural, conflitos e vida em sociedade",
+     "topics": [
+      {
+       "code": "CH.E01.T01",
+       "name": "Cultura Material e imaterial",
+       "subtopics": [
+        {
+         "code": "CH.E01.T01.S01",
+         "name": "Cultura Material e imaterial",
+         "skills": [
+          {
+           "code": "CH.E01.T01.S01.K1",
+           "name": "Cultura Material e imaterial"
+          }
+         ]
+        },
+        {
+         "code": "CH.E01.T01.S02",
+         "name": "Patrimônio e diversidade cultural no Brasil",
+         "skills": [
+          {
+           "code": "CH.E01.T01.S02.K1",
+           "name": "Patrimônio e diversidade cultural no Brasil"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E01.T02",
+       "name": "A Conquista da América",
+       "subtopics": [
+        {
+         "code": "CH.E01.T02.S01",
+         "name": "A Conquista da América",
+         "skills": [
+          {
+           "code": "CH.E01.T02.S01.K1",
+           "name": "A Conquista da América"
+          }
+         ]
+        },
+        {
+         "code": "CH.E01.T02.S02",
+         "name": "Conflitos entre europeus e indígenas na América colonial",
+         "skills": [
+          {
+           "code": "CH.E01.T02.S02.K1",
+           "name": "Conflitos entre europeus e indígenas na América colonial"
+          }
+         ]
+        },
+        {
+         "code": "CH.E01.T02.S03",
+         "name": "A escravidão e formas de resistência indígena e africana na América",
+         "skills": [
+          {
+           "code": "CH.E01.T02.S03.K1",
+           "name": "A escravidão e formas de resistência indígena e africana na América"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E01.T03",
+       "name": "História cultural dos povos africanos",
+       "subtopics": [
+        {
+         "code": "CH.E01.T03.S01",
+         "name": "História cultural dos povos africanos",
+         "skills": [
+          {
+           "code": "CH.E01.T03.S01.K1",
+           "name": "História cultural dos povos africanos"
+          }
+         ]
+        },
+        {
+         "code": "CH.E01.T03.S02",
+         "name": "A luta dos negros no Brasil e o negro na formação da sociedade brasileira",
+         "skills": [
+          {
+           "code": "CH.E01.T03.S02.K1",
+           "name": "A luta dos negros no Brasil e o negro na formação da sociedade brasileira"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E01.T04",
+       "name": "História dos povos indígenas e a formação sócio-cultural brasileira",
+       "subtopics": [
+        {
+         "code": "CH.E01.T04.S01",
+         "name": "História dos povos indígenas e a formação sócio-cultural brasileira",
+         "skills": [
+          {
+           "code": "CH.E01.T04.S01.K1",
+           "name": "História dos povos indígenas e a formação sócio-cultural brasileira"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E01.T05",
+       "name": "Movimentos culturais no mundo ocidental e seus impactos na vida política e social",
+       "subtopics": [
+        {
+         "code": "CH.E01.T05.S01",
+         "name": "Movimentos culturais no mundo ocidental e seus impactos na vida política e social",
+         "skills": [
+          {
+           "code": "CH.E01.T05.S01.K1",
+           "name": "Movimentos culturais no mundo ocidental e seus impactos na vida política e social"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CH.E02",
+     "name": "Formas de organização social, movimentos sociais, pensamento político e ação do",
+     "topics": [
+      {
+       "code": "CH.E02.T01",
+       "name": "Estado",
+       "subtopics": [
+        {
+         "code": "CH.E02.T01.S01",
+         "name": "Estado",
+         "skills": [
+          {
+           "code": "CH.E02.T01.S01.K1",
+           "name": "Estado"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T02",
+       "name": "Cidadania e democracia na Antiguidade",
+       "subtopics": [
+        {
+         "code": "CH.E02.T02.S01",
+         "name": "Cidadania e democracia na Antiguidade",
+         "skills": [
+          {
+           "code": "CH.E02.T02.S01.K1",
+           "name": "Cidadania e democracia na Antiguidade"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T02.S02",
+         "name": "Estado e direitos do cidadão a partir da Idade Moderna",
+         "skills": [
+          {
+           "code": "CH.E02.T02.S02.K1",
+           "name": "Estado e direitos do cidadão a partir da Idade Moderna"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T02.S03",
+         "name": "Democracia direta, indireta e representativa",
+         "skills": [
+          {
+           "code": "CH.E02.T02.S03.K1",
+           "name": "Democracia direta, indireta e representativa"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T03",
+       "name": "Revoluções sociais e políticas na Europa Moderna",
+       "subtopics": [
+        {
+         "code": "CH.E02.T03.S01",
+         "name": "Revoluções sociais e políticas na Europa Moderna",
+         "skills": [
+          {
+           "code": "CH.E02.T03.S01.K1",
+           "name": "Revoluções sociais e políticas na Europa Moderna"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T04",
+       "name": "Formação territorial brasileira",
+       "subtopics": [
+        {
+         "code": "CH.E02.T04.S01",
+         "name": "Formação territorial brasileira",
+         "skills": [
+          {
+           "code": "CH.E02.T04.S01.K1",
+           "name": "Formação territorial brasileira"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T04.S02",
+         "name": "As regiões brasileiras",
+         "skills": [
+          {
+           "code": "CH.E02.T04.S02.K1",
+           "name": "As regiões brasileiras"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T04.S03",
+         "name": "Políticas de reordenamento territorial",
+         "skills": [
+          {
+           "code": "CH.E02.T04.S03.K1",
+           "name": "Políticas de reordenamento territorial"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T05",
+       "name": "As lutas pela conquista da independência política das colônias da América",
+       "subtopics": [
+        {
+         "code": "CH.E02.T05.S01",
+         "name": "As lutas pela conquista da independência política das colônias da América",
+         "skills": [
+          {
+           "code": "CH.E02.T05.S01.K1",
+           "name": "As lutas pela conquista da independência política das colônias da América"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T06",
+       "name": "Grupos sociais em conflito no Brasil imperial e a construção da nação",
+       "subtopics": [
+        {
+         "code": "CH.E02.T06.S01",
+         "name": "Grupos sociais em conflito no Brasil imperial e a construção da nação",
+         "skills": [
+          {
+           "code": "CH.E02.T06.S01.K1",
+           "name": "Grupos sociais em conflito no Brasil imperial e a construção da nação"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T07",
+       "name": "O desenvolvimento do pensamento liberal na sociedade capitalista e seus críticos nos séculos XIX e XX",
+       "subtopics": [
+        {
+         "code": "CH.E02.T07.S01",
+         "name": "O desenvolvimento do pensamento liberal na sociedade capitalista e seus críticos nos séculos XIX e XX",
+         "skills": [
+          {
+           "code": "CH.E02.T07.S01.K1",
+           "name": "O desenvolvimento do pensamento liberal na sociedade capitalista e seus críticos nos séculos XIX e XX"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T08",
+       "name": "Políticas de colonização, migração, imigração e emigração no Brasil nos séculos XIX e XX",
+       "subtopics": [
+        {
+         "code": "CH.E02.T08.S01",
+         "name": "Políticas de colonização, migração, imigração e emigração no Brasil nos séculos XIX e XX",
+         "skills": [
+          {
+           "code": "CH.E02.T08.S01.K1",
+           "name": "Políticas de colonização, migração, imigração e emigração no Brasil nos séculos XIX e XX"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T09",
+       "name": "A atuação dos grupos sociais e os grandes processos revolucionários do século XX: Revolução Bolchevique, Revolução Chinesa, Revolução Cubana",
+       "subtopics": [
+        {
+         "code": "CH.E02.T09.S01",
+         "name": "A atuação dos grupos sociais e os grandes processos revolucionários do século XX: Revolução Bolchevique, Revolução Chinesa, Revolução Cubana",
+         "skills": [
+          {
+           "code": "CH.E02.T09.S01.K1",
+           "name": "A atuação dos grupos sociais e os grandes processos revolucionários do século XX: Revolução Bolchevique, Revolução Chinesa, Revolução Cubana"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T10",
+       "name": "Geopolítica e conflitos entre os séculos XIX e XX: Imperialismo, a ocupação da Ásia e da África, as Guerras Mundiais e a Guerra Fria",
+       "subtopics": [
+        {
+         "code": "CH.E02.T10.S01",
+         "name": "Geopolítica e conflitos entre os séculos XIX e XX: Imperialismo, a ocupação da Ásia e da África, as Guerras Mundiais e a Guerra Fria",
+         "skills": [
+          {
+           "code": "CH.E02.T10.S01.K1",
+           "name": "Geopolítica e conflitos entre os séculos XIX e XX: Imperialismo, a ocupação da Ásia e da África, as Guerras Mundiais e a Guerra Fria"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T11",
+       "name": "Os sistemas totalitários na Europa do século XX: nazi-fascista, franquismo, salazarismo e stalinismo",
+       "subtopics": [
+        {
+         "code": "CH.E02.T11.S01",
+         "name": "Os sistemas totalitários na Europa do século XX: nazi-fascista, franquismo, salazarismo e stalinismo",
+         "skills": [
+          {
+           "code": "CH.E02.T11.S01.K1",
+           "name": "Os sistemas totalitários na Europa do século XX: nazi-fascista, franquismo, salazarismo e stalinismo"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T11.S02",
+         "name": "Ditaduras políticas na América Latina: Estado Novo no Brasil e ditaduras na América",
+         "skills": [
+          {
+           "code": "CH.E02.T11.S02.K1",
+           "name": "Ditaduras políticas na América Latina: Estado Novo no Brasil e ditaduras na América"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T12",
+       "name": "Conflitos político-culturais pós-Guerra Fria, reorganização política internacional e os organismos multilaterais nos séculos XX e XXI",
+       "subtopics": [
+        {
+         "code": "CH.E02.T12.S01",
+         "name": "Conflitos político-culturais pós-Guerra Fria, reorganização política internacional e os organismos multilaterais nos séculos XX e XXI",
+         "skills": [
+          {
+           "code": "CH.E02.T12.S01.K1",
+           "name": "Conflitos político-culturais pós-Guerra Fria, reorganização política internacional e os organismos multilaterais nos séculos XX e XXI"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T13",
+       "name": "A luta pela conquista de direitos pelos cidadãos: direitos civis, humanos, políticos e sociais",
+       "subtopics": [
+        {
+         "code": "CH.E02.T13.S01",
+         "name": "A luta pela conquista de direitos pelos cidadãos: direitos civis, humanos, políticos e sociais",
+         "skills": [
+          {
+           "code": "CH.E02.T13.S01.K1",
+           "name": "A luta pela conquista de direitos pelos cidadãos: direitos civis, humanos, políticos e sociais"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T13.S02",
+         "name": "Direitos sociais nas constituições brasileiras",
+         "skills": [
+          {
+           "code": "CH.E02.T13.S02.K1",
+           "name": "Direitos sociais nas constituições brasileiras"
+          }
+         ]
+        },
+        {
+         "code": "CH.E02.T13.S03",
+         "name": "Políticas afirmativas",
+         "skills": [
+          {
+           "code": "CH.E02.T13.S03.K1",
+           "name": "Políticas afirmativas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E02.T14",
+       "name": "Vida urbana: redes e hierarquia nas cidades, pobreza e segregação espacial",
+       "subtopics": [
+        {
+         "code": "CH.E02.T14.S01",
+         "name": "Vida urbana: redes e hierarquia nas cidades, pobreza e segregação espacial",
+         "skills": [
+          {
+           "code": "CH.E02.T14.S01.K1",
+           "name": "Vida urbana: redes e hierarquia nas cidades, pobreza e segregação espacial"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CH.E03",
+     "name": "Características e transformações das estruturas produtivas",
+     "topics": [
+      {
+       "code": "CH.E03.T01",
+       "name": "Diferentes formas de organização da produção: escravismo antigo, feudalismo, capitalismo, socialismo e suas diferentes experiências",
+       "subtopics": [
+        {
+         "code": "CH.E03.T01.S01",
+         "name": "Diferentes formas de organização da produção: escravismo antigo, feudalismo, capitalismo, socialismo e suas diferentes experiências",
+         "skills": [
+          {
+           "code": "CH.E03.T01.S01.K1",
+           "name": "Diferentes formas de organização da produção: escravismo antigo, feudalismo, capitalismo, socialismo e suas diferentes experiências"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E03.T02",
+       "name": "Economia agro-exportadora brasileira: complexo açucareiro",
+       "subtopics": [
+        {
+         "code": "CH.E03.T02.S01",
+         "name": "Economia agro-exportadora brasileira: complexo açucareiro",
+         "skills": [
+          {
+           "code": "CH.E03.T02.S01.K1",
+           "name": "Economia agro-exportadora brasileira: complexo açucareiro"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T02.S02",
+         "name": "A mineração no período colonial",
+         "skills": [
+          {
+           "code": "CH.E03.T02.S02.K1",
+           "name": "A mineração no período colonial"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T02.S03",
+         "name": "A economia cafeeira",
+         "skills": [
+          {
+           "code": "CH.E03.T02.S03.K1",
+           "name": "A economia cafeeira"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T02.S04",
+         "name": "A borracha na Amazônia",
+         "skills": [
+          {
+           "code": "CH.E03.T02.S04.K1",
+           "name": "A borracha na Amazônia"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E03.T03",
+       "name": "Revolução Industrial: criação do sistema de fábrica na Europa e transformações no processo de produção",
+       "subtopics": [
+        {
+         "code": "CH.E03.T03.S01",
+         "name": "Revolução Industrial: criação do sistema de fábrica na Europa e transformações no processo de produção",
+         "skills": [
+          {
+           "code": "CH.E03.T03.S01.K1",
+           "name": "Revolução Industrial: criação do sistema de fábrica na Europa e transformações no processo de produção"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T03.S02",
+         "name": "Formação do espaço urbano-industrial",
+         "skills": [
+          {
+           "code": "CH.E03.T03.S02.K1",
+           "name": "Formação do espaço urbano-industrial"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T03.S03",
+         "name": "Transformações na estrutura produtiva no século XX: o fordismo, o toyotismo, as novas técnicas de produção e seus impactos",
+         "skills": [
+          {
+           "code": "CH.E03.T03.S03.K1",
+           "name": "Transformações na estrutura produtiva no século XX: o fordismo, o toyotismo, as novas técnicas de produção e seus impactos"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E03.T04",
+       "name": "A industrialização brasileira, a urbanização e as transformações sociais e trabalhistas",
+       "subtopics": [
+        {
+         "code": "CH.E03.T04.S01",
+         "name": "A industrialização brasileira, a urbanização e as transformações sociais e trabalhistas",
+         "skills": [
+          {
+           "code": "CH.E03.T04.S01.K1",
+           "name": "A industrialização brasileira, a urbanização e as transformações sociais e trabalhistas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E03.T05",
+       "name": "A globalização e as novas tecnologias de telecomunicação e suas consequências econômicas, políticas e sociais",
+       "subtopics": [
+        {
+         "code": "CH.E03.T05.S01",
+         "name": "A globalização e as novas tecnologias de telecomunicação e suas consequências econômicas, políticas e sociais",
+         "skills": [
+          {
+           "code": "CH.E03.T05.S01.K1",
+           "name": "A globalização e as novas tecnologias de telecomunicação e suas consequências econômicas, políticas e sociais"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E03.T06",
+       "name": "Produção e transformação dos espaços agrários",
+       "subtopics": [
+        {
+         "code": "CH.E03.T06.S01",
+         "name": "Produção e transformação dos espaços agrários",
+         "skills": [
+          {
+           "code": "CH.E03.T06.S01.K1",
+           "name": "Produção e transformação dos espaços agrários"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T06.S02",
+         "name": "Modernização da agricultura e estruturas agrárias tradicionais",
+         "skills": [
+          {
+           "code": "CH.E03.T06.S02.K1",
+           "name": "Modernização da agricultura e estruturas agrárias tradicionais"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T06.S03",
+         "name": "O agronegócio, a agricultura familiar, os assalariados do campo e as lutas sociais no campo",
+         "skills": [
+          {
+           "code": "CH.E03.T06.S03.K1",
+           "name": "O agronegócio, a agricultura familiar, os assalariados do campo e as lutas sociais no campo"
+          }
+         ]
+        },
+        {
+         "code": "CH.E03.T06.S04",
+         "name": "A relação campo-cidade",
+         "skills": [
+          {
+           "code": "CH.E03.T06.S04.K1",
+           "name": "A relação campo-cidade"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CH.E04",
+     "name": "Os domínios naturais e a relação do ser humano com o ambiente",
+     "topics": [
+      {
+       "code": "CH.E04.T01",
+       "name": "Relação homem-natureza, a apropriação dos recursos naturais pelas sociedades ao longo do tempo",
+       "subtopics": [
+        {
+         "code": "CH.E04.T01.S01",
+         "name": "Relação homem-natureza, a apropriação dos recursos naturais pelas sociedades ao longo do tempo",
+         "skills": [
+          {
+           "code": "CH.E04.T01.S01.K1",
+           "name": "Relação homem-natureza, a apropriação dos recursos naturais pelas sociedades ao longo do tempo"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T01.S02",
+         "name": "Impacto ambiental das atividades econômicas no Brasil",
+         "skills": [
+          {
+           "code": "CH.E04.T01.S02.K1",
+           "name": "Impacto ambiental das atividades econômicas no Brasil"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T01.S03",
+         "name": "Recursos minerais e energéticos: exploração e impactos",
+         "skills": [
+          {
+           "code": "CH.E04.T01.S03.K1",
+           "name": "Recursos minerais e energéticos: exploração e impactos"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T01.S04",
+         "name": "Recursos hídricos",
+         "skills": [
+          {
+           "code": "CH.E04.T01.S04.K1",
+           "name": "Recursos hídricos"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T01.S05",
+         "name": "Bacias hidrográficas e seus aproveitamentos",
+         "skills": [
+          {
+           "code": "CH.E04.T01.S05.K1",
+           "name": "Bacias hidrográficas e seus aproveitamentos"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E04.T02",
+       "name": "As questões ambientais contemporâneas: mudança climática, ilhas de calor, efeito estufa, chuva ácida, a destruição da camada de ozônio",
+       "subtopics": [
+        {
+         "code": "CH.E04.T02.S01",
+         "name": "As questões ambientais contemporâneas: mudança climática, ilhas de calor, efeito estufa, chuva ácida, a destruição da camada de ozônio",
+         "skills": [
+          {
+           "code": "CH.E04.T02.S01.K1",
+           "name": "As questões ambientais contemporâneas: mudança climática, ilhas de calor, efeito estufa, chuva ácida, a destruição da camada de ozônio"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T02.S02",
+         "name": "A nova ordem ambiental internacional",
+         "skills": [
+          {
+           "code": "CH.E04.T02.S02.K1",
+           "name": "A nova ordem ambiental internacional"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T02.S03",
+         "name": "Políticas territoriais ambientais",
+         "skills": [
+          {
+           "code": "CH.E04.T02.S03.K1",
+           "name": "Políticas territoriais ambientais"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T02.S04",
+         "name": "Uso e conservação dos recursos naturais, unidades de conservação, corredores ecológicos, zoneamento ecológico e econômico",
+         "skills": [
+          {
+           "code": "CH.E04.T02.S04.K1",
+           "name": "Uso e conservação dos recursos naturais, unidades de conservação, corredores ecológicos, zoneamento ecológico e econômico"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E04.T03",
+       "name": "Origem e evolução do conceito de sustentabilidade",
+       "subtopics": [
+        {
+         "code": "CH.E04.T03.S01",
+         "name": "Origem e evolução do conceito de sustentabilidade",
+         "skills": [
+          {
+           "code": "CH.E04.T03.S01.K1",
+           "name": "Origem e evolução do conceito de sustentabilidade"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E04.T04",
+       "name": "Estrutura interna da terra",
+       "subtopics": [
+        {
+         "code": "CH.E04.T04.S01",
+         "name": "Estrutura interna da terra",
+         "skills": [
+          {
+           "code": "CH.E04.T04.S01.K1",
+           "name": "Estrutura interna da terra"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T04.S02",
+         "name": "Estruturas do solo e do relevo",
+         "skills": [
+          {
+           "code": "CH.E04.T04.S02.K1",
+           "name": "Estruturas do solo e do relevo"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T04.S03",
+         "name": "Agentes internos e externos modeladores do relevo",
+         "skills": [
+          {
+           "code": "CH.E04.T04.S03.K1",
+           "name": "Agentes internos e externos modeladores do relevo"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E04.T05",
+       "name": "Situação geral da atmosfera e classificação climática",
+       "subtopics": [
+        {
+         "code": "CH.E04.T05.S01",
+         "name": "Situação geral da atmosfera e classificação climática",
+         "skills": [
+          {
+           "code": "CH.E04.T05.S01.K1",
+           "name": "Situação geral da atmosfera e classificação climática"
+          }
+         ]
+        },
+        {
+         "code": "CH.E04.T05.S02",
+         "name": "As características climáticas do território brasileiro",
+         "skills": [
+          {
+           "code": "CH.E04.T05.S02.K1",
+           "name": "As características climáticas do território brasileiro"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "code": "CH.E04.T06",
+       "name": "Os grandes domínios da vegetação no Brasil e no mundo",
+       "subtopics": [
+        {
+         "code": "CH.E04.T06.S01",
+         "name": "Os grandes domínios da vegetação no Brasil e no mundo",
+         "skills": [
+          {
+           "code": "CH.E04.T06.S01.K1",
+           "name": "Os grandes domínios da vegetação no Brasil e no mundo"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "code": "CH.E05",
+     "name": "Representação espacial",
+     "topics": [
+      {
+       "code": "CH.E05.T01",
+       "name": "Projeções cartográficas",
+       "subtopics": [
+        {
+         "code": "CH.E05.T01.S01",
+         "name": "Projeções cartográficas",
+         "skills": [
+          {
+           "code": "CH.E05.T01.S01.K1",
+           "name": "Projeções cartográficas"
+          }
+         ]
+        },
+        {
+         "code": "CH.E05.T01.S02",
+         "name": "Leitura de mapas temáticos, físicos e políticos",
+         "skills": [
+          {
+           "code": "CH.E05.T01.S02.K1",
+           "name": "Leitura de mapas temáticos, físicos e políticos"
+          }
+         ]
+        },
+        {
+         "code": "CH.E05.T01.S03",
+         "name": "Tecnologias modernas aplicadas à cartografia",
+         "skills": [
+          {
+           "code": "CH.E05.T01.S03.K1",
+           "name": "Tecnologias modernas aplicadas à cartografia"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

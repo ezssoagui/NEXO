@@ -1,0 +1,91 @@
+{
+  "source": {
+    "code": "INEP_CARTILHA_REDACAO_2026",
+    "title": "A Redação do Enem 2026 — Cartilha do Participante (Inep)",
+    "kind": "official",
+    "url": "https://www.gov.br/inep/pt-br/centrais-de-conteudo/acervo-linha-editorial/publicacoes-institucionais/avaliacoes-e-exames-da-educacao-basica/a-redacao-do-enem-2026-cartilha-do-a-participante",
+    "rights_status": "official_public_pending_review",
+    "notes": "Transcrição dos quadros de níveis de desempenho e critérios de nota zero. Exemplos de redações da cartilha NÃO foram importados (verificar direitos antes)."
+  },
+  "competencies": [
+    {
+      "number": 1,
+      "title": "Demonstrar domínio da modalidade escrita formal da língua portuguesa",
+      "locator": "Cartilha 2026, p. 14",
+      "levels": {
+        "200": "Demonstra excelente domínio da modalidade escrita formal da língua portuguesa e de escolha de registro. Desvios gramaticais ou de convenções da escrita serão aceitos somente como excepcionalidade e quando não caracterizarem reincidência.",
+        "160": "Demonstra bom domínio da modalidade escrita formal da língua portuguesa e de escolha de registro, com poucos desvios gramaticais e de convenções da escrita.",
+        "120": "Demonstra domínio mediano da modalidade escrita formal da língua portuguesa e de escolha de registro, com alguns desvios gramaticais e de convenções da escrita.",
+        "80": "Demonstra domínio insuficiente da modalidade escrita formal da língua portuguesa, com muitos desvios gramaticais, de escolha de registro e de convenções da escrita.",
+        "40": "Demonstra domínio precário da modalidade escrita formal da língua portuguesa, de forma sistemática, com diversificados e frequentes desvios gramaticais, de escolha de registro e de convenções da escrita.",
+        "0": "Demonstra desconhecimento da modalidade escrita formal da língua portuguesa."
+      }
+    },
+    {
+      "number": 2,
+      "title": "Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa",
+      "locator": "Cartilha 2026, p. 27",
+      "levels": {
+        "200": "Desenvolve o tema por meio de argumentação consistente, a partir de um repertório sociocultural produtivo, e apresenta excelente domínio do texto dissertativo-argumentativo.",
+        "160": "Desenvolve o tema por meio de argumentação consistente e apresenta bom domínio do texto dissertativo-argumentativo, com proposição, argumentação e conclusão.",
+        "120": "Desenvolve o tema por meio de argumentação previsível e apresenta domínio mediano do texto dissertativo-argumentativo, com proposição, argumentação e conclusão.",
+        "80": "Desenvolve o tema recorrendo à cópia de trechos dos textos motivadores ou apresenta domínio insuficiente do texto dissertativo-argumentativo, não atendendo à estrutura com proposição, argumentação e conclusão.",
+        "40": "Apresenta o assunto, tangenciando o tema, ou demonstra domínio precário do texto dissertativo-argumentativo, com traços constantes de outros tipos textuais.",
+        "0": "Fuga ao tema/não atendimento à estrutura dissertativo-argumentativa. Nestes casos a redação recebe nota 0 (zero) e é anulada."
+      }
+    },
+    {
+      "number": 3,
+      "title": "Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista",
+      "locator": "Cartilha 2026, p. 31",
+      "levels": {
+        "200": "Apresenta informações, fatos e opiniões relacionados ao tema proposto, de forma consistente e organizada, configurando autoria, em defesa de um ponto de vista.",
+        "160": "Apresenta informações, fatos e opiniões relacionados ao tema, de forma organizada, com indícios de autoria, em defesa de um ponto de vista.",
+        "120": "Apresenta informações, fatos e opiniões relacionados ao tema, limitados aos argumentos dos textos motivadores e pouco organizados, em defesa de um ponto de vista.",
+        "80": "Apresenta informações, fatos e opiniões relacionados ao tema, mas desorganizados ou contraditórios e limitados aos argumentos dos textos motivadores, em defesa de um ponto de vista.",
+        "40": "Apresenta informações, fatos e opiniões pouco relacionados ao tema ou incoerentes e sem defesa de um ponto de vista.",
+        "0": "Apresenta informações, fatos e opiniões não relacionados ao tema e sem defesa de um ponto de vista."
+      }
+    },
+    {
+      "number": 4,
+      "title": "Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação",
+      "locator": "Cartilha 2026, p. 34",
+      "levels": {
+        "200": "Articula bem as partes do texto e apresenta repertório diversificado de recursos coesivos.",
+        "160": "Articula as partes do texto, com poucas inadequações, e apresenta repertório diversificado de recursos coesivos.",
+        "120": "Articula as partes do texto, de forma mediana, com inadequações, e apresenta repertório pouco diversificado de recursos coesivos.",
+        "80": "Articula as partes do texto, de forma insuficiente, com muitas inadequações, e apresenta repertório limitado de recursos coesivos.",
+        "40": "Articula as partes do texto de forma precária.",
+        "0": "Não articula as informações."
+      }
+    },
+    {
+      "number": 5,
+      "title": "Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos",
+      "locator": "Cartilha 2026, p. 38",
+      "levels": {
+        "200": "Elabora muito bem proposta de intervenção, detalhada, relacionada ao tema e articulada à discussão desenvolvida no texto.",
+        "160": "Elabora bem proposta de intervenção relacionada ao tema e articulada à discussão desenvolvida no texto.",
+        "120": "Elabora, de forma mediana, proposta de intervenção relacionada ao tema e articulada à discussão desenvolvida no texto.",
+        "80": "Elabora, de forma insuficiente, proposta de intervenção relacionada ao tema, ou não articulada com a discussão desenvolvida no texto.",
+        "40": "Apresenta proposta de intervenção vaga, precária ou relacionada apenas ao assunto.",
+        "0": "Não apresenta proposta de intervenção ou apresenta proposta não relacionada ao tema ou ao assunto. Propostas que desrespeitem os direitos humanos recebem nota 0 (zero) na Competência V."
+      }
+    }
+  ],
+  "zero_rules": {
+    "locator": "Cartilha 2026, p. 8–9",
+    "items": [
+      "fuga total ao tema",
+      "não obediência ao tipo dissertativo-argumentativo",
+      "ausência de texto escrito (\"Em Branco\")",
+      "extensão de até 7 linhas manuscritas (\"Texto insuficiente\")",
+      "impropérios, desenhos e outras formas propositais de anulação (\"Anulada\")",
+      "parte deliberadamente desconectada do tema proposto",
+      "nome, assinatura, rubrica ou outra forma de identificação fora do espaço destinado (\"Anulada\")",
+      "texto escrito predominantemente ou integralmente em língua estrangeira",
+      "cópia de textos da prova/caderno: linhas copiadas desconsideradas na contagem mínima"
+    ]
+  }
+}

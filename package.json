@@ -1,0 +1,52 @@
+{
+  "name": "nexo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NEXO — plataforma web de preparação adaptativa para o ENEM",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:db": "vitest run tests/db",
+    "test:e2e": "playwright test",
+    "db:migrate": "node scripts/db/migrate.mjs",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run test:py",
+    "test:py": "python -m unittest discover -s scripts/import-enem -p \"test_*.py\" && python -m unittest discover -s scripts/curriculum -p \"test_*.py\" && python -m unittest discover -s scripts/essay-benchmark -p \"test_*.py\"",
+    "curriculum:build": "python scripts/curriculum/build_matriz_v0.py",
+    "relevance:build": "python scripts/curriculum/build_relevance_v1.py"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.6.0",
+    "@electric-sql/pglite-pgvector": "0.1.0",
+    "clsx": "2.1.1",
+    "lucide-react": "1.80.0",
+    "next": "16.4.6",
+    "postgres": "4.1.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.1",
+    "ts-fsrs": "6.0.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite-pgtap": "0.1.0",
+    "@playwright/test": "1.65.1",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "24.19.4",
+    "@types/react": "19.3.3",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "4.3.5",
+    "typescript": "5.9.3",
+    "vitest": "5.1.2"
+  },
+  "type": "module"
+}

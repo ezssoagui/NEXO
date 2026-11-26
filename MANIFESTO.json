@@ -1,0 +1,107 @@
+[
+  {
+    "path": ".gitignore",
+    "bytes": 644,
+    "sha256": "e90cff8b48b8d46661f7c9337be614dca5d5fc81be09135afaed7318029ab59e"
+  },
+  {
+    "path": "AGENTS.md",
+    "bytes": 1059,
+    "sha256": "8228b25fedd33cd67c300fac9dbcee7908a58497edbb257d5b1d27cfb96a4105"
+  },
+  {
+    "path": "CLAUDE.md",
+    "bytes": 4883,
+    "sha256": "12729def3df1e5cc9bdf455d4675e37a84f44a4b900a5e24c4e0e715fc061539"
+  },
+  {
+    "path": "INICIAR_CLAUDE.txt",
+    "bytes": 1112,
+    "sha256": "ef9c5fe4eaa907499adbcd78c70a09e337c959bd678de7c737af0c9e6f866b85"
+  },
+  {
+    "path": "LEIA_PRIMEIRO.md",
+    "bytes": 1862,
+    "sha256": "997949f048a816a3373b55649bf7aefb823666c4ecfd82f69b6a450a91941e5c"
+  },
+  {
+    "path": "PROMPT_MESTRE.md",
+    "bytes": 18825,
+    "sha256": "5c47b38deb97ba7b9699bb4330806056153fe931de97fbe7ee3a4844296d6aab"
+  },
+  {
+    "path": "docs/CRITERIOS_DE_ACEITACAO.md",
+    "bytes": 5294,
+    "sha256": "9248c0c07c6db4d23fcb48caf852157704b2039bb920a538562e3b9769d4deab"
+  },
+  {
+    "path": "docs/DECISOES_TECNICAS.md",
+    "bytes": 1606,
+    "sha256": "f2bae496305ca167bffee055cbaad763553d6275428646684001c24db3a0e50f"
+  },
+  {
+    "path": "docs/ESTADO_DO_PROJETO.md",
+    "bytes": 1612,
+    "sha256": "566d4e335e7b385dd1ca6261f9ae833944c01f3a658334fd6a203c14248542f3"
+  },
+  {
+    "path": "docs/NEXO_DOCUMENTO_MESTRE.md",
+    "bytes": 96986,
+    "sha256": "f8ee5d66b0f15ad154f2ac7227368317251c89b88ad6a7c9c1e1b48b35aedb40"
+  },
+  {
+    "path": "referencias/LEIA_ME.md",
+    "bytes": 4958,
+    "sha256": "6bc5dda5249ff429089298481a8ba6c52471d1e3d815ac22592d9c5f87766f88"
+  },
+  {
+    "path": "referencias/inep/.gitkeep",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "referencias/inep/cartilha_redacao_enem_2026.pdf",
+    "bytes": 1574872,
+    "sha256": "1b40faecb13796f748f19efeeac46dcff47c6132cbc2bb19642f17f8f5395c5e"
+  },
+  {
+    "path": "referencias/privadas/.gitkeep",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "referencias/privadas/cartilha_ufes_2026.pdf",
+    "bytes": 9118342,
+    "sha256": "055cf2bbdc4d24fe6743a75c81dcf98fcff4aa29ce6872c1150c5673caf8a596"
+  },
+  {
+    "path": "referencias/sinteses/STUDY_AI_GUIA_PEDAGOGICO.md",
+    "bytes": 6498,
+    "sha256": "1c26a71839e1633dd53ca057b4e9a144e833f7626edee8e8c6b0a31bcf2d493e"
+  },
+  {
+    "path": "referencias/visual/.gitkeep",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "referencias/visual/LEIA_ME.md",
+    "bytes": 534,
+    "sha256": "3d79bb4d1b877d0776ac0ee61d94b64da6c5102036d6e6b1cf65370a52eca1f8"
+  },
+  {
+    "path": "referencias/visual/dashboard_adaptativo_nexo_para_o_enem.png",
+    "bytes": 1699974,
+    "sha256": "9bd890cbc46a4810d59988b31d4bdda0c838c86901f1899439f79fa123ade8c6"
+  },
+  {
+    "path": "referencias/visual/dashboard_nexo_seu_percurso_enem.png",
+    "bytes": 1580085,
+    "sha256": "a50182316ad44227b1f6b6eb84da403ecf1c5ccd82f26a2ae45185986067cf80"
+  },
+  {
+    "path": "scripts/referencias/baixar_matriz_inep.py",
+    "bytes": 2139,
+    "sha256": "5b84ce70f49d4d23361a4e594c66740c2ea6349848956a5ff6f6aa51641c7d0b"
+  }
+]

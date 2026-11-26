@@ -1,0 +1,46 @@
+# Secrets / env (keep only templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.pfx
+*.p12
+# Node / build / testing
+node_modules/
+.next/
+.open-next/
+.wrangler/
+dist/
+coverage/
+playwright-report/
+test-results/
+# Python / local environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Local private/reference data and source bulk downloads
+referencias/privadas/*
+!referencias/privadas/.gitkeep
+referencias/inep/*
+!referencias/inep/.gitkeep
+referencias/visual/*
+!referencias/visual/.gitkeep
+data/raw/
+data/staging/
+data/private/
+backups/
+*.dump
+*.sqlite
+# Local agent settings
+.claude/settings.local.json
+# OS
+.DS_Store
+Thumbs.db
+# Local PGlite data / dev mailbox
+.data/
+*.tsbuildinfo
+next-env.d.ts

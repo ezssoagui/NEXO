@@ -1,0 +1,5 @@
+# Instruções para agentes de programação do NEXO
+
+A especificação do produto é `docs/NEXO_DOCUMENTO_MESTRE.md`. Leia `CLAUDE.md` para as regras operacionais completas; elas valem também para outros agentes. Consulte `docs/CRITERIOS_DE_ACEITACAO.md`, `docs/ESTADO_DO_PROJETO.md` e `docs/DECISOES_TECNICAS.md`. Use `PROMPT_MESTRE.md` para o fluxo inicial de construção.
+
+Antes de editar: inspecione o Git e os arquivos existentes, identifique os subtópicos afetados, escreva critérios de aceitação e preserve mudanças de outras pessoas. Depois de editar: execute testes, registre resultados, pendências e arquivos modificados. Nunca apresente uma integração simulada como real. A ausência de credenciais ou de referências autorizadas não justifica inventar dados. Não alterar preços, metodologia, franquias ou escopo aprovado. Não exponha segredos ou fontes privadas. Não faça deploy, push, pagamento real ou alterações remotas sem autorização. Requisitos pendentes devem ser documentados, configuráveis e isolados da produção.
